@@ -1,0 +1,102 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap'}
+        maven { url "https://dl.bintray.com/kotlin/kotlin-dev/" }
+        maven { url 'https://dl.bintray.com/jetbrains/kotlin-native-dependencies' }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+	repositories {
+		jcenter()
+		maven { url 'https://dl.bintray.com/kotlin/kotlin-eap'}
+		maven { url "https://dl.bintray.com/kotlin/kotlin-dev/" }
+		maven { url 'https://dl.bintray.com/touchlabpublic/kotlin' }
+	}
+}
+
+
+apply plugin: 'kotlin-multiplatform'
+
+
+
+kotlin {
+
+
+    sourceSets {
+
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-common"
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
+                implementation "com.jakewharton.timber:timber-common:$timber_version"
+            }
+        }
+
+		nativeCommonMain {
+			dependencies {
+			    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$kotlin_coroutines_version"
+				implementation "com.jakewharton.timber:timberNative:$timber_version"
+			}
+		}
+
+		jvmMain {
+			dependencies {
+				implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+				implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
+				implementation "com.jakewharton.timber:timber-jdk:$timber_version"
+			}
+		}
+
+		configure([linuxMain, windowsMain, macMain]) {
+			dependsOn nativeCommonMain
+		}
+
+        commonTest {
+            dependencies {
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlin_coroutines_version"
+                implementation "org.jetbrains.kotlin:kotlin-test-common"
+                implementation "org.jetbrains.kotlin:kotlin-test-annotations-common"
+            }
+        }
+
+		nativeCommonTest{
+			dependencies {
+				implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$kotlin_coroutines_version"
+			}
+		}
+
+        jvmTest {
+        	dependsOn commonTest
+            dependencies {
+            	implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
+                implementation 'org.jetbrains.kotlin:kotlin-test'
+                implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+            }
+        }
+
+        configure([linuxTest, windowsTest, macTest]) {
+            dependsOn nativeCommonTest
+        }
+    }
+
+    targets {
+        fromPreset(presets.jvm, 'jvm')
+        fromPreset(presets.linuxX64, 'linux')
+        fromPreset(presets.mingwX64, 'windows')
+        fromPreset(presets.macosX64, 'mac')
+
+		configure([linux, windows, mac]) {
+			compilations.main.outputKinds( 'EXECUTABLE')
+		}
+    }
+}
+
+
+
+

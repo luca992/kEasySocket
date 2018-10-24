@@ -1,0 +1,8 @@
+rootProject.name = 'kEasySocket'
+
+enableFeaturePreview('GRADLE_METADATA')
+
+
+
+
+
