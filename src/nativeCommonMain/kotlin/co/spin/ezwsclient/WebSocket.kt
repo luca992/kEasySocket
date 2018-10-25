@@ -2,6 +2,10 @@ package co.spin.ezwsclient
 
 import kotlinx.cinterop.*
 import platform.posix.*
+import platform.posix.size_t
+import platform.windows.addrinfo
+import platform.windows.getaddrinfo
+import platform.windows.freeaddrinfo
 import co.spin.utils.Log
 
 interface Callback_Imp{
