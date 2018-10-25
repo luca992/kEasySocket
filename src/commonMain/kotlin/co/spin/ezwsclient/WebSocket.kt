@@ -5,6 +5,9 @@ interface Callback_Imp{
     operator fun Callback_Imp.invoke()
 }
 
+const val INVALID_SOCKET  : UInt = UInt.MAX_VALUE
+const val SOCKET_ERROR  : Int = -1
+
 class WebSocket{
     enum class ReadyStateValues { CLOSING, CLOSED, CONNECTING, OPEN }
     //var readyState : ReadyStateValues
