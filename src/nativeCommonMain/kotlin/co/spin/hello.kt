@@ -3,8 +3,7 @@ import kotlin.test.*
 import co.spin.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.*
-//import timber.log.*
-
+//import com.soywiz.klogger.*
 fun main(args: Array<String>) = runBlocking<Unit> {
 
     val threadPool = ThreadPool(1)

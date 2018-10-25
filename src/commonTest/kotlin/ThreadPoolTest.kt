@@ -2,13 +2,12 @@ import kotlin.test.*
 import co.spin.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.*
-import timber.log.*
-
+import co.spin.Utils.Log
 class ThreadPoolTest {
 
 
     init{
-        initTimber()
+
         //println("Started")
     }
 
@@ -16,7 +15,7 @@ class ThreadPoolTest {
     fun enqueMultipleTest() = runTest {
         val threadPool = ThreadPool(4)
         println("Started")
-        repeat(6) {threadPool.enqueue({Timber.debug{"DO ITTTTTTT"}})}
+        repeat(6) {threadPool.enqueue({Log.debug{"DO ITTTTTTT"}})}
         delay(2000L)
         return@runTest
     }

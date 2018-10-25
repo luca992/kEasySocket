@@ -2,8 +2,7 @@ package co.spin.ezwsclient
 
 import kotlinx.cinterop.*
 import platform.posix.*
-import timber.log.*
-
+import co.spin.utils.Log
 
 interface Callback_Imp{
     operator fun Callback_Imp.invoke()
@@ -30,7 +29,7 @@ class WebSocket{
             ret = getaddrinfo(hostname, port.toString(), hints.ptr, cValuesOf(result))
             if (ret != 0)
             {
-                Timber.error{"getaddrinfo: $ret"}
+                Log.error("getaddrinfo: $ret")
                 return 1;
             }
             p = result
