@@ -12,3 +12,6 @@ actual fun getaddrinfo(pNodeName: String?,
                        ppResult: CValuesRef<CPointerVar<addrinfo>>) : Int {
     return getaddrinfo(pNodeName,pServiceName,pHints,ppResult)
 }
+actual fun closesocket(s: SocketT){
+    close(s)
+}

@@ -8,6 +8,7 @@ import co.spin.utils.Log
 import co.spin.utils.SocketT
 import co.spin.utils.addrinfo
 import co.spin.utils.getaddrinfo
+import co.spin.utils.closesocket
 import co.spin.utils.INVALID_SOCKET
 
 interface Callback_Imp{
@@ -47,7 +48,7 @@ class WebSocket{
                 if (connect(sockfd, p.pointed.ai_addr, p.pointed.ai_addrlen) != SOCKET_ERROR) {
                     break;
                 }
-                close(sockfd);
+                closesocket(sockfd);
                 sockfd = INVALID_SOCKET;
                 p = p.pointed.ai_next
             }
