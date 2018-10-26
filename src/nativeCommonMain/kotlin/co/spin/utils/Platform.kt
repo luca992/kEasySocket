@@ -9,5 +9,5 @@ expect fun getaddrinfo(pNodeName: String?,
                        pServiceName: String?,
                        pHints: CValuesRef<addrinfo>?,
                        ppResult: CValuesRef<CPointerVar<addrinfo>>) : Int
-
+expect fun closesocket(s: SocketT)
 

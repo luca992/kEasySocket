@@ -10,9 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2e2d806f-afc2-4def-ad6a-6a03f613c2af" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/unixMain/kotlin/co/spin/utils/Platform.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/unixMain/kotlin/co/spin/utils/Platform.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/windowsMain/kotlin/co/spin/utils/Platform.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/windowsMain/kotlin/co/spin/utils/Platform.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -68,13 +66,13 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="gradle" value="15" />
-          <entry key="kt" value="979" />
+          <entry key="kt" value="987" />
           <entry key="properties" value="20" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Kotlin" value="979" />
+          <entry key="Kotlin" value="987" />
           <entry key="PLAIN_TEXT" value="35" />
         </counts>
       </usages-collector>
@@ -151,11 +149,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="35" selection-start-line="5" selection-start-column="35" selection-end-line="5" selection-end-column="35" />
+            <state relative-caret-position="165">
+              <caret line="11" column="6" selection-start-line="11" selection-start-column="6" selection-end-line="11" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -177,11 +175,11 @@
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/windowsMain/kotlin/co/spin/utils/Platform.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" column="1" lean-forward="true" selection-start-line="19" selection-start-column="1" selection-end-line="19" selection-end-column="1" />
+            <state relative-caret-position="255">
+              <caret line="17" selection-start-line="17" selection-end-line="17" selection-end-column="34" />
               <folding>
                 <element signature="e#23#153#0" expanded="true" />
               </folding>
@@ -625,10 +623,10 @@
         <option value="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/utils/Log.kt" />
         <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/Utils/Platform.kt" />
         <option value="$PROJECT_DIR$/src/windowsMain/kotlin/co/spin/utils/platform.kt" />
-        <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt" />
         <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt" />
         <option value="$PROJECT_DIR$/src/unixMain/kotlin/co/spin/utils/Platform.kt" />
         <option value="$PROJECT_DIR$/src/windowsMain/kotlin/co/spin/utils/Platform.kt" />
+        <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt" />
       </list>
     </option>
   </component>
@@ -921,7 +919,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="15684000" />
+    <option name="totallyTimeSpent" value="15749000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
@@ -1034,13 +1032,6 @@
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="35" selection-start-line="5" selection-start-column="35" selection-end-line="5" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-185">
@@ -1060,11 +1051,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/windowsMain/kotlin/co/spin/utils/Platform.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="1" lean-forward="true" selection-start-line="19" selection-start-column="1" selection-end-line="19" selection-end-column="1" />
+        <state relative-caret-position="255">
+          <caret line="17" selection-start-line="17" selection-end-line="17" selection-end-column="34" />
           <folding>
             <element signature="e#23#153#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="6" selection-start-line="11" selection-start-column="6" selection-end-line="11" selection-end-column="6" />
         </state>
       </provider>
     </entry>
