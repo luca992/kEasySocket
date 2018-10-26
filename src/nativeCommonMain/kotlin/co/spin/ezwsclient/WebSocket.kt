@@ -3,23 +3,25 @@ package co.spin.ezwsclient
 import kotlinx.cinterop.*
 import platform.posix.*
 import platform.posix.size_t
-import platform.windows.addrinfo
-import platform.windows.getaddrinfo
-import platform.windows.freeaddrinfo
+//import platform.windows.freeaddrinfo
 import co.spin.utils.Log
+import co.spin.utils.SocketT
+import co.spin.utils.addrinfo
+import co.spin.utils.getaddrinfo
 
 interface Callback_Imp{
     operator fun Callback_Imp.invoke()
 }
 
-const val INVALID_SOCKET  : Int = -1
+const val INVALID_SOCKET  : SocketT = -1
 const val SOCKET_ERROR  : Int = -1
+
 
 class WebSocket{
     enum class ReadyStateValues { CLOSING, CLOSED, CONNECTING, OPEN }
     //var readyState : ReadyStateValues
 
-    private fun hostname_connect(hostname : String, port : Int) : Int {
+    private fun hostname_connect(hostname : String, port : Int) : SocketT {
         memScoped {
             val hints : addrinfo = alloc<addrinfo>()
             var result : CPointer<addrinfo> = alloc<addrinfo>().ptr
