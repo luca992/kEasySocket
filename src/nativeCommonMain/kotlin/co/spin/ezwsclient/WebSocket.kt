@@ -8,12 +8,12 @@ import co.spin.utils.Log
 import co.spin.utils.SocketT
 import co.spin.utils.addrinfo
 import co.spin.utils.getaddrinfo
+import co.spin.utils.INVALID_SOCKET
 
 interface Callback_Imp{
     operator fun Callback_Imp.invoke()
 }
 
-const val INVALID_SOCKET  : SocketT = -1
 const val SOCKET_ERROR  : Int = -1
 
 
