@@ -10,7 +10,8 @@ expect fun getaddrinfo(pNodeName: String?,
                        pServiceName: String?,
                        pHints: CValuesRef<addrinfo>?,
                        ppResult: CValuesRef<CPointerVar<addrinfo>>) : Int
-expect fun connect(connect: ULong, name : CPointer<sockaddr>?, namelen: UInt) : ULong
+expect fun connect(connect: ULong, name : CPointer<sockaddr>?, namelen: ULong) : ULong
 
 expect fun closesocket(s: ULong)
+expect fun freeaddrinfo(addr: CPointer<addrinfo>)
 

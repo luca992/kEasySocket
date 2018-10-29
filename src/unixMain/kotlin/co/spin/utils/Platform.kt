@@ -12,8 +12,8 @@ actual fun getaddrinfo(pNodeName: String?,
                        ppResult: CValuesRef<CPointerVar<addrinfo>>) : Int {
     return getaddrinfo(pNodeName,pServiceName,pHints,ppResult)
 }
-actual fun connect(connect: ULong, name : CPointer<sockaddr>?, namelen: UInt) : ULong{
-    var r =  connect(connect.toInt(), name, namelen).toULong()
+actual fun connect(connect: ULong, name : CPointer<sockaddr>?, namelen: ULong) : ULong{
+    var r =  connect(connect.toInt(), name, namelen.toUInt()).toULong()
     if (r.toInt() == Int.MAX_VALUE){
         // work around for *nix which returns -1(Int) if error
         r = INVALID_SOCKET
@@ -22,4 +22,7 @@ actual fun connect(connect: ULong, name : CPointer<sockaddr>?, namelen: UInt) : 
 }
 actual fun closesocket(s: ULong){
     close(s.toInt())
+}
+actual fun freeaddrinfo(addr: CPointer<addrinfo>) {
+    freeaddrinfo(addr)
 }

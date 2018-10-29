@@ -3,12 +3,12 @@ package co.spin.ezwsclient
 import kotlinx.cinterop.*
 import platform.posix.*
 import platform.posix.size_t
-//import platform.windows.freeaddrinfo
 import co.spin.utils.Log
 import co.spin.utils.addrinfo
 import co.spin.utils.connect
 import co.spin.utils.getaddrinfo
 import co.spin.utils.closesocket
+import co.spin.utils.freeaddrinfo
 import co.spin.utils.INVALID_SOCKET
 
 interface Callback_Imp{
@@ -49,7 +49,7 @@ class WebSocket{
                 }
                 if (sockfd == INVALID_SOCKET) {
                     continue; }
-                if (connect(sockfd, p.pointed.ai_addr, p.pointed.ai_addrlen) != SOCKET_ERROR.toULong()) {
+                if (connect(sockfd, p.pointed.ai_addr, p.pointed.ai_addrlen.toULong()) != SOCKET_ERROR.toULong()) {
                     break;
                 }
                 closesocket(sockfd);
