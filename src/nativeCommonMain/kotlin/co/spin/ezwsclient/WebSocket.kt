@@ -20,9 +20,36 @@ const val SOCKET_ERROR  : Long = -1L
 
 class WebSocket{
     enum class ReadyStateValues { CLOSING, CLOSED, CONNECTING, OPEN }
-    //var readyState : ReadyStateValues
+
+    private data class WsHeaderType (
+            var header_size: UInt,
+            var fin: Boolean,
+            var mask: Boolean,
+            var opcode: OpcodeType,
+            var N0: Int,
+            var N: ULong,
+            var masking_key: MutableList<UByte> = MutableList <UByte>(4,{0u})
+    ) {
+        enum class OpcodeType(val rgb: Int){
+            CONTINUATION(0x0),
+            TEXT_FRAME(0x1),
+            BINARY_FRAME(0x2),
+            CLOSE(8),
+            PING(9),
+            PONG(0xa),
+        }
+    }
+    var rxbuf = mutableListOf<UByte>()
+    var txbuf = mutableListOf<UByte>()
+    var receivedData = mutableListOf<UByte>()
+
+
+    var sockfd: /*socketT*/ULong
+    var readyState: ReadyStateValues
+    var useMask: Boolean
 
     private fun hostname_connect(hostname : String, port : Int) : ULong {
+        init_sockets()
         memScoped {
             val hints : addrinfo = alloc<addrinfo>()
             var result : CPointer<addrinfo> = alloc<addrinfo>().ptr
@@ -62,9 +89,10 @@ class WebSocket{
     }
 
 
-    constructor(){
-        init_sockets()
-
+    constructor(sockfd : ULong, useMask : Boolean){
+        this.sockfd = sockfd
+        this.readyState = ReadyStateValues.OPEN
+        this.useMask = useMask
     }
 
     fun poll(timeout : Int){TODO() }
