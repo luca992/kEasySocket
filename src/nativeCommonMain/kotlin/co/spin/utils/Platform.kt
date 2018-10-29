@@ -1,13 +1,16 @@
 package co.spin.utils
 
 import kotlinx.cinterop.*
+import platform.posix.*
 
-expect class SocketT
-expect val INVALID_SOCKET : SocketT
+//expect class SocketT
+expect val INVALID_SOCKET /*: SocketT */ : ULong
 expect class addrinfo
 expect fun getaddrinfo(pNodeName: String?,
                        pServiceName: String?,
                        pHints: CValuesRef<addrinfo>?,
                        ppResult: CValuesRef<CPointerVar<addrinfo>>) : Int
-expect fun closesocket(s: SocketT)
+expect fun connect(connect: ULong, name : CPointer<sockaddr>?, namelen: UInt) : ULong
+
+expect fun closesocket(s: ULong)
 

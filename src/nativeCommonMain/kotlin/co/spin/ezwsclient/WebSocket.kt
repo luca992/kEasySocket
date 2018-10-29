@@ -5,8 +5,8 @@ import platform.posix.*
 import platform.posix.size_t
 //import platform.windows.freeaddrinfo
 import co.spin.utils.Log
-import co.spin.utils.SocketT
 import co.spin.utils.addrinfo
+import co.spin.utils.connect
 import co.spin.utils.getaddrinfo
 import co.spin.utils.closesocket
 import co.spin.utils.INVALID_SOCKET
@@ -15,14 +15,14 @@ interface Callback_Imp{
     operator fun Callback_Imp.invoke()
 }
 
-const val SOCKET_ERROR  : Int = -1
+const val SOCKET_ERROR  : Long = -1L
 
 
 class WebSocket{
     enum class ReadyStateValues { CLOSING, CLOSED, CONNECTING, OPEN }
     //var readyState : ReadyStateValues
 
-    private fun hostname_connect(hostname : String, port : Int) : SocketT {
+    private fun hostname_connect(hostname : String, port : Int) : ULong {
         memScoped {
             val hints : addrinfo = alloc<addrinfo>()
             var result : CPointer<addrinfo> = alloc<addrinfo>().ptr
@@ -37,15 +37,19 @@ class WebSocket{
             if (ret != 0)
             {
                 Log.error("getaddrinfo: $ret")
-                return 1;
+                return 1u;
             }
             p = result
             while (p != null)
             {
-                sockfd = socket(p.pointed.ai_family, p.pointed.ai_socktype, p.pointed.ai_protocol);
+                sockfd = socket(p.pointed.ai_family, p.pointed.ai_socktype, p.pointed.ai_protocol).toULong()
+                if (sockfd.toInt() == Int.MAX_VALUE){
+                    // work around for *nix which returns -1(Int) if error
+                    sockfd = INVALID_SOCKET
+                }
                 if (sockfd == INVALID_SOCKET) {
                     continue; }
-                if (connect(sockfd, p.pointed.ai_addr, p.pointed.ai_addrlen) != SOCKET_ERROR) {
+                if (connect(sockfd, p.pointed.ai_addr, p.pointed.ai_addrlen) != SOCKET_ERROR.toULong()) {
                     break;
                 }
                 closesocket(sockfd);
