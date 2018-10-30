@@ -32,7 +32,7 @@ actual fun freeaddrinfo(addr: CPointer<addrinfo>) {
 actual fun select(nfds : Int, readfds: CValuesRef<fd_set>?, writefds: CValuesRef<fd_set>?, exceptfds:CValuesRef<fd_set>?, timeval : CValuesRef<timeval>?) : Int  =
         select(nfds,readfds,writefds,exceptfds,timeval)
 actual fun recv(s: ULong, buf: CPointer<UByteVar>?, len: Int, flags: Int) : Long =
-    recv(s.toInt(),buf,len,flags)
+    recv(s,buf,len,flags)
 
 actual fun send(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Long =
     recv(s.toInt(),buf,len,flags)
