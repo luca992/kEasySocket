@@ -4,6 +4,7 @@ import kotlinx.cinterop.*
 import platform.posix.*
 
 //actual typealias SocketT = Int
+actual typealias TimeValT = Long
 actual val INVALID_SOCKET /*: SocketT */ : ULong = ULong.MAX_VALUE
 actual val SOCKET_EAGAIN_EINPROGRESS : Int = EAGAIN
 actual val SOCKET_EWOULDBLOCK : Int = EWOULDBLOCK
@@ -28,3 +29,11 @@ actual fun closesocket(s: ULong){
 actual fun freeaddrinfo(addr: CPointer<addrinfo>) {
     freeaddrinfo(addr)
 }
+actual fun select(nfds : Int, readfds: CValuesRef<fd_set>?, writefds: CValuesRef<fd_set>?, exceptfds:CValuesRef<fd_set>?, timeval : CValuesRef<timeval>?) : Int  =
+        select(nfds,readfds,writefds,exceptfds,timeval)
+actual fun recv(s: ULong, buf: CPointer<UByteVar>?, len: Int, flags: Int) : Long =
+    recv(s.toInt(),buf,len,flags)
+
+actual fun send(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Long =
+    recv(s.toInt(),buf,len,flags)
+

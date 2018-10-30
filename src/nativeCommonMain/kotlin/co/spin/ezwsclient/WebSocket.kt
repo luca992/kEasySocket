@@ -3,11 +3,15 @@ package co.spin.ezwsclient
 import kotlinx.cinterop.*
 import platform.posix.*
 import co.spin.utils.Log
+import co.spin.utils.TimeValT
 import co.spin.utils.addrinfo
 import co.spin.utils.connect
 import co.spin.utils.getaddrinfo
 import co.spin.utils.closesocket
 import co.spin.utils.freeaddrinfo
+import co.spin.utils.select
+import co.spin.utils.send
+import co.spin.utils.recv
 import co.spin.utils.INVALID_SOCKET
 import co.spin.utils.SOCKET_EWOULDBLOCK
 import co.spin.utils.SOCKET_EAGAIN_EINPROGRESS
@@ -101,7 +105,7 @@ class WebSocket{
         memScoped {
             if (readyState == CLOSED) {
                 if (timeout > 0) {
-                    val tv = alloc<timeval>().apply{ tv_sec = timeout/1000L; tv_usec = (timeout%1000) * 1000 }
+                    val tv = alloc<timeval>().apply{ tv_sec = timeout/(1000 as TimeValT); tv_usec = (timeout%1000) * 1000 }
                     select(0, null, null, null, tv.ptr)
                 }
                 return@memScoped
@@ -109,7 +113,7 @@ class WebSocket{
             if (timeout != 0) {
                 var rfds = alloc<fd_set>()
                 var wfds = alloc<fd_set>()
-                val tv = alloc<timeval>().apply{ tv_sec = timeout/1000L; tv_usec = (timeout%1000) * 1000 }
+                val tv = alloc<timeval>().apply{ tv_sec = timeout/(1000 as TimeValT); tv_usec = (timeout%1000) * 1000 }
                 posix_FD_ZERO(rfds.ptr)
                 posix_FD_ZERO(wfds.ptr)
                 posix_FD_SET(sockfd.toInt(), rfds.ptr);
@@ -122,7 +126,7 @@ class WebSocket{
                 rxbuf= rxbuf.copyOf(N + 1500)
                 var ret = 0L
                 rxbuf.usePinned { pinned: Pinned<UByteArray> ->
-                    ret = recv(sockfd.toInt(), pinned.addressOf(0) + N, 1500, 0)
+                    ret = recv(sockfd, pinned.addressOf(0) + N, 1500, 0)
                 }
                 if (false) {
                 } else if (ret < 0 && (posix_errno() == SOCKET_EWOULDBLOCK || posix_errno() == SOCKET_EAGAIN_EINPROGRESS)) {
@@ -141,7 +145,7 @@ class WebSocket{
             while (!txbuf.isEmpty()) {
                 var ret =0L
                 txbuf.usePinned{ pinned->
-                    ret = send(sockfd.toInt(), pinned.addressOf(0), txbuf.size.toULong(), 0)
+                    ret = send(sockfd, pinned.addressOf(0), txbuf.size.toULong(), 0)
                 }
                 if (false) { } // ??
                 else if (ret < 0 && (posix_errno() == SOCKET_EWOULDBLOCK || posix_errno() == SOCKET_EAGAIN_EINPROGRESS)) {

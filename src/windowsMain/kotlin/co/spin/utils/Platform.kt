@@ -6,9 +6,15 @@ import platform.posix.sockaddr
 import platform.windows.getaddrinfo
 import platform.windows.closesocket
 import platform.windows.freeaddrinfo
+import platform.windows.WSAEINPROGRESS
+import platform.windows.WSAEWOULDBLOCK
+import platform.windows.select
+import platform.posix.timeval
+import platform.posix.fd_set
 
 
 //actual typealias SocketT = ULong
+actual typealias TimeValT = Int
 actual val INVALID_SOCKET /*: SocketT */ : ULong = ULong.MAX_VALUE
 actual val SOCKET_EAGAIN_EINPROGRESS : Int = WSAEINPROGRESS
 actual val SOCKET_EWOULDBLOCK : Int = WSAEWOULDBLOCK
@@ -28,3 +34,10 @@ actual fun closesocket(s: ULong){
 actual fun freeaddrinfo(addr: CPointer<addrinfo>) {
     freeaddrinfo(addr)
 }
+actual fun select(nfds : Int, readfds: CValuesRef<fd_set>?, writefds: CValuesRef<fd_set>?, exceptfds:CValuesRef<fd_set>?, timeval : CValuesRef<timeval>?) : Int  =
+        select(nfds,readfds,writefds,exceptfds,timeval)
+actual fun recv(s: ULong, buf: CPointer<UByteVar>?, len: Int, flags: Int) : Long =
+    recv(s,buf,len,flags).toLong().toLong()
+
+actual fun send(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Long =
+    recv(s,buf,len.toInt(),flags).toLong()
