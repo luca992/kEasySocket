@@ -20,7 +20,7 @@ class EasySocket(url: String, delegate: SocketDelegate) : WebSocket(url, delegat
 
     init {
         receiveQueue = ThreadPool(1)
-        state = SocketState.SocketClosed;
+        state = SocketState.SocketClosed
     }
 
 
