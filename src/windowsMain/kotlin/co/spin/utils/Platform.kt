@@ -10,6 +10,8 @@ import platform.windows.freeaddrinfo
 
 //actual typealias SocketT = ULong
 actual val INVALID_SOCKET /*: SocketT */ : ULong = ULong.MAX_VALUE
+actual val SOCKET_EAGAIN_EINPROGRESS : Int = WSAEINPROGRESS
+actual val SOCKET_EWOULDBLOCK : Int = WSAEWOULDBLOCK
 actual typealias addrinfo = platform.windows.addrinfo
 actual fun getaddrinfo(pNodeName: String?,
                        pServiceName: String?,

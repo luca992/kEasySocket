@@ -2,7 +2,6 @@ package co.spin.ezwsclient
 
 import kotlinx.cinterop.*
 import platform.posix.*
-import platform.posix.size_t
 import co.spin.utils.Log
 import co.spin.utils.addrinfo
 import co.spin.utils.connect
@@ -10,6 +9,9 @@ import co.spin.utils.getaddrinfo
 import co.spin.utils.closesocket
 import co.spin.utils.freeaddrinfo
 import co.spin.utils.INVALID_SOCKET
+import co.spin.utils.SOCKET_EWOULDBLOCK
+import co.spin.utils.SOCKET_EAGAIN_EINPROGRESS
+import co.spin.ezwsclient.WebSocket.ReadyStateValues.*
 
 interface Callback_Imp{
     operator fun Callback_Imp.invoke()
@@ -28,7 +30,7 @@ class WebSocket{
             var opcode: OpcodeType,
             var N0: Int,
             var N: ULong,
-            var masking_key: MutableList<UByte> = MutableList <UByte>(4,{0u})
+            var masking_key: UByteArray = UByteArray(4)
     ) {
         enum class OpcodeType(val rgb: Int){
             CONTINUATION(0x0),
@@ -39,9 +41,9 @@ class WebSocket{
             PONG(0xa),
         }
     }
-    var rxbuf = mutableListOf<UByte>()
-    var txbuf = mutableListOf<UByte>()
-    var receivedData = mutableListOf<UByte>()
+    var rxbuf = UByteArray(0)
+    var txbuf = UByteArray(0)
+    var receivedData = UByteArray(0)
 
 
     var sockfd: /*socketT*/ULong
@@ -91,11 +93,77 @@ class WebSocket{
 
     constructor(sockfd : ULong, useMask : Boolean){
         this.sockfd = sockfd
-        this.readyState = ReadyStateValues.OPEN
+        this.readyState = OPEN
         this.useMask = useMask
     }
 
-    fun poll(timeout : Int){TODO() }
+    fun poll(timeout : Int){
+        memScoped {
+            if (readyState == CLOSED) {
+                if (timeout > 0) {
+                    val tv = alloc<timeval>().apply{ tv_sec = timeout/1000L; tv_usec = (timeout%1000) * 1000 }
+                    select(0, null, null, null, tv.ptr)
+                }
+                return@memScoped
+            }
+            if (timeout != 0) {
+                var rfds = alloc<fd_set>()
+                var wfds = alloc<fd_set>()
+                val tv = alloc<timeval>().apply{ tv_sec = timeout/1000L; tv_usec = (timeout%1000) * 1000 }
+                posix_FD_ZERO(rfds.ptr)
+                posix_FD_ZERO(wfds.ptr)
+                posix_FD_SET(sockfd.toInt(), rfds.ptr);
+                if (!txbuf.isEmpty()) { posix_FD_SET(sockfd.toInt(), wfds.ptr); }
+                select(sockfd.toInt() + 1, rfds.ptr, wfds.ptr, null, if (timeout > 0) tv.ptr else null)
+            }
+            while (true) {
+                // FD_ISSET(0, &rfds) will be true
+                val N = rxbuf.size
+                rxbuf= rxbuf.copyOf(N + 1500)
+                var ret = 0L
+                rxbuf.usePinned { pinned: Pinned<UByteArray> ->
+                    ret = recv(sockfd.toInt(), pinned.addressOf(0) + N, 1500, 0)
+                }
+                if (false) {
+                } else if (ret < 0 && (posix_errno() == SOCKET_EWOULDBLOCK || posix_errno() == SOCKET_EAGAIN_EINPROGRESS)) {
+                    rxbuf= rxbuf.copyOf(N)
+                    break;
+                } else if (ret <= 0) {
+                    rxbuf= rxbuf.copyOf(N)
+                    closesocket(sockfd)
+                    readyState = CLOSED
+                    Log.error(if (ret < 0) "Connection error!"  else "Connection closed!")
+                    break
+                } else {
+                    rxbuf= rxbuf.copyOf(N + ret.toInt())
+                }
+            }
+            while (!txbuf.isEmpty()) {
+                var ret =0L
+                txbuf.usePinned{ pinned->
+                    ret = send(sockfd.toInt(), pinned.addressOf(0), txbuf.size.toULong(), 0)
+                }
+                if (false) { } // ??
+                else if (ret < 0 && (posix_errno() == SOCKET_EWOULDBLOCK || posix_errno() == SOCKET_EAGAIN_EINPROGRESS)) {
+                    break
+                }
+                else if (ret <= 0) {
+                    closesocket(sockfd);
+                    readyState = CLOSED;
+                    Log.error(if (ret < 0) "Connection error!"  else "Connection closed!")
+                    break
+                }
+                else {
+                    val remaining = UByteArray(txbuf.size - ret.toInt())
+                    txbuf = txbuf.copyInto(remaining,0,txbuf.size - ret.toInt())
+                }
+            }
+            if (txbuf.isEmpty() && readyState == CLOSING) {
+                closesocket(sockfd)
+                readyState = CLOSED
+            }
+        }
+    }
 
     fun send(message: String){TODO()}
     fun sendBinary(message: String){TODO()}

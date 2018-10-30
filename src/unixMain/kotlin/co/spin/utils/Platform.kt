@@ -5,6 +5,8 @@ import platform.posix.*
 
 //actual typealias SocketT = Int
 actual val INVALID_SOCKET /*: SocketT */ : ULong = ULong.MAX_VALUE
+actual val SOCKET_EAGAIN_EINPROGRESS : Int = EAGAIN
+actual val SOCKET_EWOULDBLOCK : Int = EWOULDBLOCK
 actual typealias addrinfo = platform.posix.addrinfo
 actual fun getaddrinfo(pNodeName: String?,
                        pServiceName: String?,
