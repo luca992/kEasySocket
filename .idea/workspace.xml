@@ -10,8 +10,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3b030b57-989c-4826-924d-aaa85f58bffc" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/unixMain/kotlin/co/spin/utils/Platform.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/unixMain/kotlin/co/spin/utils/Platform.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/hello.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/hello.kt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -54,11 +56,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="233">
-              <caret line="311" column="12" lean-forward="true" selection-start-line="311" selection-start-column="12" selection-end-line="311" selection-end-column="12" />
+            <state relative-caret-position="114">
+              <caret line="74" column="30" selection-start-line="74" selection-start-column="30" selection-end-line="74" selection-end-column="30" />
               <folding>
                 <element signature="e#28#712#0" expanded="true" />
               </folding>
@@ -66,51 +68,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/hello.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
-              <folding>
-                <element signature="e#23#72#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="-50">
+              <caret line="5" column="36" selection-start-line="5" selection-start-column="36" selection-end-line="5" selection-end-column="36" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/EasySocket.kt">
+        <entry file="file://$PROJECT_DIR$/example-server.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="22" column="40" lean-forward="true" selection-start-line="22" selection-start-column="40" selection-end-line="22" selection-end-column="40" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/WebSocket.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-187" />
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/SocketDelegate.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" column="15" selection-start-line="2" selection-start-column="15" selection-end-line="2" selection-end-column="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/ThreadPool.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-70">
-              <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
-              <folding>
-                <element signature="e#17#108#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="-32">
+              <caret line="7" column="4" lean-forward="true" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -140,16 +111,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>socketerrno</find>
-      <find>UByteVarOf&lt;UByte&gt;</find>
-      <find>ret</find>
-      <find>fd_set</find>
-      <find>tv</find>
-      <find>size</find>
-      <find>ubyte</find>
-      <find>OpcodeType</find>
-      <find>|=</find>
-      <find>masking</find>
       <find>HEADER_SIZE</find>
       <find>receivedData</find>
       <find>rxbuf</find>
@@ -159,10 +120,8 @@
       <find>alloc</find>
       <find>memscoped</find>
       <find>pinned</find>
-      <find>send</find>
       <find>send(</find>
       <find>for (</find>
-      <find>origin</find>
       <find>recv(</find>
       <find>stringFromUtf8</find>
       <find>memScoped</find>
@@ -170,6 +129,18 @@
       <find>version</find>
       <find>setsockopt</find>
       <find>IntVar</find>
+      <find>return@launch</find>
+      <find>ready</find>
+      <find>CLOSE</find>
+      <find>dispat</find>
+      <find>each</find>
+      <find>send</find>
+      <find>cons</find>
+      <find>channel</find>
+      <find>toString</find>
+      <find>stringF</find>
+      <find>origin</find>
+      <find>poll</find>
     </findStrings>
     <replaceStrings>
       <replace>.shl</replace>
@@ -190,7 +161,10 @@
         <option value="$PROJECT_DIR$/src/windowsMain/kotlin/co/spin/utils/Platform.kt" />
         <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt" />
         <option value="$PROJECT_DIR$/src/unixMain/kotlin/co/spin/utils/Platform.kt" />
+        <option value="$PROJECT_DIR$/src/commonTest/kotlin/ThreadPoolTest.kt" />
+        <option value="$PROJECT_DIR$/example-server.js" />
         <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt" />
+        <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/hello.kt" />
       </list>
     </option>
   </component>
@@ -215,6 +189,51 @@
             <path>
               <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
               <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="bin" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="bin" type="462c0819:PsiDirectoryNode" />
+              <item name="mac" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="bin" type="462c0819:PsiDirectoryNode" />
+              <item name="mac" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="bin" type="462c0819:PsiDirectoryNode" />
+              <item name="mac" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="debug" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="bin" type="462c0819:PsiDirectoryNode" />
+              <item name="mac" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="debug" type="462c0819:PsiDirectoryNode" />
+              <item name="executable" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -237,87 +256,6 @@
               <item name="commonMain" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="kotlin" type="462c0819:PsiDirectoryNode" />
               <item name="spin" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="nativeCommonMain" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="nativeCommonMain" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="nativeCommonMain" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
-              <item name="spin" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="nativeCommonMain" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
-              <item name="spin" type="462c0819:PsiDirectoryNode" />
-              <item name="ezwsclient" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="nativeCommonMain" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
-              <item name="spin" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="unixMain" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="unixMain" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="unixMain" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="windowsMain" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="windowsMain" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="kEasySocket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="windowsMain" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -329,7 +267,11 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1540972460731" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/build.gradle" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
   </component>
   <component name="RunDashboard">
@@ -360,12 +302,12 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="32026000" />
+    <option name="totallyTimeSpent" value="33721000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11793215" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.29886913" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="Designer" order="3" />
@@ -408,28 +350,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/ThreadPool.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-70">
-          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
-          <folding>
-            <element signature="e#17#108#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/EasySocket.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="40" lean-forward="true" selection-start-line="22" selection-start-column="40" selection-end-line="22" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/WebSocket.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-187" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -437,16 +357,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-249">
           <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
-          <folding>
-            <element signature="e#23#72#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -460,15 +370,146 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/commonTest/kotlin/ThreadPoolTest.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="20" column="5" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/ThreadPool.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="268">
+          <caret line="18" column="57" lean-forward="true" selection-start-line="18" selection-start-column="57" selection-end-line="18" selection-end-column="57" />
+          <folding>
+            <element signature="e#17#108#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/WebSocket.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-187" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/EasySocket.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="127">
+          <caret line="22" column="40" selection-start-line="22" selection-start-column="40" selection-end-line="22" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="22" selection-start-line="22" selection-end-line="22" />
+          <folding>
+            <element signature="e#23#72#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example-server.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-32">
+          <caret line="7" column="4" lean-forward="true" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="311" column="12" lean-forward="true" selection-start-line="311" selection-start-column="12" selection-end-line="311" selection-end-column="12" />
+        <state relative-caret-position="114">
+          <caret line="74" column="30" selection-start-line="74" selection-start-column="30" selection-end-line="74" selection-end-column="30" />
           <folding>
             <element signature="e#28#712#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/hello.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-50">
+          <caret line="5" column="36" selection-start-line="5" selection-start-column="36" selection-end-line="5" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <last-edited>kEasySocket-jvm</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.5" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>Kotlin</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>kEasySocket_nativeCommonTest|kEasySocket</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>Gradle: com.soywiz:klogger-jvm:0.9.0-SNAPSHOT</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
   </component>
 </project>

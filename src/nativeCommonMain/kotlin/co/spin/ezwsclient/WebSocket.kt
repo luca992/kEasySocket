@@ -72,7 +72,7 @@ class WebSocket{
         this.useMask = useMask
     }
 
-    fun poll(timeout : Int){
+    fun poll(timeout : Int = 0){
         memScoped {
             if (readyState == CLOSED) {
                 if (timeout > 0) {
@@ -240,8 +240,8 @@ class WebSocket{
 
     companion object {
 
-        fun fromUrl(url :String, origin: String): WebSocket {
-            TODO()
+        fun fromUrl(url :String, origin: String = ""): WebSocket? {
+            return fromUrl(url,true,origin)
         }
 
         fun fromUrlNoMask(url :String, origin: String): WebSocket {
