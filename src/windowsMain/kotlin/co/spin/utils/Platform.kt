@@ -8,7 +8,9 @@ import platform.windows.closesocket
 import platform.windows.freeaddrinfo
 import platform.windows.WSAEINPROGRESS
 import platform.windows.WSAEWOULDBLOCK
+import platform.windows.*
 import platform.windows.select
+import platform.windows.setsockopt
 import platform.posix.timeval
 import platform.posix.fd_set
 
@@ -41,3 +43,14 @@ actual fun recv(s: ULong, buf: CPointer<UByteVar>?, len: Int, flags: Int) : Long
 
 actual fun send(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Long =
     recv(s,buf,len.toInt(),flags).toLong()
+
+actual fun setsockopt(s: ULong, level: Int, option_name: Int, option_value: CPointer<IntVar>, option_len : Int) =
+        setsockopt(s,level,option_name,option_value.pointed.value.toChar().toString(),option_len)
+
+actual fun fcntl(s: ULong) {
+    memScoped{
+        val on = alloc<UIntVar>()
+        on.value  = 1u
+        ioctlsocket(s, FIONBIO.toInt(), on.ptr);
+    }
+}

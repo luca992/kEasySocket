@@ -37,3 +37,10 @@ actual fun recv(s: ULong, buf: CPointer<UByteVar>?, len: Int, flags: Int) : Long
 actual fun send(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Long =
     recv(s.toInt(),buf,len,flags)
 
+actual fun setsockopt(s: ULong, level: Int, option_name: Int, option_value: CPointer<IntVar>, option_len : Int) =
+        setsockopt(s.toInt(),level,option_name,option_value.,option_len.toUInt())
+
+actual fun fcntl(s: ULong) {
+    fcntl(s.toInt(), F_SETFL, O_NONBLOCK)
+}
+

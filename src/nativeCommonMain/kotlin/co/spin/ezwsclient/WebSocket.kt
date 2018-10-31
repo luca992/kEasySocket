@@ -4,6 +4,7 @@ import kotlinx.cinterop.*
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.*
 import platform.posix.*
+import co.spin.utils.fcntl
 import co.spin.utils.Log
 import co.spin.utils.TimeValT
 import co.spin.utils.addrinfo
@@ -14,6 +15,7 @@ import co.spin.utils.freeaddrinfo
 import co.spin.utils.select
 import co.spin.utils.send
 import co.spin.utils.recv
+import co.spin.utils.setsockopt
 import co.spin.utils.INVALID_SOCKET
 import co.spin.utils.SOCKET_EWOULDBLOCK
 import co.spin.utils.SOCKET_EAGAIN_EINPROGRESS
@@ -427,15 +429,10 @@ class WebSocket{
             memScoped{
                 val flag = alloc<IntVar>()
                 flag.value  = 1
-                setsockopt(sockfd.toInt(), IPPROTO_TCP, TCP_NODELAY, flag.ptr, IntVar.size.toUInt()) // Disable Nagle's algorithm
+                setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, flag.ptr, IntVar.size.toInt()) // Disable Nagle's algorithm
+                return@memScoped
             }
-            fcntl(sockfd.toInt(), F_SETFL, O_NONBLOCK)
-            /* #ifdef _WIN32
-                     u_long on = 1;
-             ioctlsocket(sockfd, FIONBIO, &on);
-             #else
-             fcntl(sockfd, F_SETFL, O_NONBLOCK);
-             #endif*/
+            fcntl(sockfd)
             //fprintf(stderr, "Connected to: %s\n", url.c_str());
 
             return WebSocket(sockfd, useMask)
