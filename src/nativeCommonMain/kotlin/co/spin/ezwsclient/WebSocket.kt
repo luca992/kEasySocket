@@ -254,7 +254,7 @@ class WebSocket{
                 val hints : addrinfo = alloc<addrinfo>()
                 var result : CPointer<addrinfo> = alloc<addrinfo>().ptr
                 var p : CPointer<addrinfo>? = alloc<addrinfo>().ptr
-                var ret : Int = 0
+                var ret : Int
 
                 var sockfd = INVALID_SOCKET;
                 memset(hints.ptr, 0, sizeOf<addrinfo>().convert<size_t>());
@@ -306,7 +306,7 @@ class WebSocket{
                     Log.error("ERROR: origin size limit exceeded: $origin")
                     return@memScoped null
                 }
-                var sscanfResult = 0
+                var sscanfResult : Int
                 loop@ for (i in 0 ..4){
                     when (i){
                         0->{
@@ -424,7 +424,7 @@ class WebSocket{
                         }
                         if (line[0].toChar() == '\r' && line[1].toChar() == '\n') { break; }
                     }
-                } ?: return@launch
+                }
             }
             memScoped{
                 val flag = alloc<IntVar>()
