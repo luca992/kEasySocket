@@ -10,7 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3b030b57-989c-4826-924d-aaa85f58bffc" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/EasySocket.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/EasySocket.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -57,8 +57,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-103">
-              <caret line="247" column="134" selection-start-line="247" selection-start-column="134" selection-end-line="247" selection-end-column="134" />
+            <state relative-caret-position="-124">
+              <caret line="292" column="27" selection-start-line="292" selection-start-column="27" selection-end-line="292" selection-end-column="27" />
               <folding>
                 <element signature="e#28#588#0" expanded="true" />
               </folding>
@@ -69,8 +69,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" selection-start-line="8" selection-end-line="8" />
+            <state relative-caret-position="220">
+              <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
               <folding>
                 <element signature="e#23#72#0" expanded="true" />
               </folding>
@@ -140,9 +140,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>init_sockets</find>
-      <find>ReadyStateValues</find>
-      <find>timeval</find>
       <find>timeout</find>
       <find>txbuf</find>
       <find>ssize_t</find>
@@ -157,12 +154,22 @@
       <find>|=</find>
       <find>masking</find>
       <find>HEADER_SIZE</find>
-      <find>send</find>
       <find>receivedData</find>
       <find>rxbuf</find>
       <find>size()</find>
       <find>WsHeaderType.OpcodeType.valueOf</find>
       <find>Masking_ke</find>
+      <find>alloc</find>
+      <find>memscoped</find>
+      <find>pinned</find>
+      <find>send</find>
+      <find>send(</find>
+      <find>for (</find>
+      <find>origin</find>
+      <find>recv(</find>
+      <find>stringFromUtf8</find>
+      <find>memScoped</find>
+      <find>IntVar</find>
     </findStrings>
     <replaceStrings>
       <replace>.shl</replace>
@@ -180,10 +187,10 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt" />
         <option value="$PROJECT_DIR$/src/windowsMain/kotlin/co/spin/utils/Platform.kt" />
         <option value="$PROJECT_DIR$/src/unixMain/kotlin/co/spin/utils/Platform.kt" />
         <option value="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/EasySocket.kt" />
+        <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt" />
         <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt" />
       </list>
     </option>
@@ -354,12 +361,12 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17819000" />
+    <option name="totallyTimeSpent" value="29707000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24959612" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11793215" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="Designer" order="3" />
@@ -375,8 +382,8 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="9" visible="true" weight="0.32876712" />
-      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" sideWeight="0.49919224" visible="true" weight="0.39178082" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50080776" side_tool="true" weight="0.39178082" />
       <window_info anchor="bottom" id="Build" order="11" weight="0.26712328" />
       <window_info anchor="bottom" id="Docker" order="12" show_stripe_button="false" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -415,16 +422,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
-          <folding>
-            <element signature="e#23#72#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/SocketDelegate.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -454,10 +451,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/utils/Platform.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
+          <folding>
+            <element signature="e#23#72#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-103">
-          <caret line="247" column="134" selection-start-line="247" selection-start-column="134" selection-end-line="247" selection-end-column="134" />
+        <state relative-caret-position="-124">
+          <caret line="292" column="27" selection-start-line="292" selection-start-column="27" selection-end-line="292" selection-end-column="27" />
           <folding>
             <element signature="e#28#588#0" expanded="true" />
           </folding>

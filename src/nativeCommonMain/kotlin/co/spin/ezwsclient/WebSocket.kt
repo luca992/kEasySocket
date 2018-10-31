@@ -21,6 +21,7 @@ import co.spin.ezwsclient.WebSocket.ReadyStateValues.*
 import kotlinx.coroutines.TDispatchers
 
 fun UByte.shl(b: Int) = (toInt() shl b.toInt()).toUByte()
+fun UByte.toChar() = (toByte()).toChar()
 
 interface Callback_Imp{
     operator fun Callback_Imp.invoke()
@@ -61,46 +62,6 @@ class WebSocket{
     var sockfd: /*socketT*/ULong
     var readyState: ReadyStateValues
     var useMask: Boolean
-
-    private fun hostname_connect(hostname : String, port : Int) : ULong {
-        init_sockets()
-        memScoped {
-            val hints : addrinfo = alloc<addrinfo>()
-            var result : CPointer<addrinfo> = alloc<addrinfo>().ptr
-            var p : CPointer<addrinfo>? = alloc<addrinfo>().ptr
-            var ret : Int = 0
-
-            var sockfd = INVALID_SOCKET;
-            memset(hints.ptr, 0, sizeOf<addrinfo>().convert<size_t>());
-            hints.ai_family = AF_UNSPEC;
-            hints.ai_socktype = SOCK_STREAM;
-            ret = getaddrinfo(hostname, port.toString(), hints.ptr, cValuesOf(result))
-            if (ret != 0)
-            {
-                Log.error("getaddrinfo: $ret")
-                return 1u;
-            }
-            p = result
-            while (p != null)
-            {
-                sockfd = socket(p.pointed.ai_family, p.pointed.ai_socktype, p.pointed.ai_protocol).toULong()
-                if (sockfd.toInt() == Int.MAX_VALUE){
-                    // work around for *nix which returns -1(Int) if error
-                    sockfd = INVALID_SOCKET
-                }
-                if (sockfd == INVALID_SOCKET) {
-                    continue; }
-                if (connect(sockfd, p.pointed.ai_addr, p.pointed.ai_addrlen.toULong()) != SOCKET_ERROR.toULong()) {
-                    break;
-                }
-                closesocket(sockfd);
-                sockfd = INVALID_SOCKET;
-                p = p.pointed.ai_next
-            }
-            freeaddrinfo(result);
-            return sockfd;
-        }
-    }
 
 
     constructor(sockfd : ULong, useMask : Boolean){
@@ -277,13 +238,209 @@ class WebSocket{
 
     companion object {
 
-        fun from_url(url :String, origin: String): WebSocket {
+        fun fromUrl(url :String, origin: String): WebSocket {
             TODO()
         }
 
-        fun from_url_no_mask(url :String, origin: String): WebSocket {
+        fun fromUrlNoMask(url :String, origin: String): WebSocket {
             TODO()
         }
+
+        private fun hostnameConnect(hostname : String, port : Int) : ULong {
+            init_sockets()
+            memScoped {
+                val hints : addrinfo = alloc<addrinfo>()
+                var result : CPointer<addrinfo> = alloc<addrinfo>().ptr
+                var p : CPointer<addrinfo>? = alloc<addrinfo>().ptr
+                var ret : Int = 0
+
+                var sockfd = INVALID_SOCKET;
+                memset(hints.ptr, 0, sizeOf<addrinfo>().convert<size_t>());
+                hints.ai_family = AF_UNSPEC;
+                hints.ai_socktype = SOCK_STREAM;
+                ret = getaddrinfo(hostname, port.toString(), hints.ptr, cValuesOf(result))
+                if (ret != 0)
+                {
+                    Log.error("getaddrinfo: $ret")
+                    return 1u;
+                }
+                p = result
+                while (p != null)
+                {
+                    sockfd = socket(p.pointed.ai_family, p.pointed.ai_socktype, p.pointed.ai_protocol).toULong()
+                    if (sockfd.toInt() == Int.MAX_VALUE){
+                        // work around for *nix which returns -1(Int) if error
+                        sockfd = INVALID_SOCKET
+                    }
+                    if (sockfd == INVALID_SOCKET) {
+                        continue; }
+                    if (connect(sockfd, p.pointed.ai_addr, p.pointed.ai_addrlen.toULong()) != SOCKET_ERROR.toULong()) {
+                        break;
+                    }
+                    closesocket(sockfd);
+                    sockfd = INVALID_SOCKET;
+                    p = p.pointed.ai_next
+                }
+                freeaddrinfo(result);
+                return sockfd;
+            }
+        }
+
+        private data class Url(val host : String,
+                               val port : Int,
+                               val path : String)
+
+        private fun fromUrl(_url :String, useMask: Boolean, origin: String) : WebSocket? {
+            val url : Url = memScoped<Url?> {
+                val host = ByteArray(128)
+                val port = alloc<IntVar>()
+                val path = ByteArray(128)
+
+                if (_url.length >= 128) {
+                    Log.error("ERROR: url size limit exceeded: $_url")
+                    return@memScoped null
+                }
+                if (origin.length >= 200) {
+                    Log.error("ERROR: origin size limit exceeded: $origin")
+                    return@memScoped null
+                }
+                var sscanfResult = 0
+                loop@ for (i in 0 ..4){
+                    when (i){
+                        0->{
+                            sscanfResult = sscanf(_url, "ws://%[^:/]:%d/%s", host, port.ptr, path)
+                            if (sscanfResult == 3) break@loop
+                        }
+                        1->{
+                            sscanfResult = sscanf(_url, "ws://%[^:/]/%s", host, path)
+                            if (sscanfResult == 2) {
+                                port.value = 80
+                                break@loop
+                            }
+                        }
+                        2->{
+                            sscanfResult = sscanf(_url, "ws://%[^:/]:%d", host, port.ptr)
+                            if (sscanfResult == 2) {
+                                path[0] = '\u0000'.toByte()
+                                break@loop
+                            }
+                        }
+                        3->{
+                            sscanfResult = sscanf(_url, "ws://%[^:/]", host)
+                            if (sscanfResult == 1) {
+                                port.value = 80
+                                path[0] = '\u0000'.toByte()
+                                break@loop
+                            }
+                        }
+                        else-> {
+                            Log.error("ERROR: Could not parse WebSocket url: $_url")
+                            return@memScoped null
+                        }
+                    }
+                }
+                return@memScoped Url(host.stringFromUtf8(), port.value, path.stringFromUtf8())
+            } ?: return null
+            //fprintf(stderr, "easywsclient: connecting: host=%s port=%d path=/%s\n", host, port, path);
+            val sockfd = hostnameConnect(url.host, url.port)
+            if (sockfd == INVALID_SOCKET) {
+                Log.error("Unable to connect to ${url.host}:${url.port}")
+                return null
+            }
+            GlobalScope.launch(TDispatchers.Default) {
+                memScoped {
+                    // XXX: this should be done non-blocking,
+                    val line = UByteArray(256)
+                    val status = alloc<IntVar>()
+                    var i = 0
+                    "GET /${url.path} HTTP/1.1\r\n".toUtf8().copyOf(256).toUByteArray()
+                            .usePinned { pinned ->
+                                send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                            }
+                    if (url.port == 80) {
+                        "Host: ${url.host}\r\n".toUtf8().copyOf(256).toUByteArray()
+                                .usePinned { pinned ->
+                                    send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                                }
+                    }
+                    else {
+                        "Host: ${url.host}:${url.port}\r\n".toUtf8().copyOf(256).toUByteArray()
+                                .usePinned { pinned ->
+                                    send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                                }
+                    }
+                    "Upgrade: websocket\r\n".toUtf8().copyOf(256).toUByteArray()
+                            .usePinned { pinned ->
+                                send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                            }
+                    "Connection: Upgrade\r\n".toUtf8().copyOf(256).toUByteArray()
+                            .usePinned { pinned ->
+                                send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                            }
+                    if (!origin.isEmpty()) {
+                        "Origin: $origin\r\n".toUtf8().copyOf(256).toUByteArray()
+                                .usePinned { pinned ->
+                                    send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                                }
+                    }
+                    "Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==\r\n".toUtf8().copyOf(256).toUByteArray()
+                            .usePinned { pinned ->
+                                send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                            }
+                    "Sec-WebSocket-Version: 13\r\n".toUtf8().copyOf(256).toUByteArray()
+                            .usePinned { pinned ->
+                                send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                            }
+                    "\r\n".toUtf8().copyOf(256).toUByteArray()
+                            .usePinned { pinned ->
+                                send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                            }
+                    line.usePinned { pinned ->
+                        while (i < 2 || (i < 255 && line[i - 2].toChar() != '\r' && line[i - 1].toChar() != '\n')) {
+                            val recv = recv(sockfd, pinned.addressOf(i), 1, 0)
+                            if (recv == 0L) {
+                                return@memScoped
+                            }
+                            ++i
+                        }
+                    }
+                    line[i] = 0u
+                    if (i == 255) { Log.error("ERROR: Got invalid status line connecting to: $_url"); return@memScoped; }
+                    val sscanfResult = sscanf(line.toByteArray().stringFromUtf8(), "HTTP/1.1 %d", status.ptr)
+                    if (sscanfResult != 1 || status.value != 101) {
+                        Log.error("ERROR: Got bad status connecting to $_url: $line"); return@memScoped
+                    }
+                    // TODO: verify response headers,
+                    while (true) {
+                        i = 0
+                        line.usePinned { pinned ->
+                            while (i < 2 || (i < 255 && line[i-2].toChar() != '\r' && line[i-1].toChar() != '\n')) {
+                                val recv = recv(sockfd, pinned.addressOf(i), 1, 0).toInt()
+                                if (recv == 0) { return@memScoped; }
+                                ++i
+                            }
+                        }
+                        if (line[0].toChar() == '\r' && line[1].toChar() == '\n') { break; }
+                    }
+                } ?: return@launch
+            }
+            memScoped{
+                val flag = alloc<IntVar>()
+                flag.value  = 1
+                setsockopt(sockfd.toInt(), IPPROTO_TCP, TCP_NODELAY, flag.ptr, IntVar.size.toUInt()) // Disable Nagle's algorithm
+            }
+            fcntl(sockfd.toInt(), F_SETFL, O_NONBLOCK)
+            /* #ifdef _WIN32
+                     u_long on = 1;
+             ioctlsocket(sockfd, FIONBIO, &on);
+             #else
+             fcntl(sockfd, F_SETFL, O_NONBLOCK);
+             #endif*/
+            //fprintf(stderr, "Connected to: %s\n", url.c_str());
+
+            return WebSocket(sockfd, useMask)
+        }
+
     }
 }
 
