@@ -97,7 +97,7 @@ class WebSocket{
                 rxbuf= rxbuf.copyOf(N + 1500)
                 var ret = 0L
                 rxbuf.usePinned { pinned: Pinned<UByteArray> ->
-                    ret = recv(sockfd, pinned.addressOf(0) + N, 1500, 0)
+                    ret = recv(sockfd, pinned.addressOf(0) + N, 1500u, 0)
                 }
                 if (false) {
                 } else if (ret < 0 && (posix_errno() == SOCKET_EWOULDBLOCK || posix_errno() == SOCKET_EAGAIN_EINPROGRESS)) {
@@ -403,7 +403,7 @@ class WebSocket{
                             }
                     line.usePinned { pinned ->
                         while (i < 2 || (i < 255 && line[i - 2].toChar() != '\r' && line[i - 1].toChar() != '\n')) {
-                            val recv = recv(sockfd, pinned.addressOf(i), 1, 0)
+                            val recv = recv(sockfd, pinned.addressOf(i), 1u, 0)
                             if (recv == 0L) {
                                 return@memScoped
                             }
@@ -414,14 +414,14 @@ class WebSocket{
                     if (i == 255) { Log.error("ERROR: Got invalid status line connecting to: $_url"); return@memScoped; }
                     val sscanfResult = sscanf(line.toByteArray().stringFromUtf8(), "HTTP/1.1 %d", status.ptr)
                     if (sscanfResult != 1 || status.value != 101) {
-                        Log.error("ERROR: Got bad status connecting to $_url: $line"); return@memScoped
+                        Log.error("ERROR: Got bad status connecting to $_url: ${line.toByteArray().stringFromUtf8()}"); return@memScoped
                     }
                     // TODO: verify response headers,
                     while (true) {
                         i = 0
                         line.usePinned { pinned ->
                             while (i < 2 || (i < 255 && line[i-2].toChar() != '\r' && line[i-1].toChar() != '\n')) {
-                                val recv = recv(sockfd, pinned.addressOf(i), 1, 0).toInt()
+                                val recv = recv(sockfd, pinned.addressOf(i), 1u, 0).toInt()
                                 if (recv == 0) { return@memScoped; }
                                 ++i
                             }

@@ -36,16 +36,17 @@ actual fun closesocket(s: ULong){
 actual fun freeaddrinfo(addr: CPointer<addrinfo>) {
     freeaddrinfo(addr)
 }
+
 actual fun select(nfds : Int, readfds: CValuesRef<fd_set>?, writefds: CValuesRef<fd_set>?, exceptfds:CValuesRef<fd_set>?, timeval : CValuesRef<timeval>?) : Int  =
-        select(nfds,readfds,writefds,exceptfds,timeval)
-actual fun recv(s: ULong, buf: CPointer<UByteVar>?, len: Int, flags: Int) : Long =
-    recv(s,buf,len,flags).toLong().toLong()
+        platform.windows.select(nfds,readfds,writefds,exceptfds,timeval)
+actual fun recv(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Long =
+        platform.windows.recv(s,buf,len,flags).toLong().toLong()
 
 actual fun send(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Long =
-    recv(s,buf,len.toInt(),flags).toLong()
+        platform.windows.send(s,buf,len.toInt(),flags).toLong()
 
 actual fun setsockopt(s: ULong, level: Int, option_name: Int, option_value: CPointer<IntVar>, option_len : Int) =
-        setsockopt(s,level,option_name,option_value.pointed.value.toChar().toString(),option_len)
+        platform.windows.setsockopt(s,level,option_name,option_value.pointed.value.toChar().toString(),option_len)
 
 actual fun fcntl(s: ULong) {
     memScoped{
