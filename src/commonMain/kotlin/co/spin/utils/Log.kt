@@ -4,11 +4,11 @@ import com.soywiz.klogger.*
 
 object Log {
 
-    val logger = Logger("Socket")
+    val logger = Logger("socket")
 
 
     fun error(e: String){
-        logger.trace { e }
+        logger.error { e }
     }
 
     fun debug(e: String){
