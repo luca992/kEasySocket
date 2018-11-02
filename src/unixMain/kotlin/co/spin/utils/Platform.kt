@@ -1,7 +1,24 @@
 package co.spin.utils
 
 import kotlinx.cinterop.*
-import platform.posix.*
+import platform.posix.addrinfo
+import platform.posix.sockaddr
+import platform.posix.fd_set
+import platform.posix.timeval
+import platform.posix.getaddrinfo
+import platform.posix.connect
+import platform.posix.close
+import platform.posix.freeaddrinfo
+import platform.posix.select
+import platform.posix.recv
+import platform.posix.send
+import platform.posix.setsockopt
+import platform.posix.EAGAIN
+import platform.posix.EWOULDBLOCK
+import platform.posix.fcntl
+import platform.posix.F_SETFL
+import platform.posix.O_NONBLOCK
+import platform.osx.*
 
 //actual typealias SocketT = Int
 actual typealias TimeValT = Long

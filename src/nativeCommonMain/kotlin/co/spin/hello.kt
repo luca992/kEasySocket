@@ -11,7 +11,7 @@ fun main(args: Array<String>) = runBlocking<Unit> {
 
 
 
-    val ws = WebSocket.fromUrl("ws://localhost:8126/foo")!!
+    val ws = WebSocket.fromUrl("ws://localhost:8126/foo") ?: return@runBlocking
 
     while (ws.readyState != CLOSED) {
         ws.poll()

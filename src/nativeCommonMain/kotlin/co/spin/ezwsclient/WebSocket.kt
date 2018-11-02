@@ -250,23 +250,27 @@ class WebSocket{
 
         private fun hostnameConnect(hostname : String, port : Int) : ULong {
             init_sockets()
-            memScoped {
+            return memScoped {
                 val hints : addrinfo = alloc<addrinfo>()
-                var result : CPointer<CPointerVar<addrinfo>> = alloc<CPointerVar<addrinfo>>().ptr
+                val result : CPointerVar<addrinfo> = alloc<CPointerVar<addrinfo>>()
                 var p : CPointer<addrinfo>? = alloc<addrinfo>().ptr
-                var ret : Int
+                val ret : Int
+
 
                 var sockfd = INVALID_SOCKET;
-                memset(hints.ptr, 0, sizeOf<addrinfo>().convert<size_t>());
-                hints.ai_family = AF_UNSPEC;
-                hints.ai_socktype = SOCK_STREAM;
-                ret = getaddrinfo(hostname, port.toString(), hints.ptr, result)
+                memset(hints.ptr, 0, sizeOf<addrinfo>().convert<size_t>())
+                hints.ai_family = AF_UNSPEC
+                hints.ai_socktype = SOCK_STREAM
+
+                val hn =hostname
+                val ps= port.toString()
+                ret = getaddrinfo(hn, ps, hints.ptr, result.ptr)
                 if (ret != 0)
                 {
                     Log.error("getaddrinfo: $ret")
-                    return 1u;
+                    return@memScoped 1u
                 }
-                p = result.pointed.value
+                p = result.value
                 while (p != null)
                 {
                     sockfd = socket(p.pointed.ai_family, p.pointed.ai_socktype, p.pointed.ai_protocol).toULong()
@@ -274,17 +278,16 @@ class WebSocket{
                         // work around for *nix which returns -1(Int) if error
                         sockfd = INVALID_SOCKET
                     }
-                    if (sockfd == INVALID_SOCKET) {
-                        continue; }
+                    if (sockfd == INVALID_SOCKET) { continue; }
                     if (connect(sockfd, p.pointed.ai_addr, p.pointed.ai_addrlen.toULong()) != SOCKET_ERROR.toULong()) {
-                        break;
+                        break
                     }
-                    closesocket(sockfd);
-                    sockfd = INVALID_SOCKET;
+                    closesocket(sockfd)
+                    sockfd = INVALID_SOCKET
                     p = p.pointed.ai_next
                 }
-                freeaddrinfo(result.pointed.value);
-                return sockfd;
+                freeaddrinfo(result.value)
+                return@memScoped sockfd
             }
         }
 
