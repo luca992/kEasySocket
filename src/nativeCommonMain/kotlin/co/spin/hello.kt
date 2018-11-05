@@ -15,6 +15,7 @@ fun main(args: Array<String>) = runBlocking<Unit> {
 
     while (ws.readyState != CLOSED) {
         ws.poll()
+        ws.send("hello")
         GlobalScope.launch(TDispatchers.Default) {
             ws.dispatchBinary().consumeEach {
                 println(it.toByteArray().stringFromUtf8())

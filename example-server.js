@@ -17,7 +17,7 @@ var wss = new WebSocketServer({server: server, path: '/foo'});
 wss.on('connection', function(ws) {
     console.log('/foo connected');
     ws.on('message', function(data, flags) {
-        if (flags.binary) { return; }
+       // if (flags.binary) { return; }
         console.log('>>> ' + data);
         if (data == 'goodbye') { console.log('<<< galaxy'); ws.send('galaxy'); }
         if (data == 'hello') { console.log('<<< world'); ws.send('world'); }

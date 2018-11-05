@@ -23,6 +23,7 @@ import co.spin.ezwsclient.WebSocket.ReadyStateValues.*
 import kotlinx.coroutines.TDispatchers
 
 fun UByte.shl(b: Int) = (toInt() shl b.toInt()).toUByte()
+fun UByte.shr(b: Int) = (toInt() shr b.toInt()).toUByte()
 fun UByte.toChar() = (toByte()).toChar()
 
 interface Callback_Imp{
@@ -32,6 +33,7 @@ interface Callback_Imp{
 const val SOCKET_ERROR  : Long = -1L
 
 
+@ExperimentalUnsignedTypes
 class WebSocket{
     enum class ReadyStateValues { CLOSING, CLOSED, CONNECTING, OPEN }
 
@@ -220,21 +222,87 @@ class WebSocket{
                         rxbuf[i+ws.header_size.toInt()] =  rxbuf[i+ws.header_size.toInt()].xor(ws.masking_key[i.and(0x3)])
                     }
                 }
-                //std::string data(rxbuf.begin()+ws.header_size, rxbuf.begin()+ws.header_size+(size_t)ws.N);
-                //sendData(WsHeaderType.OpcodeType.PONG, data.size, data.begin(), data.end());
+                val pongData = UByteArray(ws.header_size.toInt() + ws.N.toInt()) {rxbuf[ws.header_size.toInt() +i]}
+                sendData(WsHeaderType.OpcodeType.PONG, pongData.size, pongData)
             }
             else if (ws.opcode == WsHeaderType.OpcodeType.PONG) { }
-            else if (ws.opcode == WsHeaderType.OpcodeType.CLOSE) { close(); }
-            else { Log.error{"ERROR: Got unexpected WebSocket message.\n"}; close(); }
+            else if (ws.opcode == WsHeaderType.OpcodeType.CLOSE) { this@WebSocket.close() }
+            else { Log.error{"ERROR: Got unexpected WebSocket message.\n"}; this@WebSocket.close() }
 
             rxbuf = UByteArray(0)
         }
     }
 
-    fun send(message: String){TODO()}
+    fun send(message: String){
+        val uft8Msg = message.toUtf8().toUByteArray()
+        sendData(WsHeaderType.OpcodeType.TEXT_FRAME, uft8Msg.size, uft8Msg)
+    }
+
     fun sendBinary(message: String){TODO()}
     fun sendBinary(message: ByteArray){TODO()}
     fun sendPing(){TODO()}
+
+    private fun sendData(type : WsHeaderType.OpcodeType, messageSize: Int, message: UByteArray) {
+        val messageSizeUbyte = messageSize.toUByte()
+        // TODO:
+        // Masking key should (must) be derived from a high quality random
+        // number generator, to mitigate attacks on non-WebSocket friendly
+        // middleware:
+        val masking_key = ubyteArrayOf(0x12u, 0x34u, 0x56u, 0x78u)
+        // TODO: consider acquiring a lock on txbuf...
+        if (readyState == CLOSING || readyState == CLOSED) { return; }
+        val header = UByteArray(2 + (if(messageSizeUbyte >= 126u) 2 else 0) + (if(messageSizeUbyte >= 65536u) 6 else 0) + (if (useMask) 4 else 0)) {0u}
+        header[0] = 0x80.toUByte().or(type.value)
+        if (messageSizeUbyte < 126u) {
+            header[1] = (messageSizeUbyte.and(0xffu)).or(if (useMask) 0x80u else 0u)
+            if (useMask) {
+                header[2] = masking_key[0]
+                header[3] = masking_key[1]
+                header[4] = masking_key[2]
+                header[5] = masking_key[3]
+            }
+        }
+        else if (messageSizeUbyte < 65536u) {
+            header[1] = 126u.toUByte().or(if (useMask) 0x80u else 0u)
+            header[2] = messageSizeUbyte.shr(8).and(0xffu)
+            header[3] = messageSizeUbyte.shr(0).and(0xffu)
+            if (useMask) {
+                header[4] = masking_key[0]
+                header[5] = masking_key[1]
+                header[6] = masking_key[2]
+                header[7] = masking_key[3]
+            }
+        }
+        else { // TODO: run coverage testing here
+            header[1] = 127.toUByte().or(if (useMask) 0x80u else 0u)
+            header[2] = messageSizeUbyte.shr(56).and(0xffu)
+            header[3] = messageSizeUbyte.shr(48).and(0xffu)
+            header[4] = messageSizeUbyte.shr(40).and(0xffu)
+            header[5] = messageSizeUbyte.shr(32).and(0xffu)
+            header[6] = messageSizeUbyte.shr(24).and(0xffu)
+            header[7] = messageSizeUbyte.shr(16).and(0xffu)
+            header[8] = messageSizeUbyte.shr( 8).and(0xffu)
+            header[9] = messageSizeUbyte.shr( 0).and(0xffu)
+            if (useMask) {
+                header[10] = masking_key[0]
+                header[11] = masking_key[1]
+                header[12] = masking_key[2]
+                header[13] = masking_key[3]
+            }
+        }
+        // N.B. - txbuf will keep growing until it can be transmitted over the socket:
+        val txbufOldSize = txbuf.size
+        txbuf= txbuf.copyOf(txbufOldSize+header.size+ message.size)
+        header.copyInto(txbuf,txbufOldSize)
+        message.copyInto(txbuf,txbufOldSize+header.size)
+        if (useMask) {
+            val message_offset = txbuf.size - messageSizeUbyte.toInt()
+            for (i in 0 until messageSize){
+                txbuf[message_offset + i] = txbuf[message_offset + i].xor(masking_key[i.and(0x3)])
+            }
+        }
+    }
+
     fun close(){TODO()}
 
 
