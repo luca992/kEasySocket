@@ -107,7 +107,7 @@ class WebSocket{
                     rxbuf= rxbuf.copyOf(N)
                     closesocket(sockfd)
                     readyState = CLOSED
-                    Log.error(if (ret < 0) "Connection error!"  else "Connection closed!")
+                    Log.error{if (ret < 0) "Connection error!"  else "Connection closed!"}
                     break
                 } else {
                     rxbuf= rxbuf.copyOf(N + ret.toInt())
@@ -125,7 +125,7 @@ class WebSocket{
                 else if (ret <= 0) {
                     closesocket(sockfd);
                     readyState = CLOSED;
-                    Log.error(if (ret < 0) "Connection error!"  else "Connection closed!")
+                    Log.error{if (ret < 0) "Connection error!"  else "Connection closed!"}
                     break
                 }
                 else {
@@ -225,7 +225,7 @@ class WebSocket{
             }
             else if (ws.opcode == WsHeaderType.OpcodeType.PONG) { }
             else if (ws.opcode == WsHeaderType.OpcodeType.CLOSE) { close(); }
-            else { Log.error("ERROR: Got unexpected WebSocket message.\n"); close(); }
+            else { Log.error{"ERROR: Got unexpected WebSocket message.\n"}; close(); }
 
             rxbuf = UByteArray(0)
         }
@@ -267,7 +267,7 @@ class WebSocket{
                 ret = getaddrinfo(hn, ps, hints.ptr, result.ptr)
                 if (ret != 0)
                 {
-                    Log.error("getaddrinfo: $ret")
+                    Log.error{"getaddrinfo: $ret"}
                     return@memScoped 1u
                 }
                 p = result.value
@@ -303,11 +303,11 @@ class WebSocket{
                 val path = allocArray<ByteVar>(size)
 
                 if (_url.length >= 128) {
-                    Log.error("ERROR: url size limit exceeded: $_url")
+                    Log.error{"ERROR: url size limit exceeded: $_url"}
                     return@memScoped null
                 }
                 if (origin.length >= 200) {
-                    Log.error("ERROR: origin size limit exceeded: $origin")
+                    Log.error{"ERROR: origin size limit exceeded: $origin"}
                     return@memScoped null
                 }
                 var sscanfResult : Int
@@ -340,96 +340,99 @@ class WebSocket{
                             }
                         }
                         else -> {
-                            Log.error("ERROR: Could not parse WebSocket url: $_url")
+                            Log.error{"ERROR: Could not parse WebSocket url: $_url"}
                             return@memScoped null
                         }
                     }
                 }
                 return@memScoped Url(host.readBytes(size).stringFromUtf8(), port.value, path.readBytes(size).stringFromUtf8())
             } ?: return null
-            Log.debug("easywsclient: connecting: host=${url.host} port=${url.port} path=/${url.path}\n")
+            Log.debug{"easywsclient: connecting: host=${url.host} port=${url.port} path=/${url.path}"}
             val sockfd = hostnameConnect(url.host, url.port)
             if (sockfd == INVALID_SOCKET) {
-                Log.error("Unable to connect to ${url.host}:${url.port}")
+                Log.error{"Unable to connect to ${url.host}:${url.port}"}
                 return null
             }
-            GlobalScope.launch(TDispatchers.Default) {
-                memScoped {
-                    // XXX: this should be done non-blocking,
-                    val line = UByteArray(256)
-                    val status = alloc<IntVar>()
-                    var i = 0
-                    "GET /${url.path} HTTP/1.1\r\n".toUtf8().copyOf(256).toUByteArray()
+            memScoped {
+                // XXX: this should be done non-blocking,
+                val line = UByteArray(256)
+                val status = alloc<IntVar>()
+                var i = 0
+                Log.debug{"easywsclient: connecting now: host=${url.host} port=${url.port} path=/${url.path}"}
+                "GET /${url.path} HTTP/1.1\r\n".toUtf8().toUByteArray()
+                        .usePinned { pinned ->
+                            send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                        }
+                if (url.port == 80) {
+                    "Host: ${url.host}\r\n".toUtf8().toUByteArray()
                             .usePinned { pinned ->
                                 send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
                             }
-                    if (url.port == 80) {
-                        "Host: ${url.host}\r\n".toUtf8().copyOf(256).toUByteArray()
-                                .usePinned { pinned ->
-                                    send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
-                                }
+                }
+                else {
+                    "Host: ${url.host}:${url.port}\r\n".toUtf8().toUByteArray()
+                            .usePinned { pinned ->
+                                send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                            }
+                }
+                "Upgrade: websocket\r\n".toUtf8().toUByteArray()
+                        .usePinned { pinned ->
+                            send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                        }
+                "Connection: Upgrade\r\n".toUtf8().toUByteArray()
+                        .usePinned { pinned ->
+                            send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                        }
+                if (!origin.isEmpty()) {
+                    "Origin: $origin\r\n".toUtf8().toUByteArray()
+                            .usePinned { pinned ->
+                                send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                            }
+                }
+                "Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==\r\n".toUtf8().toUByteArray()
+                        .usePinned { pinned ->
+                            send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                        }
+                "Sec-WebSocket-Version: 13\r\n".toUtf8().toUByteArray()
+                        .usePinned { pinned ->
+                            send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                        }
+                "\r\n".toUtf8().toUByteArray()
+                        .usePinned { pinned ->
+                            send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                        }
+                line.usePinned{ pinned ->
+                    while (i < 2 || (i < 255 && line[i - 2].toChar() != '\r' && line[i - 1].toChar() != '\n')) {
+                        val recv = recv(sockfd, pinned.addressOf(i), 1u, 0)
+                        if (recv == 0L) {
+                            return@fromUrl null
+                        }
+                        ++i
                     }
-                    else {
-                        "Host: ${url.host}:${url.port}\r\n".toUtf8().copyOf(256).toUByteArray()
-                                .usePinned { pinned ->
-                                    send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
-                                }
-                    }
-                    "Upgrade: websocket\r\n".toUtf8().copyOf(256).toUByteArray()
-                            .usePinned { pinned ->
-                                send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
-                            }
-                    "Connection: Upgrade\r\n".toUtf8().copyOf(256).toUByteArray()
-                            .usePinned { pinned ->
-                                send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
-                            }
-                    if (!origin.isEmpty()) {
-                        "Origin: $origin\r\n".toUtf8().copyOf(256).toUByteArray()
-                                .usePinned { pinned ->
-                                    send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
-                                }
-                    }
-                    "Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==\r\n".toUtf8().copyOf(256).toUByteArray()
-                            .usePinned { pinned ->
-                                send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
-                            }
-                    "Sec-WebSocket-Version: 13\r\n".toUtf8().copyOf(256).toUByteArray()
-                            .usePinned { pinned ->
-                                send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
-                            }
-                    "\r\n".toUtf8().copyOf(256).toUByteArray()
-                            .usePinned { pinned ->
-                                send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
-                            }
+                }
+
+                line[i] = 0u
+                if (i == 255) { Log.error{"ERROR: Got invalid status line connecting to: $_url"}; return@fromUrl null;}
+                val sscanfResult = sscanf(line.toByteArray().stringFromUtf8(), "HTTP/1.1 %d", status.ptr)
+                if (sscanfResult != 1 || status.value != 101) {
+                    Log.error{"ERROR: Got bad status connecting to $_url: ${line.toByteArray().stringFromUtf8()}"}; return@memScoped
+                }
+                // TODO: verify response headers,
+                while (true) {
+                    i = 0
                     line.usePinned { pinned ->
-                        while (i < 2 || (i < 255 && line[i - 2].toChar() != '\r' && line[i - 1].toChar() != '\n')) {
-                            val recv = recv(sockfd, pinned.addressOf(i), 1u, 0)
-                            if (recv == 0L) {
-                                return@memScoped
+                        while (i < 2 || (i < 255 && line[i-2].toChar() != '\r' && line[i-1].toChar() != '\n')) {
+                            val recv = recv(sockfd, pinned.addressOf(i), 1u, 0).toInt()
+                            if (recv == 0) {
+                                return@fromUrl null
                             }
                             ++i
                         }
-                    }
-                    line[i] = 0u
-                    if (i == 255) { Log.error("ERROR: Got invalid status line connecting to: $_url"); return@memScoped; }
-                    val sscanfResult = sscanf(line.toByteArray().stringFromUtf8(), "HTTP/1.1 %d", status.ptr)
-                    if (sscanfResult != 1 || status.value != 101) {
-                        Log.error("ERROR: Got bad status connecting to $_url: ${line.toByteArray().stringFromUtf8()}"); return@memScoped
-                    }
-                    // TODO: verify response headers,
-                    while (true) {
-                        i = 0
-                        line.usePinned { pinned ->
-                            while (i < 2 || (i < 255 && line[i-2].toChar() != '\r' && line[i-1].toChar() != '\n')) {
-                                val recv = recv(sockfd, pinned.addressOf(i), 1u, 0).toInt()
-                                if (recv == 0) { return@memScoped; }
-                                ++i
-                            }
-                        }
-                        if (line[0].toChar() == '\r' && line[1].toChar() == '\n') { break; }
-                    }
+                    } ?: return@fromUrl null
+                    if (line[0].toChar() == '\r' && line[1].toChar() == '\n') { break; }
                 }
             }
+
             memScoped{
                 val flag = alloc<IntVar>()
                 flag.value  = 1
@@ -437,7 +440,7 @@ class WebSocket{
                 return@memScoped
             }
             fcntl(sockfd)
-            //fprintf(stderr, "Connected to: %s\n", url.c_str());
+            Log.debug{"Connected to: $url"}
 
             return WebSocket(sockfd, useMask)
         }

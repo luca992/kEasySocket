@@ -33,7 +33,13 @@ kotlin {
 
 
     sourceSets {
-
+        all {
+            languageSettings {
+                //enableLanguageFeature('InlineClasses') // language feature name
+                //useExperimentalAnnotation('kotlin.ExperimentalUnsignedTypes') // annotation FQ-name
+                //progressiveMode = true // false by default
+            }
+        }
         commonMain {
             dependencies {
                 implementation "org.jetbrains.kotlin:kotlin-stdlib-common"
@@ -43,12 +49,14 @@ kotlin {
         }
 
 		nativeCommonMain {
+		    dependsOn commonMain
 			dependencies {
 			    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$kotlin_coroutines_version"
 			}
 		}
 
 		jvmMain {
+		    dependsOn commonMain
 			dependencies {
 				implementation 'org.jetbrains.kotlin:kotlin-stdlib'
 				implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
