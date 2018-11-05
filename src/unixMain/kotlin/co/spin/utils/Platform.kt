@@ -37,7 +37,7 @@ actual fun recv(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Lo
 
 actual fun send(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Long {
     val message = (buf as? CPointer<ByteVar>?)?.toKString()
-    Log.debug{"Sending: ${message?.trim()}}
+    Log.debug{"Sending: ${message?.trim()}"}
     return platform.posix.send(s.toInt(),buf,len,flags)
 }
 
