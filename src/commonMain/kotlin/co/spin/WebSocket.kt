@@ -8,7 +8,7 @@ enum class SocketState {
 }
 
 abstract class WebSocket(
-    protected val url: String,
+    val url: String,
     protected val delegate: SocketDelegate) {
     /**
      * Open the websocket connection.

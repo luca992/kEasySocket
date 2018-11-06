@@ -144,13 +144,13 @@ class WebSocket{
         }
     }
 
-    fun dispatchBinary() : ReceiveChannel<UByteArray> = GlobalScope.produce<UByteArray>(TDispatchers.Default) {
+    fun dispatchBinary(callback: (UByteArray) -> Unit): Job = GlobalScope.launch(TDispatchers.Default) {
         try {
             // TODO: consider acquiring a lock on rxbuf...
             while (true) {
                 val ws = WsHeaderType()
                 if (rxbuf.size < 2) {
-                    return@produce /* Need at least 2 */
+                    return@launch /* Need at least 2 */
                 }
                 val data = rxbuf// peek, but don't consume
                 ws.fin = (data[0].and(0x80u)) == 0x80.toUByte()
@@ -159,7 +159,7 @@ class WebSocket{
                 ws.N0 = data[1].and(0x7fu).toInt()
                 ws.header_size = 2u + (if (ws.N0 == 126) 2u else 0u) + (if (ws.N0 == 127) 8u else 0u) + (if (ws.mask) 4u else 0u)
                 if (rxbuf.size < ws.header_size.toInt()) {
-                    return@produce; /* Need: ws.header_size - rxbuf.size */
+                    return@launch; /* Need: ws.header_size - rxbuf.size */
                 }
                 var i = 0// free memory
                 // just feed
@@ -202,7 +202,7 @@ class WebSocket{
                     ws.masking_key[3] = 0u
                 }
                 if (rxbuf.size < ws.header_size.toInt() + ws.N.toLong()) {
-                    return@produce; /* Need: ws.header_size+ws.N - rxbuf.size */
+                    return@launch; /* Need: ws.header_size+ws.N - rxbuf.size */
                 }
 
                 // We got a whole message, now do something with it:
@@ -221,7 +221,7 @@ class WebSocket{
                     receivedData = receivedData.copyOf(receivedData.size + ws.N.toInt())
                     receivedData = rxbuf.copyInto(receivedData, oldReceivedDataSize, ws.header_size.toInt(), ws.header_size.toInt() + ws.N.toInt())// just feed
                     if (ws.fin) {
-                        this.send(receivedData)
+                        callback(receivedData)
                         receivedData = UByteArray(0)
                     }
                 } else if (ws.opcode == WsHeaderType.OpcodeType.PING) {
