@@ -30,8 +30,4 @@ abstract class WebSocket(
      */
     abstract fun getSocketState(): SocketState
 
-    /**
-     * Sets the WebSocket URL.
-     */
-    abstract fun setURL(url: String)
 }
