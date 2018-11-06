@@ -12,17 +12,20 @@ fun main(args: Array<String>) = runBlocking<Unit> {
 
 
     val ws = WebSocket.fromUrl("ws://localhost:8126/foo") ?: return@runBlocking
-
+    var sendCount= 0
     while (ws.readyState != CLOSED) {
         ws.poll()
-        ws.send("hello")
+        if (sendCount<50) {
+            ws.send("hello")
+            sendCount++
+        } else {
+            ws.close()
+        }
         GlobalScope.launch(TDispatchers.Default) {
             ws.dispatchBinary().consumeEach {
                 println(it.toByteArray().stringFromUtf8())
             }
         }
     }
-    delay(30000L)
-
     return@runBlocking
 }

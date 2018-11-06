@@ -55,7 +55,6 @@ class WebSocket{
             PONG(0xau);
             companion object {
                 fun valueOf(value: UByte): OpcodeType = OpcodeType.values().first{
-                    println("$value")
                     it.value == value }
             }
         }
@@ -317,7 +316,14 @@ class WebSocket{
         }
     }
 
-    fun close(){TODO()}
+    fun close(){
+        if(readyState == CLOSING || readyState == CLOSED) { return; }
+        readyState = CLOSING
+        val txbufOldSize = txbuf.size
+        val closeFrame = ubyteArrayOf(0x88u, 0x80u, 0x00u, 0x00u, 0x00u, 0x00u) // last 4 bytes are a masking key
+        txbuf = txbuf.copyOf(txbuf.size + closeFrame.size)
+        txbuf = closeFrame.copyInto(txbuf,txbufOldSize)
+    }
 
 
     companion object {
