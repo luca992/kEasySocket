@@ -105,7 +105,7 @@ class WebSocket{
                 if (false) {
                 } else if (ret < 0 && (posix_errno() == SOCKET_EWOULDBLOCK || posix_errno() == SOCKET_EAGAIN_EINPROGRESS)) {
                     rxbuf= rxbuf.copyOf(N)
-                    break;
+                    break
                 } else if (ret <= 0) {
                     rxbuf= rxbuf.copyOf(N)
                     closesocket(sockfd)
