@@ -32,17 +32,23 @@ actual fun freeaddrinfo(addr: CPointer<addrinfo>) {
 }
 actual fun select(nfds : Int, readfds: CValuesRef<fd_set>?, writefds: CValuesRef<fd_set>?, exceptfds:CValuesRef<fd_set>?, timeval : CValuesRef<timeval>?) : Int  =
         platform.posix.select(nfds,readfds,writefds,exceptfds,timeval)
-actual fun recv(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Long =
-        platform.posix.recv(s.toInt(),buf,len,flags)
+actual fun recv(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Long {
+    val r = platform.posix.recv(s.toInt(), buf, len, flags)
+//    val message = (buf as? CPointer<ByteVar>?)?.toKString()
+//    Log.debug{"Receiving: ${message?.trim()}"}
+    return r
+}
 
 actual fun send(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Long {
     val message = (buf as? CPointer<ByteVar>?)?.toKString()
-    Log.debug{"Sending: ${message?.trim()}"}
+    //Log.debug{"Sending: ${message?.trim()}"}
     return platform.posix.send(s.toInt(),buf,len,flags)
 }
 
+@ExperimentalUnsignedTypes
 actual fun setsockopt(s: ULong, level: Int, option_name: Int, option_value: CPointer<IntVar>, option_len : Int) =
-        platform.posix.setsockopt(s.toInt(),level,option_name,option_value,option_len.toUInt())
+    platform.posix.setsockopt(s.toInt(), level, option_name, option_value, option_len.toUInt())
+
 
 actual fun fcntl(s: ULong) {
     platform.posix.fcntl(s.toInt(), F_SETFL, O_NONBLOCK)

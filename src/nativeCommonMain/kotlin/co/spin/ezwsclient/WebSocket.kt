@@ -54,7 +54,9 @@ class WebSocket{
             PING(9u),
             PONG(0xau);
             companion object {
-                fun valueOf(value: UByte): OpcodeType = OpcodeType.values().first{it.value == value }
+                fun valueOf(value: UByte): OpcodeType = OpcodeType.values().first{
+                    println("$value")
+                    it.value == value }
             }
         }
     }
@@ -132,7 +134,8 @@ class WebSocket{
                 }
                 else {
                     val remaining = UByteArray(txbuf.size - ret.toInt())
-                    txbuf = txbuf.copyInto(remaining,0,txbuf.size - ret.toInt())
+                    //Log.debug { "${remaining.size}  : ${ret.toInt()}" }
+                    txbuf = if (remaining.isEmpty()) remaining else txbuf.copyInto(remaining,0,txbuf.size - ret.toInt())
                 }
             }
             if (txbuf.isEmpty() && readyState == CLOSING) {
@@ -143,93 +146,104 @@ class WebSocket{
     }
 
     fun dispatchBinary() : ReceiveChannel<UByteArray> = GlobalScope.produce<UByteArray>(TDispatchers.Default) {
-        // TODO: consider acquiring a lock on rxbuf...
-        while (true) {
-            val ws = WsHeaderType()
-            if (rxbuf.size < 2) { return@produce /* Need at least 2 */ }
-            val data = rxbuf// peek, but don't consume
-            ws.fin = (data[0].and(0x80u)) == 0x80.toUByte()
-            ws.opcode = WsHeaderType.OpcodeType.valueOf(data[0].and(0x0fu))
-            ws.mask = data[1].and(0x80u) == 0x80.toUByte()
-            ws.N0 = data[1].and(0x7fu).toInt()
-            ws.header_size = 2u + (if (ws.N0 == 126) 2u else 0u) + (if (ws.N0 == 127) 8u else 0u) + (if(ws.mask) 4u else 0u)
-            if (rxbuf.size < ws.header_size.toInt()) { return@produce; /* Need: ws.header_size - rxbuf.size */ }
-            var i = 0// free memory
-            // just feed
-            /* Need: ws.header_size+ws.N - rxbuf.size */
+        try {
+            // TODO: consider acquiring a lock on rxbuf...
+            while (true) {
+                val ws = WsHeaderType()
+                if (rxbuf.size < 2) {
+                    return@produce /* Need at least 2 */
+                }
+                val data = rxbuf// peek, but don't consume
+                ws.fin = (data[0].and(0x80u)) == 0x80.toUByte()
+                ws.opcode = WsHeaderType.OpcodeType.valueOf(data[0].and(0x0fu))
+                ws.mask = data[1].and(0x80u) == 0x80.toUByte()
+                ws.N0 = data[1].and(0x7fu).toInt()
+                ws.header_size = 2u + (if (ws.N0 == 126) 2u else 0u) + (if (ws.N0 == 127) 8u else 0u) + (if (ws.mask) 4u else 0u)
+                if (rxbuf.size < ws.header_size.toInt()) {
+                    return@produce; /* Need: ws.header_size - rxbuf.size */
+                }
+                var i = 0// free memory
+                // just feed
+                /* Need: ws.header_size+ws.N - rxbuf.size */
 
-            // We got a whole message, now do something with it:
-            when {
-                ws.N0 < 126 -> {
-                    ws.N = ws.N0.toULong()
-                    i = 2
-                }
-                ws.N0 == 126 -> {
-                    ws.N = 0u
-                    ws.N = ws.N.or(data[2].toULong().shl(8))
-                    ws.N = (data[3].toULong()).shl(0)
-                    i = 4
-                }
-                ws.N0 == 127 -> {
-                    ws.N = 0u
-                    ws.N = (data[2].toULong()).shl(56)
-                    ws.N = (data[3].toULong()).shl(48)
-                    ws.N = (data[4].toULong()).shl(40)
-                    ws.N = (data[5].toULong()).shl(32)
-                    ws.N = (data[6].toULong()).shl(24)
-                    ws.N = (data[7].toULong()).shl(16)
-                    ws.N = (data[8].toULong()).shl(8)
-                    ws.N = (data[9].toULong()).shl(0)
-                    i = 10
-                }
-            }
-            if (ws.mask) {
-                ws.masking_key[0] = (data[i+0]).shl(0)
-                ws.masking_key[1] = (data[i+1]).shl(0)
-                ws.masking_key[2] = (data[i+2]).shl(0)
-                ws.masking_key[3] = (data[i+3]).shl(0)
-            }
-            else {
-                ws.masking_key[0] = 0u
-                ws.masking_key[1] = 0u
-                ws.masking_key[2] = 0u
-                ws.masking_key[3] = 0u
-            }
-            if (rxbuf.size < ws.header_size.toInt() +ws.N.toLong()) { return@produce; /* Need: ws.header_size+ws.N - rxbuf.size */ }
-
-            // We got a whole message, now do something with it:
-            if (false) { }
-            else if (
-                    ws.opcode == WsHeaderType.OpcodeType.TEXT_FRAME
-                    || ws.opcode == WsHeaderType.OpcodeType.BINARY_FRAME
-                    || ws.opcode == WsHeaderType.OpcodeType.CONTINUATION
-            ) {
-                if (ws.mask) {
-                    for (i in 0..ws.N.toInt()) {
-                        rxbuf[i+ws.header_size.toInt()] =  rxbuf[i+ws.header_size.toInt()].xor(ws.masking_key[i.and(0x3)])
+                // We got a whole message, now do something with it:
+                when {
+                    ws.N0 < 126 -> {
+                        ws.N = ws.N0.toULong()
+                        i = 2
+                    }
+                    ws.N0 == 126 -> {
+                        ws.N = 0u
+                        ws.N = ws.N.or(data[2].toULong().shl(8))
+                        ws.N = ws.N.or((data[3].toULong()).shl(0))
+                        i = 4
+                    }
+                    ws.N0 == 127 -> {
+                        ws.N = 0u
+                        ws.N = ws.N.or((data[2].toULong()).shl(56))
+                        ws.N = ws.N.or((data[3].toULong()).shl(48))
+                        ws.N = ws.N.or((data[4].toULong()).shl(40))
+                        ws.N = ws.N.or((data[5].toULong()).shl(32))
+                        ws.N = ws.N.or((data[6].toULong()).shl(24))
+                        ws.N = ws.N.or((data[7].toULong()).shl(16))
+                        ws.N = ws.N.or((data[8].toULong()).shl(8))
+                        ws.N = ws.N.or((data[9].toULong()).shl(0))
+                        i = 10
                     }
                 }
-                receivedData = receivedData.copyOf(receivedData.size + ws.N.toInt())
-                receivedData = rxbuf.copyInto(receivedData,receivedData.size,ws.header_size.toInt(), ws.header_size.toInt()+ws.N.toInt())// just feed
-                if (ws.fin) {
-                    this.send(receivedData)
-                    receivedData = UByteArray(0)
-                }
-            }
-            else if (ws.opcode == WsHeaderType.OpcodeType.PING) {
                 if (ws.mask) {
-                    for (i in 0..ws.N.toInt()) {
-                        rxbuf[i+ws.header_size.toInt()] =  rxbuf[i+ws.header_size.toInt()].xor(ws.masking_key[i.and(0x3)])
-                    }
+                    ws.masking_key[0] = (data[i + 0]).shl(0)
+                    ws.masking_key[1] = (data[i + 1]).shl(0)
+                    ws.masking_key[2] = (data[i + 2]).shl(0)
+                    ws.masking_key[3] = (data[i + 3]).shl(0)
+                } else {
+                    ws.masking_key[0] = 0u
+                    ws.masking_key[1] = 0u
+                    ws.masking_key[2] = 0u
+                    ws.masking_key[3] = 0u
                 }
-                val pongData = UByteArray(ws.header_size.toInt() + ws.N.toInt()) {rxbuf[ws.header_size.toInt() +i]}
-                sendData(WsHeaderType.OpcodeType.PONG, pongData.size, pongData)
-            }
-            else if (ws.opcode == WsHeaderType.OpcodeType.PONG) { }
-            else if (ws.opcode == WsHeaderType.OpcodeType.CLOSE) { this@WebSocket.close() }
-            else { Log.error{"ERROR: Got unexpected WebSocket message.\n"}; this@WebSocket.close() }
+                if (rxbuf.size < ws.header_size.toInt() + ws.N.toLong()) {
+                    return@produce; /* Need: ws.header_size+ws.N - rxbuf.size */
+                }
 
-            rxbuf = UByteArray(0)
+                // We got a whole message, now do something with it:
+                if (false) {
+                } else if (
+                        ws.opcode == WsHeaderType.OpcodeType.TEXT_FRAME
+                        || ws.opcode == WsHeaderType.OpcodeType.BINARY_FRAME
+                        || ws.opcode == WsHeaderType.OpcodeType.CONTINUATION
+                ) {
+                    if (ws.mask) {
+                        for (i in 0..ws.N.toInt()) {
+                            rxbuf[i + ws.header_size.toInt()] = rxbuf[i + ws.header_size.toInt()].xor(ws.masking_key[i.and(0x3)])
+                        }
+                    }
+                    val oldReceivedDataSize = receivedData.size
+                    receivedData = receivedData.copyOf(receivedData.size + ws.N.toInt())
+                    receivedData = rxbuf.copyInto(receivedData, oldReceivedDataSize, ws.header_size.toInt(), ws.header_size.toInt() + ws.N.toInt())// just feed
+                    if (ws.fin) {
+                        this.send(receivedData)
+                        receivedData = UByteArray(0)
+                    }
+                } else if (ws.opcode == WsHeaderType.OpcodeType.PING) {
+                    if (ws.mask) {
+                        for (i in 0..ws.N.toInt()) {
+                            rxbuf[i + ws.header_size.toInt()] = rxbuf[i + ws.header_size.toInt()].xor(ws.masking_key[i.and(0x3)])
+                        }
+                    }
+                    val pongData = UByteArray(ws.header_size.toInt() + ws.N.toInt()) { rxbuf[ws.header_size.toInt() + i] }
+                    sendData(WsHeaderType.OpcodeType.PONG, pongData.size, pongData)
+                } else if (ws.opcode == WsHeaderType.OpcodeType.PONG) {
+                } else if (ws.opcode == WsHeaderType.OpcodeType.CLOSE) {
+                    this@WebSocket.close()
+                } else {
+                    Log.error { "ERROR: Got unexpected WebSocket message.\n" }; this@WebSocket.close()
+                }
+
+                rxbuf = UByteArray(0)
+            }
+        } catch (e: Exception){
+            e.printStackTrace()
         }
     }
 

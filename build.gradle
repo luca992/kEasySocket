@@ -35,8 +35,8 @@ kotlin {
     sourceSets {
         all {
             languageSettings {
-                //enableLanguageFeature('InlineClasses') // language feature name
-                //useExperimentalAnnotation('kotlin.ExperimentalUnsignedTypes') // annotation FQ-name
+                enableLanguageFeature('InlineClasses') // language feature name
+                useExperimentalAnnotation('kotlin.ExperimentalUnsignedTypes') // annotation FQ-name
                 //progressiveMode = true // false by default
             }
         }
