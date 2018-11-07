@@ -18,13 +18,13 @@ import kotlinx.serialization.json.content
  */
 class PhxPush(
         /*!< The event name the server listens on. */
-        //private val channel: PhxChannel,
+        private val channel: PhxChannel,
         private val event: String,
         /*!< Holds the payload that will be sent to the server. */
         private var payload: JsonElement
 ) {
     /*!< Name of event for the message. */
-    private val refEvent: String? = null
+    private var refEvent: String? = null
 
     /*!< The callback to trigger if event is not returned from server. */
     private var afterHook: After? = null
@@ -57,7 +57,7 @@ class PhxPush(
      *  \return void
      */
     private fun cancelRefEvent() {
-        //channel.offEvent(refEvent)
+        channel.offEvent(refEvent)
     }
 
     /**
@@ -133,25 +133,27 @@ class PhxPush(
      *  \return void
      */
     fun send() {
-        //val ref = channel.getSocket()
-        //refEvent = channel.replyEventName(ref)
+        val ref = channel.socket
+        refEvent = channel.replyEventName(ref.toString().toLong())//FIXME: ("MAYBE don't do this...)
         receivedResp = null
         sent = false
 
         // FIXME: Should this be weak?
-        /*channel.onEvent(
-        refEvent, [this](nlohmann::json message, int64_t ref) {
-            this->receivedResp = message;
-            this->matchReceive(message);
-            this->cancelRefEvent();
-            this->cancelAfter();
-        });*/
+        channel.onEvent(refEvent!!) {
+            message: JsonElement,
+            _: Long ->
+            receivedResp = message
+            matchReceive(message as JsonObject)
+            cancelRefEvent()
+            cancelAfter()
+        }
+
 
         startAfter()
         sent = true
 
         // clang-format off
-        /*channel.getSocket()->push(receivedResp
+        /*channel.socket.push(receivedResp
         { { "topic", this->channel->getTopic() },
             { "event", this->event },
             { "payload", this->payload },
