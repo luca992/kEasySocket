@@ -5,6 +5,8 @@ import kotlinx.coroutines.TDispatchers
 import kotlinx.coroutines.launch
 import co.spin.ezwsclient.WebSocket
 import co.spin.utils.Log
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 @ExperimentalUnsignedTypes
@@ -15,7 +17,7 @@ class EasySocket(url: String, delegate: SocketDelegate) : co.spin.WebSocket(url,
     private val receiveQueue : ThreadPool
 
     /*!< The mutex used when sending/polling messages over the socket. */
-    //private lateinit var socketMutex: Mutex;
+    private val socketMutex =  Mutex()
 
     /*!< The underlying socket EasySocket wraps. */
     private var socket: WebSocket? = null
@@ -73,15 +75,17 @@ class EasySocket(url: String, delegate: SocketDelegate) : co.spin.WebSocket(url,
                     }
                     WebSocket.ReadyStateValues.CLOSING-> {
                         state = SocketState.SocketClosing;
-                        //std::lock_guard<std::mutex> guard(this->socketMutex);
-                        ws.poll()
-                        ws.dispatchBinary(callback)
+                        socketMutex.withLock {
+                            ws.poll()
+                            ws.dispatchBinary(callback)
+                        }
                     }
                     WebSocket.ReadyStateValues.CONNECTING-> {
                         state = SocketState.SocketConnecting
-                        //std::lock_guard<std::mutex> guard(this->socketMutex);
-                        ws.poll()
-                        ws.dispatchBinary(callback)
+                        socketMutex.withLock {
+                            ws.poll()
+                            ws.dispatchBinary(callback)
+                        }
                     }
                     WebSocket.ReadyStateValues.OPEN -> {
                         state = SocketState.SocketOpen
@@ -92,9 +96,10 @@ class EasySocket(url: String, delegate: SocketDelegate) : co.spin.WebSocket(url,
 
                         }
 
-                        //std::lock_guard<std::mutex> guard(this->socketMutex);
-                        ws.poll()
-                        ws.dispatchBinary(callback)
+                        socketMutex.withLock {
+                            ws.poll()
+                            ws.dispatchBinary(callback)
+                        }
                     }
                     else -> {
                     }
@@ -113,9 +118,10 @@ class EasySocket(url: String, delegate: SocketDelegate) : co.spin.WebSocket(url,
 
     override fun send(message: String) {
         GlobalScope.launch(TDispatchers.Default) {
-            //std::lock_guard<std::mutex> guard(this->socketMutex);
-            if (socket != null && state == SocketState.SocketOpen) {
-                socket!!.send(message)
+            socketMutex.withLock {
+                if (socket != null && state == SocketState.SocketOpen) {
+                    socket!!.send(message)
+                }
             }
         }
     }

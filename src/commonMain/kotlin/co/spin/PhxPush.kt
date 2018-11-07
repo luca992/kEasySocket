@@ -4,6 +4,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.TDispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.content
@@ -45,8 +47,8 @@ class PhxPush(
      */
     private var sent = false
 
-    /*!< Mutex used when setting this->shouldContinueAfterCallback. */
-    //std::mutex afterTimerMutex;
+    /*!< Mutex used when setting shouldContinueAfterCallback. */
+    val afterTimerMutex = Mutex()
 
     /*!< Flag that determines if After callback will be triggered. */
     private var shouldContinueAfterCallback = false
@@ -71,8 +73,9 @@ class PhxPush(
         }
 
         GlobalScope.launch(TDispatchers.Default) {
-            //std::lock_guard<std::mutex> guard(this->afterTimerMutex);
-            shouldContinueAfterCallback = false
+            afterTimerMutex.withLock {
+                shouldContinueAfterCallback = false
+            }
         }
     }
 
@@ -92,11 +95,12 @@ class PhxPush(
             // Use sleep_for to wait specified time (or sleep_until).
             shouldContinueAfterCallback = true
             delay(interval*1000L /*interval in seconds*/)
-            //std::lock_guard<std::mutex> guard(this->afterTimerMutex);
-            if (shouldContinueAfterCallback) {
-                cancelRefEvent()
-                afterHook?.invoke()
-            shouldContinueAfterCallback = false
+            afterTimerMutex.withLock {
+                if (shouldContinueAfterCallback) {
+                    cancelRefEvent()
+                    afterHook?.invoke()
+                    shouldContinueAfterCallback = false
+                }
             }
         }
     }
