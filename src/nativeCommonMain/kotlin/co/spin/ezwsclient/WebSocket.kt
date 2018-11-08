@@ -251,9 +251,18 @@ class WebSocket{
         sendData(WsHeaderType.OpcodeType.TEXT_FRAME, uft8Msg.size, uft8Msg)
     }
 
-    fun sendBinary(message: String){TODO()}
-    fun sendBinary(message: ByteArray){TODO()}
-    fun sendPing(){TODO()}
+    fun sendBinary(message: String){
+        val uft8Msg = message.toUtf8().toUByteArray()
+        sendData(WsHeaderType.OpcodeType.BINARY_FRAME, uft8Msg.size, uft8Msg)
+    }
+    fun sendBinary(message: ByteArray){
+        sendData(WsHeaderType.OpcodeType.BINARY_FRAME, message.size, message)
+    }
+
+    fun sendPing(){
+        val empty = "".toUtf8().toUByteArray()
+        sendData(WsHeaderType.OpcodeType.PING, empty.size, empty)
+    }
 
     private fun sendData(type : WsHeaderType.OpcodeType, messageSize: Int, message: UByteArray) {
         val messageSizeUbyte = messageSize.toUByte()
@@ -329,11 +338,11 @@ class WebSocket{
     companion object {
 
         fun fromUrl(url :String, origin: String = ""): WebSocket? {
-            return fromUrl(url,true,origin)
+            return fromUrl(url,true, origin)
         }
 
-        fun fromUrlNoMask(url :String, origin: String): WebSocket {
-            TODO()
+        fun fromUrlNoMask(url :String, origin: String): WebSocket? {
+            return fromUrl(url,false, origin)
         }
 
         private fun hostnameConnect(hostname : String, port : Int) : ULong {
