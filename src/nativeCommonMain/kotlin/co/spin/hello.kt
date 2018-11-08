@@ -10,7 +10,7 @@ import kotlin.coroutines.*
 //import com.soywiz.klogger.*
 fun main(args: Array<String>) = runBlocking<Unit> {
 
-    val ws = WebSocket.fromUrl("ws://localhost:8126/foo") ?: return@runBlocking
+    /*val ws = WebSocket.fromUrl("ws://localhost:8126/foo") ?: return@runBlocking
     var callback = { s:UByteArray ->
         println(s.toByteArray().stringFromUtf8())
     }
@@ -24,6 +24,12 @@ fun main(args: Array<String>) = runBlocking<Unit> {
             ws.close()
         }
         ws.dispatchBinary(callback)
-    }
+    }*/
+
+    val
+
+    delay(30000L)
+
+
     return@runBlocking
 }
