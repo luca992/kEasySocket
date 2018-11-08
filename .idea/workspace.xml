@@ -11,6 +11,9 @@
   <component name="ChangeListManager">
     <list default="true" id="d66a484c-fad5-49b7-9b1f-a4e82a58e9a1" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxSocket.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxSocket.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/WebSocket.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/WebSocket.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonTest/kotlin/ThreadPoolTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonTest/kotlin/ThreadPoolTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/EasySocket.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/EasySocket.kt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -26,6 +29,23 @@
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="kEasySocket" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
@@ -44,8 +64,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/EasySocket.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+            <state relative-caret-position="300">
+              <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
               <folding>
                 <element signature="e#17#225#0" expanded="true" />
               </folding>
@@ -54,22 +74,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxTypes.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="9" column="40" selection-start-line="9" selection-start-column="40" selection-end-line="9" selection-end-column="40" />
-              <folding>
-                <element signature="e#16#106#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxPush.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
-              <caret line="87" column="32" lean-forward="true" selection-start-line="87" selection-start-column="32" selection-end-line="87" selection-end-column="32" />
+            <state relative-caret-position="319">
+              <caret line="104" column="9" lean-forward="true" selection-start-line="93" selection-start-column="8" selection-end-line="104" selection-end-column="9" />
               <folding>
                 <element signature="e#17#259#0" expanded="true" />
               </folding>
@@ -78,10 +86,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-common/1.0.0/fbe00e9f1a3138c7d138fe4e02724366e9e42f24/kotlinx-coroutines-core-common-1.0.0-sources.jar!/sync/Mutex.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1320">
+              <caret line="96" column="11" selection-start-line="96" selection-start-column="11" selection-end-line="96" selection-end-column="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/SocketDelegate.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" column="29" selection-start-line="2" selection-start-column="15" selection-end-line="2" selection-end-column="29" />
+            <state relative-caret-position="90">
+              <caret line="6" column="12" selection-start-line="6" selection-start-column="12" selection-end-line="6" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -89,8 +106,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxChannel.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3525">
-              <caret line="235" column="29" selection-start-line="235" selection-start-column="29" selection-end-line="235" selection-end-column="29" />
+            <state relative-caret-position="253">
+              <caret line="234" column="20" selection-start-line="234" selection-start-column="20" selection-end-line="234" selection-end-column="20" />
               <folding>
                 <element signature="e#17#155#0" expanded="true" />
               </folding>
@@ -99,28 +116,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.0/8bee30ce9d075088b3d590488a270e2c3ea39b3a/kotlin-stdlib-common-1.3.0-sources.jar!/kotlin/util/Tuples.kt">
+        <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/WebSocket.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="27" column="15" selection-start-line="27" selection-start-column="15" selection-end-line="27" selection-end-column="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/.konan/kotlin-native-macos-1.0.1/klib/common/stdlib/linkdata/package_kotlin/0_kotlin.knm">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="805" column="33" selection-start-line="805" selection-start-column="33" selection-end-line="805" selection-end-column="33" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.3.0/8bee30ce9d075088b3d590488a270e2c3ea39b3a/kotlin-stdlib-common-1.3.0-sources.jar!/generated/_Collections.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="163">
-              <caret line="711" column="41" selection-start-line="711" selection-start-column="41" selection-end-line="711" selection-end-column="41" />
+            <state relative-caret-position="105">
+              <caret line="7" column="1" lean-forward="true" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
             </state>
           </provider>
         </entry>
@@ -128,8 +127,25 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxSocket.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="296">
-              <caret line="236" column="20" selection-start-line="236" selection-start-column="9" selection-end-line="236" selection-end-column="20" />
+            <state relative-caret-position="301">
+              <caret line="320" column="9" lean-forward="true" selection-start-line="320" selection-start-column="9" selection-end-line="320" selection-end-column="9" />
+              <folding>
+                <element signature="e#17#340#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/commonTest/kotlin/runtTest.kt">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/commonTest/kotlin/ThreadPoolTest.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
             </state>
           </provider>
         </entry>
@@ -145,14 +161,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>sendData</find>
-      <find>PING</find>
-      <find>message_begin</find>
-      <find>insert</find>
-      <find>txbuf</find>
-      <find>copyInto</find>
-      <find>rxbuf</find>
-      <find>copy</find>
       <find>for</find>
       <find>xor</find>
       <find>shr</find>
@@ -160,7 +168,6 @@
       <find>sendD</find>
       <find>receivedResp</find>
       <find>onRec</find>
-      <find>shouldContinueAfterCallback</find>
       <find>ChannelState</find>
       <find>payload</find>
       <find>pushEvent</find>
@@ -170,17 +177,27 @@
       <find>this-&gt;</find>
       <find>refEvent</find>
       <find>channel</find>
-      <find>launch</find>
-      <find>mutex</find>
-      <find>afterTimerMutex</find>
-      <find>PhxSocketDelegate</find>
       <find>socket</find>
+      <find>TODO()</find>
+      <find>setCanSendHeartBeat</find>
+      <find>canSendHeartbeat</find>
+      <find>setCanReconnect</find>
+      <find>afterTimerMutex</find>
+      <find>phxSocketDidOpen</find>
+      <find>PhxSocketDelegate</find>
+      <find>launch</find>
+      <find>shouldContinueAfterCallback</find>
+      <find>params</find>
+      <find>lock</find>
+      <find>delegate</find>
+      <find>mutex</find>
     </findStrings>
     <replaceStrings>
       <replace>Log.debug{</replace>
       <replace>message_size.shr(</replace>
       <replace>.and(0xffu)</replace>
       <replace>socket.</replace>
+      <replace>Unit</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -199,22 +216,22 @@
         <option value="$PROJECT_DIR$/src/unixMain/kotlin/co/spin/utils/Platform.kt" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.cpp" />
         <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/hello.kt" />
-        <option value="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/WebSocket.kt" />
         <option value="$PROJECT_DIR$/gradle.properties" />
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxTypes.kt" />
         <option value="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxChannel.kt" />
         <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/ezwsclient/WebSocket.kt" />
-        <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/EasySocket.kt" />
         <option value="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxPush.kt" />
+        <option value="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/WebSocket.kt" />
+        <option value="$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/EasySocket.kt" />
+        <option value="$PROJECT_DIR$/src/commonTest/kotlin/ThreadPoolTest.kt" />
         <option value="$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxSocket.kt" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="y" value="23" />
     <option name="width" value="1280" />
-    <option name="height" value="732" />
+    <option name="height" value="800" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -264,6 +281,19 @@
               <item name="kotlin" type="462c0819:PsiDirectoryNode" />
               <item name="co" type="462c0819:PsiDirectoryNode" />
               <item name="spin" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kEasySocket" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="commonTest" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="kEasySocket" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="commonTest" type="462c0819:PsiDirectoryNode" />
+              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="kEasySocket" type="b2602c69:ProjectViewProjectNode" />
@@ -393,7 +423,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="46756000" />
+    <option name="totallyTimeSpent" value="50862000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -426,7 +456,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Gradle" order="3" />
+      <window_info anchor="right" id="Gradle" order="3" weight="0.32956383" />
       <window_info anchor="right" id="Database" order="4" />
     </layout>
   </component>
@@ -456,7 +486,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxSocket.kt</url>
-          <line>8</line>
+          <line>12</line>
           <option name="timeStamp" value="54" />
         </line-breakpoint>
       </breakpoints>
@@ -679,13 +709,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/WebSocket.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="29" column="7" selection-start-line="29" selection-start-column="7" selection-end-line="29" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-serialization-runtime-common/0.9.0/14d68224aa7f127573152c1992048a6b575fdb35/kotlinx-serialization-runtime-common-0.9.0-sources.jar!/kotlinx/serialization/json/JsonElement.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-805">
@@ -714,22 +737,73 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxChannel.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3525">
-          <caret line="235" column="29" selection-start-line="235" selection-start-column="29" selection-end-line="235" selection-end-column="29" />
-          <folding>
-            <element signature="e#17#155#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxTypes.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="9" column="40" selection-start-line="9" selection-start-column="40" selection-end-line="9" selection-end-column="40" />
           <folding>
             <element signature="e#16#106#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/commonTest/kotlin/ThreadPoolTest.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/commonTest/kotlin/runtTest.kt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/SocketDelegate.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="12" selection-start-line="6" selection-start-column="12" selection-end-line="6" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxChannel.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="253">
+          <caret line="234" column="20" selection-start-line="234" selection-start-column="20" selection-end-line="234" selection-end-column="20" />
+          <folding>
+            <element signature="e#17#155#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-common/1.0.0/fbe00e9f1a3138c7d138fe4e02724366e9e42f24/kotlinx-coroutines-core-common-1.0.0-sources.jar!/sync/Mutex.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1320">
+          <caret line="96" column="11" selection-start-line="96" selection-start-column="11" selection-end-line="96" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxPush.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="319">
+          <caret line="104" column="9" lean-forward="true" selection-start-line="93" selection-start-column="8" selection-end-line="104" selection-end-column="9" />
+          <folding>
+            <element signature="e#17#259#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/WebSocket.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="1" lean-forward="true" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/EasySocket.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+          <folding>
+            <element signature="e#17#225#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -744,37 +818,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/nativeCommonMain/kotlin/co/spin/EasySocket.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
-          <folding>
-            <element signature="e#17#225#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxPush.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="87" column="32" lean-forward="true" selection-start-line="87" selection-start-column="32" selection-end-line="87" selection-end-column="32" />
-          <folding>
-            <element signature="e#17#259#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/SocketDelegate.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="29" selection-start-line="2" selection-start-column="15" selection-end-line="2" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/commonMain/kotlin/co/spin/PhxSocket.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="296">
-          <caret line="236" column="20" selection-start-line="236" selection-start-column="9" selection-end-line="236" selection-end-column="20" />
+        <state relative-caret-position="301">
+          <caret line="320" column="9" lean-forward="true" selection-start-line="320" selection-start-column="9" selection-end-line="320" selection-end-column="9" />
+          <folding>
+            <element signature="e#17#340#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

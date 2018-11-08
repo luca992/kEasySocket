@@ -37,7 +37,7 @@ class EasySocket(url: String, delegate: SocketDelegate) : co.spin.WebSocket(url,
         if (socket==null){
             state = SocketState.SocketClosed
             GlobalScope.launch(TDispatchers.Default) {
-                delegate.webSocketDidError(this@EasySocket, "")
+                delegate?.webSocketDidError(this@EasySocket, "")
             }
             socket = null
             return
@@ -59,7 +59,7 @@ class EasySocket(url: String, delegate: SocketDelegate) : co.spin.WebSocket(url,
             val callback = {message :UByteArray ->
                 Log.info {message}
                 receiveQueue.enqueue {
-                    delegate.webSocketDidReceive(this@EasySocket, message.toByteArray().stringFromUtf8())
+                    delegate?.webSocketDidReceive(this@EasySocket, message.toByteArray().stringFromUtf8())
 
                 }
             }
@@ -68,7 +68,7 @@ class EasySocket(url: String, delegate: SocketDelegate) : co.spin.WebSocket(url,
                 when (ws.readyState) {
                     WebSocket.ReadyStateValues.CLOSED -> {
                         state = SocketState.SocketClosed
-                        delegate.webSocketDidClose(this@EasySocket, 0, "", true)
+                        delegate?.webSocketDidClose(this@EasySocket, 0, "", true)
 
                         // We got a CLOSED so the loop should stop.
                         shouldContinueLoop = false
@@ -92,7 +92,7 @@ class EasySocket(url: String, delegate: SocketDelegate) : co.spin.WebSocket(url,
                         if (!triggeredWebsocketJoinedCallback) {
                             triggeredWebsocketJoinedCallback = true;
                             getSocketState()
-                            delegate.webSocketDidOpen(this@EasySocket);
+                            delegate?.webSocketDidOpen(this@EasySocket);
 
                         }
 

@@ -1,6 +1,10 @@
 package co.spin
 
-import kotlinx.serialization.json.JsonElement
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.TDispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.*
 
 abstract class PhxSocketDelegate {
     abstract fun phxSocketDidOpen()
@@ -29,7 +33,7 @@ class PhxSocket(
         /*!
         The underlying WebSocket interface. This can be used with a
         different library provided the WebSocket interface is implemented.*/
-        val socket: WebSocket? = null) : SocketDelegate() {
+        var socket: WebSocket? = null) : SocketDelegate() {
 
     /*!< Single Thread Thread Pool used for synchronization. */
     private var pool =  ThreadPool(POOL_SIZE)
@@ -68,17 +72,21 @@ class PhxSocket(
      *
      *  \return void
      */
-    private fun discardHeartBeatTimer() = Unit
+    private fun discardHeartBeatTimer() {
+        setCanSendHeartBeat(false)
+    }
 
     /*!< Flag indicating whether or not to continue sending heartbeats. */
-    private fun canSendHeartbeat() : Boolean = TODO()
+    private var canSendHeartbeat : Boolean = false
 
     /**
      *  \brief Stops trying to reconnect the WebSocket.
      *
      *  \return void
      */
-    private fun discardReconnectTimer() = Unit
+    private fun discardReconnectTimer() {
+        setCanReconnect(false)
+    }
 
     /*!< Flag indicating whether or not socket can reconnect to server. */
     private var canReconnect = false
@@ -92,14 +100,45 @@ class PhxSocket(
      *
      *  \return void
      */
-    private fun disconnectSocket() = Unit
+    private fun disconnectSocket() {
+        socket?.apply {
+            delegate = null
+            close()
+        }
+        socket = null
+    }
 
     /**
      *  \brief Function called when WebSocket opens.
      *
      *  \return void
      */
-    private fun onConnOpen() = Unit
+    private fun onConnOpen() {
+        discardReconnectTimer()
+
+        // After the socket connection is opened, continue to send heartbeats
+        // to keep the connection alive.
+        if (heartBeatInterval > 0) {
+            GlobalScope.launch(TDispatchers.Default) {
+                // Use sleep_for to wait specified time (or sleep_until).
+                setCanSendHeartBeat(true)
+                while (true) {
+                    delay(heartBeatInterval * 1000L /*interval in seconds*/)
+                    if (canSendHeartbeat) {
+                        pool.enqueue { sendHeartbeat() }
+                    } else {
+                        break
+                    }
+                }
+            }
+        }
+
+        for (callback in openCallbacks) {
+            callback()
+        }
+
+        delegate?.phxSocketDidOpen()
+    }
 
     /**
      *  \brief Function called when WebSocket closes.
@@ -107,7 +146,37 @@ class PhxSocket(
      *  \param event The event that caused the close.
      *  \return void
      */
-    private fun onConnClose(event: String) = Unit
+    private fun onConnClose(event: String) {
+        triggerChanError(event)
+
+        // When connection is closed, attempt to reconnect.
+        if (reconnectOnError) {
+            if (!reconnecting) {
+                reconnecting = true
+                canReconnect = true
+
+                GlobalScope.launch(TDispatchers.Default) {
+                    // Use sleep_for to wait specified time (or sleep_until).
+                    delay(RECONNECT_INTERVAL * 1000L /*interval in seconds*/)
+                    pool.enqueue {
+                        if (canReconnect) {
+                            canReconnect = false
+                            reconnect()
+                        }
+                        reconnecting = false
+                    }
+                }
+            }
+        }
+
+        discardHeartBeatTimer()
+
+        for (callback in closeCallbacks) {
+            callback(event)
+        }
+
+        delegate?.phxSocketDidClose(event)
+    }
 
     /**
      *  \brief Function called when there was an error with the connection.
@@ -115,7 +184,17 @@ class PhxSocket(
      *  \param error The error message.
      *  \return void
      */
-    private fun onConnError(error: String) = Unit
+    private fun onConnError(error: String) {
+        discardHeartBeatTimer()
+
+        for (callback in errorCallbacks) {
+            callback(error)
+        }
+
+        delegate?.phxSocketDidReceiveError(error)
+
+        onConnClose(error)
+    }
 
     /**
      *  \brief Function called when WebSocket receives a message.
@@ -123,7 +202,29 @@ class PhxSocket(
      *  \param rawMessage The message as a std::string.
      *  \return void
      */
-    private fun onConnMessage(rawMessage: String) = Unit
+    private fun onConnMessage(rawMessage: String) {
+        val json = JsonTreeParser(rawMessage).read() as JsonObject
+        val jsonTopic = json.get("topic").content
+        val jsonEvent = json.get("event").content
+        val jsonRef = json.getPrimitiveOrNull("ref")
+        val jsonPayload = json.get("payload").jsonObject
+
+        // Ref can be null, so check for it first.
+        var ref = -1L
+        if (jsonRef!=null) {
+            ref = jsonRef.long
+        }
+
+        for (channel in channels) {
+            if (channel.topic == jsonTopic) {
+                channel.triggerEvent(jsonEvent, jsonPayload, ref)
+            }
+        }
+
+        for (callback in messageCallbacks) {
+            callback(json)
+        }
+    }
 
     /**
      *  \brief Triggers a "phx_error" event to all channels.
@@ -131,14 +232,26 @@ class PhxSocket(
      *  \param error The error message.
      *  \return void
      */
-    private fun triggerChanError(error: String) = Unit
+    private fun triggerChanError(error: String) {
+        for (channel in channels) {
+            channel.triggerEvent("phx_error", JsonPrimitive(error), 0)
+        }
+
+    }
 
     /**
      *  \brief Sends a heartbeat to keep Websocket connection alive.
      *
      *  \return void
      */
-    private fun sendHeartbeat() = Unit
+    private fun sendHeartbeat() {
+        push(JsonObject(mapOf(
+                "topic" to JsonPrimitive("phoenix") ,
+                "event" to JsonPrimitive("heartbeat"),
+                "payload" to JsonObject(mapOf()),
+                "ref" to JsonPrimitive(makeRef())))
+        )
+    }
 
     /**
      *  \brief Sets this->canSendHeartbeat.
@@ -149,7 +262,11 @@ class PhxSocket(
      *  continue sending heartbeats.
      *  \return void
      */
-    private fun setCanSendHeartBeat(canSendHeartbeat: Boolean) = Unit
+    private fun setCanSendHeartBeat(canSendHeartbeat: Boolean) {
+        pool.enqueue {
+            this.canSendHeartbeat = canSendHeartbeat
+        }
+    }
 
     /**
      *  \brief Sets this->canReconnect.
@@ -159,20 +276,33 @@ class PhxSocket(
      *  \param canReconnect Indicating whether or not the socket can reconnect.
      *  \return void
      */
-    private fun setCanReconnect(canReconnect: Boolean) = Unit
+    private fun setCanReconnect(canReconnect: Boolean) {
+        pool.enqueue { this.canReconnect = canReconnect }
+    }
 
     // SocketDelegate
-    override fun webSocketDidOpen(socket: WebSocket) = Unit
-    override fun webSocketDidReceive(socket: WebSocket, message: String) = Unit
-    override fun webSocketDidError(socket: WebSocket, error: String) = Unit
-    override fun webSocketDidClose(socket: WebSocket, code: Int, reason: String, wasClean: Boolean) = Unit
+    override fun webSocketDidOpen(socket: WebSocket) {
+        pool.enqueue { onConnOpen() }
+    }
+    override fun webSocketDidReceive(socket: WebSocket, message: String) {
+        pool.enqueue { onConnMessage(message) }
+    }
+    override fun webSocketDidError(socket: WebSocket, error: String) {
+        pool.enqueue { onConnError(error) }
+    }
+    override fun webSocketDidClose(socket: WebSocket, code: Int, reason: String, wasClean: Boolean) {
+        pool.enqueue { onConnClose(reason) }
+    }
+
     // SocketDelegate
     /**
      *  \brief Connects the Websocket.
      *
      *  \return void
      */
-    fun connect() = Unit
+    fun connect() {
+        connect(mapOf())
+    }
 
     /**
      *  \brief Connects the Websocket.
@@ -180,7 +310,25 @@ class PhxSocket(
      *  \param params List of params to be formatted into Websocket URL.
      *  \return void
      */
-    fun connect(params: Map<String, String>) = Unit
+    fun connect(params: Map<String, String>) {
+        this.params = params
+
+        // FIXME: Add the parameters to the url.
+        val url = if (params.isNotEmpty()) {
+            this.url
+        } else {
+            this.url
+        }
+
+        setCanReconnect(false)
+
+        // The socket hasn't been instantiated with a custom WebSocket.
+        if (socket==null) {
+            this.socket = EasySocket(url, this)
+        }
+
+        socket!!.open()
+    }
 
     /**
      *  \brief Disconnects the socket connection.
