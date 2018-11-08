@@ -68,7 +68,7 @@ class PhxSocket(
      *
      *  \return void
      */
-    private fun discardHeartBeatTimer() = TODO()
+    private fun discardHeartBeatTimer() = Unit
 
     /*!< Flag indicating whether or not to continue sending heartbeats. */
     private fun canSendHeartbeat() : Boolean = TODO()
@@ -78,7 +78,7 @@ class PhxSocket(
      *
      *  \return void
      */
-    private fun discardReconnectTimer() = TODO()
+    private fun discardReconnectTimer() = Unit
 
     /*!< Flag indicating whether or not socket can reconnect to server. */
     private var canReconnect = false
@@ -92,14 +92,14 @@ class PhxSocket(
      *
      *  \return void
      */
-    private fun disconnectSocket() = TODO()
+    private fun disconnectSocket() = Unit
 
     /**
      *  \brief Function called when WebSocket opens.
      *
      *  \return void
      */
-    private fun onConnOpen() = TODO()
+    private fun onConnOpen() = Unit
 
     /**
      *  \brief Function called when WebSocket closes.
@@ -107,7 +107,7 @@ class PhxSocket(
      *  \param event The event that caused the close.
      *  \return void
      */
-    private fun onConnClose(event: String) = TODO()
+    private fun onConnClose(event: String) = Unit
 
     /**
      *  \brief Function called when there was an error with the connection.
@@ -115,7 +115,7 @@ class PhxSocket(
      *  \param error The error message.
      *  \return void
      */
-    private fun onConnError(error: String) = TODO()
+    private fun onConnError(error: String) = Unit
 
     /**
      *  \brief Function called when WebSocket receives a message.
@@ -123,7 +123,7 @@ class PhxSocket(
      *  \param rawMessage The message as a std::string.
      *  \return void
      */
-    private fun onConnMessage(rawMessage) = TODO()
+    private fun onConnMessage(rawMessage: String) = Unit
 
     /**
      *  \brief Triggers a "phx_error" event to all channels.
@@ -131,14 +131,14 @@ class PhxSocket(
      *  \param error The error message.
      *  \return void
      */
-    private fun triggerChanError(error: String) = TODO()
+    private fun triggerChanError(error: String) = Unit
 
     /**
      *  \brief Sends a heartbeat to keep Websocket connection alive.
      *
      *  \return void
      */
-    private fun sendHeartbeat() = TODO()
+    private fun sendHeartbeat() = Unit
 
     /**
      *  \brief Sets this->canSendHeartbeat.
@@ -149,7 +149,7 @@ class PhxSocket(
      *  continue sending heartbeats.
      *  \return void
      */
-    private fun setCanSendHeartBeat(canSendHeartbeat: Boolean) = TODO()
+    private fun setCanSendHeartBeat(canSendHeartbeat: Boolean) = Unit
 
     /**
      *  \brief Sets this->canReconnect.
@@ -159,21 +159,20 @@ class PhxSocket(
      *  \param canReconnect Indicating whether or not the socket can reconnect.
      *  \return void
      */
-    private fun setCanReconnect(canReconnect: Boolean) = TODO()
+    private fun setCanReconnect(canReconnect: Boolean) = Unit
 
     // SocketDelegate
-    private fun webSocketDidOpen(socket: WebSocket) = TODO()
-    private fun webSocketDidReceive(socket: WebSocket, message: String) = TODO()
-    private fun webSocketDidError(socket: WebSocket, error: String) = TODO()
-    private fun webSocketDidClose(socket: WebSocket, code: Int, reason: String, wasClean: Boolean) = TODO()
+    override fun webSocketDidOpen(socket: WebSocket) = Unit
+    override fun webSocketDidReceive(socket: WebSocket, message: String) = Unit
+    override fun webSocketDidError(socket: WebSocket, error: String) = Unit
+    override fun webSocketDidClose(socket: WebSocket, code: Int, reason: String, wasClean: Boolean) = Unit
     // SocketDelegate
-    public:
     /**
      *  \brief Connects the Websocket.
      *
      *  \return void
      */
-    fun connect() = TODO()
+    fun connect() = Unit
 
     /**
      *  \brief Connects the Websocket.
@@ -181,14 +180,14 @@ class PhxSocket(
      *  \param params List of params to be formatted into Websocket URL.
      *  \return void
      */
-    fun connect(params: Map<String, String>) = TODO()
+    fun connect(params: Map<String, String>) = Unit
 
     /**
      *  \brief Disconnects the socket connection.
      *
      *  \return void
      */
-    fun disconnect() = TODO()
+    fun disconnect() = Unit
 
     /**
      *  \brief Reconnects the socket after disconnection.
@@ -197,7 +196,7 @@ class PhxSocket(
      *
      *  \return void
      */
-    fun reconnect() = TODO()
+    fun reconnect() = Unit
 
     /**
      *  \brief Adds a callback on open.
@@ -205,7 +204,7 @@ class PhxSocket(
      *  \param callback
      *  \return void
      */
-    fun onOpen(callback: OnOpen) = TODO()
+    fun onOpen(callback: OnOpen) = Unit
 
     /**
      *  \brief Adds a callback on close.
@@ -213,7 +212,7 @@ class PhxSocket(
      *  \param callback
      *  \return void
      */
-    fun onClose(callback: OnClose) = TODO()
+    fun onClose(callback: OnClose) = Unit
 
     /**
      *  \brief Adds a callback on error.
@@ -221,7 +220,7 @@ class PhxSocket(
      *  \param callback
      *  \return void
      */
-    fun onError(callback: OnError) = TODO()
+    fun onError(callback: OnError) = Unit
 
     /**
      *  \brief Adds a callback on message.
@@ -229,7 +228,7 @@ class PhxSocket(
      *  \param callback
      *  \return void
      */
-    fun onMessage(callback: OnMessage) = TODO()
+    fun onMessage(callback: OnMessage) = Unit
 
     /**
      *  \brief Flag indicating whether or not socket is connected.
@@ -258,26 +257,26 @@ class PhxSocket(
      *  \param data The json data to send.
      *  \return void
      */
-    fun push(data: JsonElement) = TODO()
+    fun push(data: JsonElement) = Unit
 
     /**
      *  \brief Adds PhxChannel to list of channels.
      *
      *  \return void
      */
-    fun addChannel(channel: PhxChannel) = TODO()
+    fun addChannel(channel: PhxChannel) = Unit
 
     /**
      *  \brief Removes PhxChannel from list of channels.
      *
      *  \return void
      */
-    fun removeChannel(channel: PhxChannel) = TODO()
+    fun removeChannel(channel: PhxChannel) = Unit
 
     /**
      *  \brief Sets the PhxSocketDelegate.
      *
      *  this->delegate will be weakly held by PhxSocket.
      */
-    fun setDelegate(delegate: PhxSocketDelegate) = TODO()
-};
+    fun setDelegate(delegate: PhxSocketDelegate) = Unit
+}
