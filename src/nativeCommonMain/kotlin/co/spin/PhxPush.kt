@@ -8,6 +8,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.content
 
 /**
@@ -137,7 +138,7 @@ class PhxPush(
      *  \return void
      */
     fun send() {
-        val ref = channel.socket
+        val ref = channel.socket.makeRef()
         refEvent = channel.replyEventName(ref.toString().toLong())//FIXME: ("MAYBE don't do this...)
         receivedResp = null
         sent = false
@@ -157,12 +158,11 @@ class PhxPush(
         sent = true
 
         // clang-format off
-        /*channel.socket.push(receivedResp
-        { { "topic", this->channel->getTopic() },
-            { "event", this->event },
-            { "payload", this->payload },
-            { "ref", ref }
-        })*/
+        channel.socket.push(JsonObject(mapOf(
+                "topic" to JsonPrimitive(channel.topic) ,
+                "event" to JsonPrimitive(event),
+                "payload" to payload,
+                "ref" to JsonPrimitive(ref))))
     }
 
     /**
@@ -180,7 +180,7 @@ class PhxPush(
             && (receivedResp as JsonObject).getValue("status").content == status) {
             callback(receivedResp as JsonObject)
         }
-        recHooks.add(recHooks.size, Pair(status, callback))
+        recHooks.add(Pair(status, callback))
         return this
     }
 

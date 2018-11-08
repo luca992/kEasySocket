@@ -7,14 +7,13 @@ import co.spin.ezwsclient.WebSocket
 import co.spin.utils.Log
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 
 @ExperimentalUnsignedTypes
 class EasySocket(url: String, delegate: SocketDelegate) : co.spin.WebSocket(url, delegate) {
 
 
     /*!< Queue used for receiving messages. */
-    private val receiveQueue : ThreadPool
+    private val receiveQueue : ThreadPool = ThreadPool(1)
 
     /*!< The mutex used when sending/polling messages over the socket. */
     private val socketMutex =  Mutex()
@@ -24,12 +23,7 @@ class EasySocket(url: String, delegate: SocketDelegate) : co.spin.WebSocket(url,
 
     /*!< Keep track of Socket State.
       This is used instead of easywsclient's SocketState. */
-    private var state: SocketState
-
-    init {
-        receiveQueue = ThreadPool(1)
-        state = SocketState.SocketClosed
-    }
+    private var state: SocketState = SocketState.SocketClosed
 
 
     override fun open() {

@@ -118,28 +118,24 @@ class PhxChannel(
     fun bootstrap() {
         // NOTE: This can't be done in the constructor.
         // So we bootstrap the connection here.
-        /*socket.addChannel(this)
+        socket.addChannel(this)
 
-        socket.onOpen([this]() { rejoin(); });
+        socket.onOpen { rejoin() }
 
-        socket.onClose([this](const std::string& event) {
-            state = ChannelState::CLOSED;
-            socket.removeChannel(shared_from_this());
-        })
+        socket.onClose {
+            state = ChannelState.CLOSED;
+            socket.removeChannel(this)
+        }
 
-        socket.onError([this](
-        const std::string& error) { state = ChannelState.ERRORED; });
+        socket.onError { state = ChannelState.ERRORED }
 
-        std::shared_ptr<PhxPush> n = std::make_shared<PhxPush>(
-                shared_from_this(), "phx_join", params);
-        joinPush = std::move(n);
+        joinPush = PhxPush(this, "phx_join", JsonObject(params.mapValues { JsonPrimitive(it.value) }))
 
-        joinPush->onReceive("ok",
-        [this](nlohmann::json message) { state = ChannelState::JOINED; });
+        joinPush!!.onReceive("ok") { state = ChannelState.JOINED }
 
-        onEvent("phx_reply", [this](nlohmann::json message, int64_t ref) {
-            triggerEvent(replyEventName(ref), message, ref);
-        });*/
+        onEvent("phx_reply") { message: JsonElement, ref: Long ->
+            triggerEvent(replyEventName(ref), message, ref)
+        }
     }
 
     /**
@@ -183,7 +179,7 @@ class PhxChannel(
      *  \return void
      */
     fun onEvent(event: String, callback: OnReceive) {
-        bindings.add(bindings.size,Pair(event, callback))
+        bindings.add(Pair(event, callback))
     }
 
     /**
@@ -240,4 +236,21 @@ class PhxChannel(
         p.send()
         return p
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as PhxChannel
+
+        if (topic != other.topic) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return topic.hashCode()
+    }
+
+
 }

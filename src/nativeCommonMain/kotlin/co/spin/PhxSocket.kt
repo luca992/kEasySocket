@@ -65,7 +65,7 @@ class PhxSocket(
     private var params = mapOf<String, String>()
 
     /*!< Ref to keep track of for each WebSocket message. */
-    private var ref = 0
+    private var ref = 0L
 
     /**
      *  \brief Stops the heartbeating.
@@ -335,7 +335,11 @@ class PhxSocket(
      *
      *  \return void
      */
-    fun disconnect() = Unit
+    fun disconnect() {
+        discardHeartBeatTimer()
+        discardReconnectTimer()
+        disconnectSocket()
+    }
 
     /**
      *  \brief Reconnects the socket after disconnection.
@@ -344,7 +348,10 @@ class PhxSocket(
      *
      *  \return void
      */
-    fun reconnect() = Unit
+    fun reconnect() {
+        disconnectSocket()
+        connect(params)
+    }
 
     /**
      *  \brief Adds a callback on open.
@@ -352,7 +359,9 @@ class PhxSocket(
      *  \param callback
      *  \return void
      */
-    fun onOpen(callback: OnOpen) = Unit
+    fun onOpen(callback: OnOpen) {
+        openCallbacks.add(callback)
+    }
 
     /**
      *  \brief Adds a callback on close.
@@ -360,7 +369,9 @@ class PhxSocket(
      *  \param callback
      *  \return void
      */
-    fun onClose(callback: OnClose) = Unit
+    fun onClose(callback: OnClose) {
+        closeCallbacks.add(callback)
+    }
 
     /**
      *  \brief Adds a callback on error.
@@ -368,7 +379,9 @@ class PhxSocket(
      *  \param callback
      *  \return void
      */
-    fun onError(callback: OnError) = Unit
+    fun onError(callback: OnError) {
+        errorCallbacks.add(callback)
+    }
 
     /**
      *  \brief Adds a callback on message.
@@ -376,28 +389,38 @@ class PhxSocket(
      *  \param callback
      *  \return void
      */
-    fun onMessage(callback: OnMessage) = Unit
+    fun onMessage(callback: OnMessage) {
+        messageCallbacks.add(callback)
+    }
 
     /**
      *  \brief Flag indicating whether or not socket is connected.
      *
      *  \return bool Indicating connected status.
      */
-    fun isConnected() : Boolean = TODO()
+    fun isConnected() : Boolean = socketState() == SocketState.SocketOpen
+
 
     /**
      *  \brief Make a unique reference per message sent to Phoenix Server.
      *
-     *  \return int64_t
+     *  \return Long
      */
-    fun makeRef() : Long = TODO()
+    fun makeRef() : Long {
+        return ref++
+    }
 
     /**
      *  \brief The current state of the socket connection.
      *
      *  \return SocketState
      */
-    fun socketState(): SocketState = TODO()
+    fun socketState(): SocketState {
+        if (socket == null) {
+            return SocketState.SocketClosed;
+        }
+        return socket!!.getSocketState()
+    }
 
     /**
      *  \brief Send data through websockets.
@@ -405,26 +428,34 @@ class PhxSocket(
      *  \param data The json data to send.
      *  \return void
      */
-    fun push(data: JsonElement) = Unit
+    fun push(data: JsonElement) {
+        socket?.send(data.content)
+    }
 
     /**
      *  \brief Adds PhxChannel to list of channels.
      *
      *  \return void
      */
-    fun addChannel(channel: PhxChannel) = Unit
+    fun addChannel(channel: PhxChannel) {
+        channels.add(channel)
+    }
 
     /**
      *  \brief Removes PhxChannel from list of channels.
      *
      *  \return void
      */
-    fun removeChannel(channel: PhxChannel) = Unit
+    fun removeChannel(channel: PhxChannel) {
+        channels = channels.filter{ it!=channel}.toMutableList()
+    }
 
     /**
      *  \brief Sets the PhxSocketDelegate.
      *
      *  this->delegate will be weakly held by PhxSocket.
      */
-    fun setDelegate(delegate: PhxSocketDelegate) = Unit
+    fun setDelegate(delegate: PhxSocketDelegate) {
+        this.delegate = delegate
+    }
 }
