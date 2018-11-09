@@ -26,9 +26,9 @@ fun main(args: Array<String>) = runBlocking<Unit> {
         ws.dispatchBinary(callback)
     }*/
 
-    val
-
-    delay(30000L)
+    val n = Network()
+    n.start("SFMyNTY.g3QAAAACZAAEZGF0YWEsZAAGc2lnbmVkbgYAGxzH8WYB.ClBF4Yvug0lgBFL8PANqxw0JMgfI5lRjBW0Re2hB4G4",
+            13L)
 
 
     return@runBlocking

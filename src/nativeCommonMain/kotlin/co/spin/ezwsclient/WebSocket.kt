@@ -54,8 +54,8 @@ class WebSocket{
             PING(9u),
             PONG(0xau);
             companion object {
-                fun valueOf(value: UByte): OpcodeType = OpcodeType.values().first{
-                    it.value == value }
+                fun valueOf(value: UByte): OpcodeType = OpcodeType.values().firstOrNull{
+                    it.value == value } ?: TEXT_FRAME
             }
         }
     }
@@ -221,6 +221,7 @@ class WebSocket{
                     receivedData = receivedData.copyOf(receivedData.size + ws.N.toInt())
                     receivedData = rxbuf.copyInto(receivedData, oldReceivedDataSize, ws.header_size.toInt(), ws.header_size.toInt() + ws.N.toInt())// just feed
                     if (ws.fin) {
+                        Log.info { "Recieved: ${receivedData.toByteArray().stringFromUtf8()}" }
                         callback(receivedData)
                         receivedData = UByteArray(0)
                     }
@@ -256,7 +257,7 @@ class WebSocket{
         sendData(WsHeaderType.OpcodeType.BINARY_FRAME, uft8Msg.size, uft8Msg)
     }
     fun sendBinary(message: ByteArray){
-        sendData(WsHeaderType.OpcodeType.BINARY_FRAME, message.size, message)
+        sendData(WsHeaderType.OpcodeType.BINARY_FRAME, message.size, message.toUByteArray())
     }
 
     fun sendPing(){
@@ -394,12 +395,12 @@ class WebSocket{
 
         private fun fromUrl(_url :String, useMask: Boolean, origin: String) : WebSocket? {
             val url : Url = memScoped<Url?> {
-                val size = 128
+                val size = 256
                 val host = allocArray<ByteVar>(size)
                 val port = alloc<IntVar>()
                 val path = allocArray<ByteVar>(size)
 
-                if (_url.length >= 128) {
+                if (_url.length >= size) {
                     Log.error{"ERROR: url size limit exceeded: $_url"}
                     return@memScoped null
                 }

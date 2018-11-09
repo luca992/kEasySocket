@@ -34,14 +34,14 @@ actual fun select(nfds : Int, readfds: CValuesRef<fd_set>?, writefds: CValuesRef
         platform.posix.select(nfds,readfds,writefds,exceptfds,timeval)
 actual fun recv(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Long {
     val r = platform.posix.recv(s.toInt(), buf, len, flags)
-//    val message = (buf as? CPointer<ByteVar>?)?.toKString()
-//    Log.debug{"Receiving: ${message?.trim()}"}
+    //val message = (buf as? CPointer<ByteVar>?)?.toKString()
+    //if (!message!!.isBlank()) Log.debug{"Receiving: ${message?.trim()}"}
     return r
 }
 
 actual fun send(s: ULong, buf: CPointer<UByteVar>?, len: ULong, flags: Int) : Long {
     val message = (buf as? CPointer<ByteVar>?)?.toKString()
-    //Log.debug{"Sending: ${message?.trim()}"}
+    Log.debug{"Sending: ${message?.trim()}"}
     return platform.posix.send(s.toInt(),buf,len,flags)
 }
 

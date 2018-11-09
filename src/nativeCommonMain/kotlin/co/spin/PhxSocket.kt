@@ -429,7 +429,11 @@ class PhxSocket(
      *  \return void
      */
     fun push(data: JsonElement) {
-        socket?.send(data.content)
+        try {
+            socket?.send(data.toString())
+        } catch ( e:Exception) {
+            e.printStackTrace()
+        }
     }
 
     /**

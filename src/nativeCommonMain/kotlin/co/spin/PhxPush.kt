@@ -159,7 +159,7 @@ class PhxPush(
 
         // clang-format off
         channel.socket.push(JsonObject(mapOf(
-                "topic" to JsonPrimitive(channel.topic) ,
+                "topic" to JsonPrimitive(channel.topic),
                 "event" to JsonPrimitive(event),
                 "payload" to payload,
                 "ref" to JsonPrimitive(ref))))
