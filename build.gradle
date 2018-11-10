@@ -148,3 +148,15 @@ kotlin {
         }
     }
 }
+
+
+task runProgram {
+    def buildType = 'RELEASE' // Change to 'DEBUG' to run application with debug symbols.
+    dependsOn kotlin.targets.mac.compilations.main.linkTaskName('EXECUTABLE', buildType)
+    doLast {
+        exec {
+            executable kotlin.targets.mac.compilations.main.getBinary('EXECUTABLE', buildType)
+            args "$url", "$token"
+        }
+    }
+}

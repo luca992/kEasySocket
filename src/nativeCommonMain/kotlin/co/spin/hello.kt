@@ -26,9 +26,11 @@ fun main(args: Array<String>) = runBlocking<Unit> {
         ws.dispatchBinary(callback)
     }*/
 
+    if (args.isEmpty())
+        return@runBlocking
+
     val n = Network()
-    n.start("SFMyNTY.g3QAAAACZAAEZGF0YWEsZAAGc2lnbmVkbgYAGxzH8WYB.ClBF4Yvug0lgBFL8PANqxw0JMgfI5lRjBW0Re2hB4G4",
-            13L)
+    n.start(args[0],args[1],13L)
 
 
     return@runBlocking
