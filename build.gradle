@@ -1,3 +1,4 @@
+
 buildscript {
     repositories {
         jcenter()
@@ -109,13 +110,41 @@ kotlin {
         fromPreset(presets.linuxX64, 'linux')
         fromPreset(presets.mingwX64, 'windows')
         fromPreset(presets.macosX64, 'mac')
-
 		configure([linux, windows, mac]) {
 			compilations.main.outputKinds( 'EXECUTABLE')
+            compilations.main.cinterops {
+                openssl {
+                    switch (it) {
+                        case mac:
+                            includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+                            break
+                        case linux:
+                            includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+                            break
+                    }
+                }
+            }
 		}
+		//workaround: https://github.com/JetBrains/kotlin-native/issues/1828#issuecomment-434955550
+		matching { it.platformType.name == 'native' }.all {
+            compilations.all {
+                cinterops.all {
+                    configurations[dependencyConfigurationName].attributes.attribute(
+                        Usage.USAGE_ATTRIBUTE,
+                        objects.named(Usage, 'kotlin-api')
+                    )
+                }
+            }
+        }
+
+        all {
+            mavenPublication {
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('name', 'openssl interop library')
+                    root.appendNode('description', 'A library providing interoperability with host openssl')
+                }
+            }
+        }
     }
 }
-
-
-
-
