@@ -1,6 +1,7 @@
 package co.spin.ezwsclient
 
 import kotlinx.cinterop.*
+import openssl.*
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.*
 import platform.posix.*
@@ -68,6 +69,27 @@ class WebSocket{
     var readyState: ReadyStateValues
     var useMask: Boolean
 
+    var sslctx : CPointerVar<SSL_CTX>? = null
+    var cSSL : CPointerVar<SSL>? = null
+
+
+    //https://stackoverflow.com/a/16328115/1363742
+    fun InitializeSSL() {
+        SSL_load_error_strings()
+        SSL_library_init()
+        OPENSSL_add_all_algorithms_conf()
+
+    }
+
+    fun DestroySSL() {
+        ERR_free_strings()
+        EVP_cleanup()
+    }
+
+    fun ShutdownSSL() {
+        SSL_shutdown(cSSL?.value)
+        SSL_free(cSSL?.value)
+    }
 
     constructor(sockfd : ULong, useMask : Boolean){
         this.sockfd = sockfd

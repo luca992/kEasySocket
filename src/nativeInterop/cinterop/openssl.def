@@ -1,6 +1,6 @@
-headers = openssl/bio.h openssl/ssl.h openssl/err.h
+headers = openssl/bio.h openssl/ssl.h openssl/err.h openssl/evp.h
 headerFilter = openssl/*
 compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu
 compilerOpts.osx = -I/usr/local/opt/openssl/include
-linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/openssl/lib
+linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/openssl/lib -lssl -lcrypto
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lopenssl
