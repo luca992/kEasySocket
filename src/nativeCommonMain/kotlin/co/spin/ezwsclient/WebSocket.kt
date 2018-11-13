@@ -411,62 +411,56 @@ class WebSocket{
             }
         }
 
-        private data class Url(val host : String,
+        data class Url(val protocol : String,
+                               val host : String,
                                val port : Int,
-                               val path : String)
+                               val path : String,
+                               val query: String?)
+
+
+        fun parseUrl(url: String, query: String? = null) : Url? {
+            val ex = """(ws|wss)://([^/ :]+):?([^/ ]*)(/?[^ #?]*)\x3f?([^ #]*)#?([^ ]*)""".toRegex()
+            val found = ex.find(url)
+
+            if (found?.groups == null) {
+                return null
+            }
+
+            val protocol = found.groups[1]?.value
+            val host     = found.groups[2]?.value
+            val portStr  = found.groups[3]?.value
+            var path     = found.groups[4]?.value
+            val _query   = if (found.groups[5]?.value.isNullOrBlank()) found.groups[5]?.value else query
+
+            println("$protocol : $host : $portStr : $path : $_query")
+
+            val port : Int = if (portStr.isNullOrEmpty()) {
+                if (protocol == "wss") 443
+                else 80
+            } else portStr!!.toInt()
+
+
+            if (path.isNullOrEmpty()) {
+                path = "/"
+            } else if (path!![0] != '/') {
+                path = "/$path"
+            }
+
+            if (!_query.isNullOrEmpty()) {
+                path += "?"
+                path += _query
+            }
+
+            return  Url(protocol!!,
+                    host!!,
+                    port,
+                    path,
+                    _query
+            )
+        }
 
         private fun fromUrl(_url :String, useMask: Boolean, origin: String) : WebSocket? {
-            val url : Url = memScoped<Url?> {
-                val size = 256
-                val host = allocArray<ByteVar>(size)
-                val port = alloc<IntVar>()
-                val path = allocArray<ByteVar>(size)
-
-                if (_url.length >= size) {
-                    Log.error{"ERROR: url size limit exceeded: $_url"}
-                    return@memScoped null
-                }
-                if (origin.length >= 200) {
-                    Log.error{"ERROR: origin size limit exceeded: $origin"}
-                    return@memScoped null
-                }
-                var sscanfResult : Int
-                loop@ for (i in 0..4) {
-                    when (i) {
-                        0 -> {
-                            sscanfResult = sscanf(_url, "ws://%[^:/]:%d/%s", host, port.ptr, path)
-                            if (sscanfResult == 3) break@loop
-                        }
-                        1 -> {
-                            sscanfResult = sscanf(_url, "ws://%[^:/]/%s", host, path)
-                            if (sscanfResult == 2) {
-                                port.value = 80
-                                break@loop
-                            }
-                        }
-                        2 -> {
-                            sscanfResult = sscanf(_url, "ws://%[^:/]:%d", host, port.ptr)
-                            if (sscanfResult == 2) {
-                                path[0] = '\u0000'.toByte()
-                                break@loop
-                            }
-                        }
-                        3 -> {
-                            sscanfResult = sscanf(_url, "ws://%[^:/]", host)
-                            if (sscanfResult == 1) {
-                                port.value = 80
-                                path[0] = '\u0000'.toByte()
-                                break@loop
-                            }
-                        }
-                        else -> {
-                            Log.error{"ERROR: Could not parse WebSocket url: $_url"}
-                            return@memScoped null
-                        }
-                    }
-                }
-                return@memScoped Url(host.readBytes(size).stringFromUtf8(), port.value, path.readBytes(size).stringFromUtf8())
-            } ?: return null
+            val url : Url = parseUrl(_url) ?: return null
             Log.debug{"easywsclient: connecting: host=${url.host} port=${url.port} path=/${url.path}"}
             val sockfd = hostnameConnect(url.host, url.port)
             if (sockfd == INVALID_SOCKET) {

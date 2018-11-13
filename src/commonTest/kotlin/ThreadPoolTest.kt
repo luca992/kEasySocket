@@ -2,7 +2,6 @@ import kotlin.test.*
 import co.spin.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.*
-import co.spin.Utils.Log
 import co.spin.utils.Log
 
 class ThreadPoolTest {
