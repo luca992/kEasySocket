@@ -430,7 +430,7 @@ class WebSocket{
             val host     = found.groups[2]?.value
             val portStr  = found.groups[3]?.value
             var path     = found.groups[4]?.value
-            val _query   = if (found.groups[5]?.value.isNullOrBlank()) found.groups[5]?.value else query
+            val _query   = if (!found.groups[5]?.value.isNullOrBlank()) found.groups[5]?.value else query
 
             println("$protocol : $host : $portStr : $path : $_query")
 
