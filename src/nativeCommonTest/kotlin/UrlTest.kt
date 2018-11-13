@@ -1,8 +1,9 @@
+import co.spin.ezwsclient.Url
 import co.spin.ezwsclient.WebSocket
 
 import kotlin.test.*
 
-class WebSocketTest {
+class UrlTest {
 
 
     init{
@@ -13,9 +14,9 @@ class WebSocketTest {
     @Test
     fun parseUrlTestQueryInString() {
 
-        val url = WebSocket.parseUrl("ws://localhost:8126/foo?token=SFMyNTY.asdassdadsasdasdasd")
+        val url = Url.parseUrl("ws://localhost:8126/foo?token=SFMyNTY.asdassdadsasdasdasd")
         assertEquals(
-                WebSocket.Companion.Url(
+                Url(
                         "ws",
                         "localhost",
                         8126,
@@ -27,9 +28,9 @@ class WebSocketTest {
 
     @Test
     fun parseUrlTestAddedQuery() {
-        val url = WebSocket.parseUrl("ws://localhost:8126/foo", "token=SFMyNTY.asdassdadsasdasdasd")
+        val url = Url.parseUrl("ws://localhost:8126/foo", "token=SFMyNTY.asdassdadsasdasdasd")
         assertEquals(
-                WebSocket.Companion.Url(
+                Url(
                         "ws",
                         "localhost",
                         8126,
