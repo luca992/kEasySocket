@@ -75,15 +75,15 @@ class WebSocket{
 
     //https://stackoverflow.com/a/16328115/1363742
     fun InitializeSSL() {
-        SSL_load_error_strings()
-        SSL_library_init()
-        OPENSSL_add_all_algorithms_conf()
+       // SSL_load_error_strings()
+        //SSL_library_init()
+        //OPENSSL_add_all_algorithms()
 
     }
 
     fun DestroySSL() {
-        ERR_free_strings()
-        EVP_cleanup()
+        //ERR_free_strings()
+        //EVP_cleanup()
     }
 
     fun ShutdownSSL() {
