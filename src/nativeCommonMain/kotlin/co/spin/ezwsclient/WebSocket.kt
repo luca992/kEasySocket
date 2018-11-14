@@ -73,6 +73,7 @@ open class WebSocket{
     var readyState: ReadyStateValues = OPEN
     var useMask: Boolean
 
+
     var sslctx : CPointerVar<SSL_CTX>? = null
     var cSSL : CPointerVar<SSL>? = null
 
@@ -105,8 +106,8 @@ open class WebSocket{
 
     private fun init() {
         Log.debug{"easywsclient: connecting: host=${url.host} port=${url.port} path=/${url.path}"}
-        connect(url.host, url.port)
-        if (sockfd == INVALID_SOCKET) {
+        val success = connect(url.host, url.port)
+        if (!success) {
             throw RuntimeException("Unable to connect to ${url.host}:${url.port}")
         }
         memScoped {
@@ -197,11 +198,11 @@ open class WebSocket{
         }
         fcntl(sockfd)
         Log.debug{"Connected to: $url"}
-        this.sockfd = sockfd
     }
 
-    protected open fun connect(hostname : String, port : Int): ULong {
-        return hostnameConnect(hostname, port)
+    protected open fun connect(hostname : String, port : Int): Boolean {
+        this.sockfd = hostnameConnect(hostname, port)
+        return sockfd != INVALID_SOCKET
     }
 
     private fun hostnameConnect(hostname : String, port : Int) : ULong {
