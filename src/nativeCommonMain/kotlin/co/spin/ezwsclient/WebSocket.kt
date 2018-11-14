@@ -105,7 +105,7 @@ open class WebSocket{
 
 
     private fun init() {
-        Log.debug{"easywsclient: connecting: host=${url.host} port=${url.port} path=/${url.path}"}
+        Log.debug{"easywsclient: connecting: host=${url.host} port=${url.port} path=${url.path}"}
         val success = connect(url.host, url.port)
         if (!success) {
             throw RuntimeException("Unable to connect to ${url.host}:${url.port}")

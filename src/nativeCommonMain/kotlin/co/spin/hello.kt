@@ -30,7 +30,7 @@ fun main(args: Array<String>) = runBlocking<Unit> {
         return@runBlocking
 
     val n = Network()
-    n.start(args[0],args[1],13L)
+    n.start(args[0],if (args.size > 1) args[1] else null,13L)
 
 
     return@runBlocking

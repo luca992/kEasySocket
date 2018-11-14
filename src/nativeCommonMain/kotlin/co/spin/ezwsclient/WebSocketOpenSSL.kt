@@ -174,29 +174,29 @@ class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
         {
             e = ERR_get_error()
             return if (e > 0uL) {
-                "OpenSSL failed - ${ERR_error_string(e, null)}"
+                "OpenSSL failed - ${ERR_error_string(e, null)?.toKString()}"
             } else if (e == 0uL && ret == 0) {
                 "OpenSSL failed - received early EOF";
             } else {
-                "OpenSSL failed - underlying BIO reported an I/O error";
+                "OpenSSL failed - underlying BIO reported an I/O error"
             }
         }
         else if (err == SSL_ERROR_SSL)
         {
             e = ERR_get_error()
-            return "OpenSSL failed - ${ERR_error_string(e, null)}"
+            return "OpenSSL failed - ${ERR_error_string(e, null)?.toKString()}"
         }
         else if (err == SSL_ERROR_NONE)
         {
-            return "OpenSSL failed - err none";
+            return "OpenSSL failed - err none"
         }
         else if (err == SSL_ERROR_ZERO_RETURN)
         {
-            return "OpenSSL failed - err zero return";
+            return "OpenSSL failed - err zero return"
         }
         else
         {
-            return "OpenSSL failed - unknown error";
+            return "OpenSSL failed - unknown error"
         }
     }
 

@@ -34,7 +34,7 @@ class Network : PhxSocketDelegate() {
      *  \param param
      *  \return return type
      */
-    fun start(url:String, token: String, id: Long){
+    fun start(url:String, query: String?, id: Long){
         val socket
         = PhxSocket(url/*"ws://localhost:4000/socket/websocket"*/, 1)
         socket.setDelegate(this)
