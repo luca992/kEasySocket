@@ -500,7 +500,7 @@ open class WebSocket{
         }
     }
 
-    fun close(){
+    open fun close(){
         if(readyState == CLOSING || readyState == CLOSED) { return; }
         readyState = CLOSING
         val txbufOldSize = txbuf.size

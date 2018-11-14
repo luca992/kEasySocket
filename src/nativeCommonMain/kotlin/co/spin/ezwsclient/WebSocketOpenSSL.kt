@@ -9,7 +9,7 @@ class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
 
 
     var ssl_context : CPointer<SSL_CTX>? = null
-    val ssl_connection : SSL? = null
+    var ssl_connection : CPointer<SSL>? = null
     var ssl_method :  CValuesRef<SSL_METHOD>? = null
     var openSSLInitialized: Boolean = false
     var openSSLInitializationSuccessful: Boolean = false
@@ -31,8 +31,6 @@ class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
 
         return openSSLInitializationSuccessful
     }
-
-
 
 
     fun openSSLCreateContext() : CPointer<SSL_CTX>?
@@ -57,8 +55,61 @@ class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
         return ctx
     }
 
-    override fun connect(hostname : String, port : Int): Boolean {
+    /* create new SSL connection state object */
+    fun openssl_create_connection(ctx : CPointer<SSL_CTX>?, socket : Int) : CPointer<SSL>?
+    {
+        if (ctx == null) throw RuntimeException("ctx should not be null")
+        if (socket < 1) throw RuntimeException("socket: $socket not valid")
 
+        val ssl = SSL_new(ctx)
+        if (ssl != null)
+            SSL_set_fd(ssl, socket)
+        return ssl
+    }
+
+    fun openSSLHandshake(host: String) : Boolean {
+        while (true)
+        {
+            if (ssl_connection == null || ssl_context == null)
+            {
+                return false
+            }
+
+            ERR_clear_error()
+            val connectResult = SSL_connect(ssl_connection)
+            if (connectResult == 1) {
+                return openSSLCheckServerCert(ssl_connection, host)
+            }
+            val reason = SSL_get_error(ssl_connection, connectResult)
+
+            var rc: Boolean
+            if (reason == SSL_ERROR_WANT_READ || reason == SSL_ERROR_WANT_WRITE) {
+                rc = true
+            } else {
+                Log.error {getSSLError(connectResult)}
+                rc = false
+            }
+
+            if (!rc) {
+                return false
+            }
+        }
+    }
+
+    fun openSSLCheckServerCert(ssl: CPointer<SSL>?, hostname : String) : Boolean {
+        val server_cert = SSL_get_peer_certificate(ssl)
+        if (server_cert == null)
+        {
+            Log.error {"OpenSSL failed - peer didn't present a X509 certificate."}
+            return false
+        }
+
+        X509_free(server_cert);
+        return true;
+    }
+
+    override fun connect(hostname : String, port : Int): Boolean {
+        var handshakeSuccessful = false
         if (!openSSLInitialize())
         {
             return false
@@ -72,9 +123,94 @@ class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
             return false
         }
 
+        ERR_clear_error()
+        val cert_load_result = SSL_CTX_set_default_verify_paths(ssl_context)
+        if (cert_load_result == 0) {
+            val ssl_err = ERR_get_error()
+            Log.error {"OpenSSL failed - SSL_CTX_default_verify_paths loading failed: ${ERR_error_string(ssl_err, null)}"}
+        }
 
+        ssl_connection = openssl_create_connection(ssl_context, sockfd.toInt())
+        if (null == ssl_connection)
+        {
+            Log.error {"OpenSSL failed to connect"}
+            SSL_CTX_free(ssl_context)
+            ssl_context = null
+            return false
+        }
+
+        // SNI support
+        SSL_ctrl(ssl_connection,SSL_CTRL_SET_TLSEXT_HOSTNAME,TLSEXT_NAMETYPE_host_name,hostname.cstr) //SSL_set_tlsext_host_name(ssl_connection, hostname)
+
+        // Support for server name verification
+        val param = SSL_get0_param(ssl_connection)
+        X509_VERIFY_PARAM_set1_host(param, hostname, 0)
+
+        handshakeSuccessful = openSSLHandshake(hostname)
+
+        if (!handshakeSuccessful) {
+            close()
+            return false
+        }
 
         return true
+    }
+
+    fun getSSLError(ret: Int) : String
+    {
+        var e: ULong
+
+        val err = SSL_get_error(ssl_connection, ret)
+
+        if (err == SSL_ERROR_WANT_CONNECT || err == SSL_ERROR_WANT_ACCEPT)
+        {
+            return "OpenSSL failed - connection failure";
+        }
+        else if (err == SSL_ERROR_WANT_X509_LOOKUP)
+        {
+            return "OpenSSL failed - x509 error";
+        }
+        else if (err == SSL_ERROR_SYSCALL)
+        {
+            e = ERR_get_error()
+            return if (e > 0uL) {
+                "OpenSSL failed - ${ERR_error_string(e, null)}"
+            } else if (e == 0uL && ret == 0) {
+                "OpenSSL failed - received early EOF";
+            } else {
+                "OpenSSL failed - underlying BIO reported an I/O error";
+            }
+        }
+        else if (err == SSL_ERROR_SSL)
+        {
+            e = ERR_get_error()
+            return "OpenSSL failed - ${ERR_error_string(e, null)}"
+        }
+        else if (err == SSL_ERROR_NONE)
+        {
+            return "OpenSSL failed - err none";
+        }
+        else if (err == SSL_ERROR_ZERO_RETURN)
+        {
+            return "OpenSSL failed - err zero return";
+        }
+        else
+        {
+            return "OpenSSL failed - unknown error";
+        }
+    }
+
+    override fun close() {
+        if (ssl_connection != null) {
+            SSL_free(ssl_connection);
+            ssl_connection = null
+        }
+        if (ssl_context != null)
+        {
+            SSL_CTX_free(ssl_context);
+            ssl_context = null
+        }
+        super.close()
     }
 }
 
