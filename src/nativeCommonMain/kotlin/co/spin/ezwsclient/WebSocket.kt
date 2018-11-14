@@ -3,7 +3,6 @@ package co.spin.ezwsclient
 import co.spin.ezwsclient.Url.Companion.parseUrl
 import kotlinx.cinterop.*
 import openssl.*
-import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.*
 import platform.posix.*
 import co.spin.utils.fcntl
@@ -61,6 +60,10 @@ open class WebSocket{
             }
         }
     }
+
+    private var url: Url
+    private var origin: String
+
     var rxbuf = UByteArray(0)
     var txbuf = UByteArray(0)
     var receivedData = UByteArray(0)
@@ -92,15 +95,17 @@ open class WebSocket{
         SSL_free(cSSL?.value)
     }
 
-    constructor(useMask : Boolean = true){
+
+    constructor(url : Url, useMask : Boolean = true, origin: String= ""){
+        this.url = url
         this.useMask = useMask
+        this.origin = origin
     }
 
 
-    private fun fromUrl(_url :String, origin: String) {
-        val url : Url = parseUrl(_url) ?: throw Exception("Can't parse Url")
+    private fun init() {
         Log.debug{"easywsclient: connecting: host=${url.host} port=${url.port} path=/${url.path}"}
-        val sockfd = hostnameConnect(url.host, url.port)
+        connect(url.host, url.port)
         if (sockfd == INVALID_SOCKET) {
             throw RuntimeException("Unable to connect to ${url.host}:${url.port}")
         }
@@ -163,10 +168,10 @@ open class WebSocket{
             }
 
             line[i] = 0u
-            if (i == 255) { throw RuntimeException("ERROR: Got invalid status line connecting to: $_url");}
+            if (i == 255) { throw RuntimeException("ERROR: Got invalid status line connecting to: $url");}
             val sscanfResult = sscanf(line.toByteArray().stringFromUtf8(), "HTTP/1.1 %d", status.ptr)
             if (sscanfResult != 1 || status.value != 101) {
-                Log.error{"ERROR: Got bad status connecting to $_url: ${line.toByteArray().stringFromUtf8()}"}; return@memScoped
+                Log.error{"ERROR: Got bad status connecting to $url: ${line.toByteArray().stringFromUtf8()}"}; return@memScoped
             }
             // TODO: verify response headers,
             while (true) {
@@ -506,15 +511,24 @@ open class WebSocket{
 
     companion object {
 
+        private fun webSocketForUrl(_url: String, useMask: Boolean) : WebSocket{
+            val url : Url = parseUrl(_url) ?: throw Exception("Can't parse Url")
+            return if (url.protocol == "wss"){
+                WebSocketOpenSSL(url, useMask)
+            } else {
+                WebSocket(url, useMask)
+            }
+
+        }
         fun fromUrl(url :String, origin: String = ""): WebSocket {
-            val webSocket =  WebSocket(true)
-            fromUrl(url, origin)
+            val webSocket =  webSocketForUrl(url, true)
+            webSocket.init()
             return webSocket
         }
 
         fun fromUrlNoMask(url :String, origin: String): WebSocket {
-            val webSocket =  WebSocket(false)
-            Companion.fromUrl(url, origin)
+            val webSocket =  webSocketForUrl(url, true)
+            webSocket.init()
             return webSocket
         }
 

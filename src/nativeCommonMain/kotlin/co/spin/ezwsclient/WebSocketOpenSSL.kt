@@ -1,6 +1,6 @@
 package co.spin.ezwsclient
 
-class WebSocketOpenSSL(useMask : Boolean) : WebSocket(useMask) {
+class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
 
 
     override fun connect(hostname : String, port : Int): ULong {
