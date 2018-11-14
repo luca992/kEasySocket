@@ -205,7 +205,7 @@ open class WebSocket{
         return sockfd != INVALID_SOCKET
     }
 
-    private fun hostnameConnect(hostname : String, port : Int) : ULong {
+    protected fun hostnameConnect(hostname : String, port : Int) : ULong {
         init_sockets()
         return memScoped {
             val hints : addrinfo = alloc<addrinfo>()
