@@ -409,6 +409,7 @@ class PhxSocket(
      */
     fun push(data: JsonElement) {
         try {
+            println("JSON: ${data.toString()}")
             socket?.send(data.toString())
         } catch ( e:Exception) {
             e.printStackTrace()

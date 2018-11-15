@@ -3,7 +3,9 @@ package co.spin.ezwsclient
 import co.spin.utils.INVALID_SOCKET
 import co.spin.utils.Log
 import co.spin.Url
+import co.spin.utils.SOCKET_EWOULDBLOCK
 import kotlinx.cinterop.*
+import platform.posix.*
 import openssl.*
 
 class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
@@ -213,6 +215,73 @@ class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
         }
         super.close()
     }
+
+    override fun send(buf: CPointer<UByteVar>?, len: ULong) : Long {
+        val message = (buf as? CPointer<ByteVar>?)?.toKString()
+        Log.debug{"Sending: ${message?.trim()}"}
+
+        var nbyte = len.toInt()
+        var sent: Long = 0
+
+        while (nbyte > 0) {
+
+            if (ssl_connection == null || ssl_context == null) {
+                return 0
+            }
+
+            ERR_clear_error()
+            val write_result = SSL_write(ssl_connection, buf + sent, nbyte)
+            val reason = SSL_get_error(ssl_connection, write_result)
+
+            if (reason == SSL_ERROR_NONE) {
+                nbyte -= write_result
+                sent += write_result
+            } else if (reason == SSL_ERROR_WANT_READ || reason == SSL_ERROR_WANT_WRITE) {
+                set_posix_errno(SOCKET_EWOULDBLOCK)
+                return -1
+            } else if (reason == SSL_ERROR_SYSCALL) {
+                val e = ERR_get_error()
+                val r = if (e > 0uL) {
+                    "OpenSSL failed - ${ERR_error_string(e, null)?.toKString()}"
+                } else if (e == 0uL && reason == 0) {
+                    "OpenSSL failed - received early EOF";
+                } else {
+                    "OpenSSL failed - underlying BIO reported an I/O error"
+                }
+                Log.debug { r }
+                return -1
+            } else {
+                return -1
+            }
+        }
+        return sent
+    }
+
+    override fun recv(buf: CPointer<UByteVar>?, len: ULong) : Long {
+        var nbyte = len.toInt()
+        while (true) {
+            if (ssl_connection == null || ssl_context === null) {
+                return 0
+            }
+
+            ERR_clear_error()
+            val read_result = SSL_read(ssl_connection, buf, nbyte)
+
+            if (read_result > 0) {
+                return read_result.toLong()
+            }
+
+            val reason = SSL_get_error(ssl_connection, read_result)
+
+            if (reason == SSL_ERROR_WANT_READ || reason == SSL_ERROR_WANT_WRITE) {
+                set_posix_errno(SOCKET_EWOULDBLOCK)
+                return -1
+            } else {
+                return -1
+            }
+        }
+    }
+
 }
 
 fun openssl_verify_callback(preverify: Int, x509_ctx: CPointer<X509_STORE_CTX>?) : Int

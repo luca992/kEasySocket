@@ -34,12 +34,12 @@ class Network : PhxSocketDelegate() {
      *  \param param
      *  \return return type
      */
-    fun start(url: Url, id: Long){
+    fun start(url: Url, initialTopic: String){
         val socket
         = PhxSocket(url/*"ws://localhost:4000/socket/websocket"*/, 1)
         socket.setDelegate(this)
 
-        channel = PhxChannel(socket, "room:lobby", mapOf())
+        channel = PhxChannel(socket, initialTopic, mapOf())
         channel.bootstrap()
 
         // Instantiate the PhxChannel first before connecting on the socket.

@@ -147,7 +147,7 @@ class PhxChannel(
         if (joinedOnce) {
             // ERROR
         } else {
-            joinedOnce = true;
+            joinedOnce = true
         }
 
         sendJoin()

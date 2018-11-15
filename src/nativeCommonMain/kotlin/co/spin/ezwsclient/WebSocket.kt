@@ -115,52 +115,52 @@ open class WebSocket{
             val line = UByteArray(256)
             val status = alloc<IntVar>()
             var i = 0
-            Log.debug{"easywsclient: connecting now: host=${url.host} port=${url.port} path=/${url.path}"}
-            "GET /${url.path} HTTP/1.1\r\n".toUtf8().toUByteArray()
+            Log.debug{"easywsclient: connecting now: host=${url.host} port=${url.port} path=${url.path}"}
+            "GET ${url.path} HTTP/1.1\r\n".toUtf8().toUByteArray()
                     .usePinned { pinned ->
-                        send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                        send(pinned.addressOf(0), pinned.get().size.toULong())
                     }
             if (url.port == 80) {
                 "Host: ${url.host}\r\n".toUtf8().toUByteArray()
                         .usePinned { pinned ->
-                            send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                            send(pinned.addressOf(0), pinned.get().size.toULong())
                         }
             }
             else {
                 "Host: ${url.host}:${url.port}\r\n".toUtf8().toUByteArray()
                         .usePinned { pinned ->
-                            send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                            send(pinned.addressOf(0), pinned.get().size.toULong())
                         }
             }
             "Upgrade: websocket\r\n".toUtf8().toUByteArray()
                     .usePinned { pinned ->
-                        send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                        send(pinned.addressOf(0), pinned.get().size.toULong())
                     }
             "Connection: Upgrade\r\n".toUtf8().toUByteArray()
                     .usePinned { pinned ->
-                        send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                        send(pinned.addressOf(0), pinned.get().size.toULong())
                     }
             if (!origin.isEmpty()) {
                 "Origin: $origin\r\n".toUtf8().toUByteArray()
                         .usePinned { pinned ->
-                            send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                            send(pinned.addressOf(0), pinned.get().size.toULong())
                         }
             }
             "Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==\r\n".toUtf8().toUByteArray()
                     .usePinned { pinned ->
-                        send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                        send(pinned.addressOf(0), pinned.get().size.toULong())
                     }
             "Sec-WebSocket-Version: 13\r\n".toUtf8().toUByteArray()
                     .usePinned { pinned ->
-                        send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                        send(pinned.addressOf(0), pinned.get().size.toULong())
                     }
             "\r\n".toUtf8().toUByteArray()
                     .usePinned { pinned ->
-                        send(sockfd, pinned.addressOf(0), pinned.get().size.toULong(), 0)
+                        send(pinned.addressOf(0), pinned.get().size.toULong())
                     }
             line.usePinned{ pinned ->
                 while (i < 2 || (i < 255 && line[i - 2].toChar() != '\r' && line[i - 1].toChar() != '\n')) {
-                    val recv = recv(sockfd, pinned.addressOf(i), 1u, 0)
+                    val recv = recv(pinned.addressOf(i), 1u)
                     if (recv == 0L) {
                         throw Exception("recv returned 0")
                     }
@@ -179,7 +179,7 @@ open class WebSocket{
                 i = 0
                 line.usePinned { pinned ->
                     while (i < 2 || (i < 255 && line[i-2].toChar() != '\r' && line[i-1].toChar() != '\n')) {
-                        val recv = recv(sockfd, pinned.addressOf(i), 1u, 0).toInt()
+                        val recv = recv(pinned.addressOf(i), 1u).toInt()
                         if (recv == 0) {
                             throw Exception("recv returned 0")
                         }
@@ -198,6 +198,14 @@ open class WebSocket{
         }
         fcntl(sockfd)
         Log.debug{"Connected to: $url"}
+    }
+
+    protected open fun send(buf: CPointer<UByteVar>?, len: ULong) : Long {
+        return send(sockfd,buf,len,0)
+    }
+
+    protected open fun recv(buf: CPointer<UByteVar>?, len: ULong) : Long {
+        return recv(sockfd,buf,len,0)
     }
 
     protected open fun connect(hostname : String, port : Int): Boolean {
@@ -274,7 +282,7 @@ open class WebSocket{
                 rxbuf= rxbuf.copyOf(N + 1500)
                 var ret = 0L
                 rxbuf.usePinned { pinned: Pinned<UByteArray> ->
-                    ret = recv(sockfd, pinned.addressOf(0) + N, 1500u, 0)
+                    ret = recv(pinned.addressOf(0) + N, 1500u)
                 }
                 if (false) {
                 } else if (ret < 0 && (posix_errno() == SOCKET_EWOULDBLOCK || posix_errno() == SOCKET_EAGAIN_EINPROGRESS)) {
@@ -293,15 +301,15 @@ open class WebSocket{
             while (!txbuf.isEmpty()) {
                 var ret =0L
                 txbuf.usePinned{ pinned->
-                    ret = send(sockfd, pinned.addressOf(0), txbuf.size.toULong(), 0)
+                    ret = send(pinned.addressOf(0), txbuf.size.toULong())
                 }
                 if (false) { } // ??
                 else if (ret < 0 && (posix_errno() == SOCKET_EWOULDBLOCK || posix_errno() == SOCKET_EAGAIN_EINPROGRESS)) {
                     break
                 }
                 else if (ret <= 0) {
-                    closesocket(sockfd);
-                    readyState = CLOSED;
+                    closesocket(sockfd)
+                    readyState = CLOSED
                     Log.error{if (ret < 0) "Connection error!"  else "Connection closed!"}
                     break
                 }
@@ -448,7 +456,10 @@ open class WebSocket{
         val masking_key = ubyteArrayOf(0x12u, 0x34u, 0x56u, 0x78u)
         // TODO: consider acquiring a lock on txbuf...
         if (readyState == CLOSING || readyState == CLOSED) { return; }
-        val header = UByteArray(2 + (if(messageSizeUbyte >= 126u) 2 else 0) + (if(messageSizeUbyte >= 65536u) 6 else 0) + (if (useMask) 4 else 0)) {0u}
+        val header = UByteArray(2 +
+                (if(messageSizeUbyte >= 126u) 2 else 0) +
+                (if(messageSizeUbyte >= 65536u) 6 else 0) +
+                (if (useMask) 4 else 0)) {0u}
         header[0] = 0x80.toUByte().or(type.value)
         if (messageSizeUbyte < 126u) {
             header[1] = (messageSizeUbyte.and(0xffu)).or(if (useMask) 0x80u else 0u)
