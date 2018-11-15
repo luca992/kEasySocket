@@ -8,7 +8,7 @@ enum class SocketState {
 }
 
 abstract class WebSocket(
-        var url: String,
+        var url: Url,
         var delegate: SocketDelegate?) {
     /**
      * Open the websocket connection.

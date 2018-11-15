@@ -1,5 +1,4 @@
-import co.spin.ezwsclient.Url
-import co.spin.ezwsclient.WebSocket
+import co.spin.Url
 
 import kotlin.test.*
 

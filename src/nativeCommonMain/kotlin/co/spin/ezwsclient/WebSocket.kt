@@ -1,26 +1,12 @@
 package co.spin.ezwsclient
 
-import co.spin.ezwsclient.Url.Companion.parseUrl
+import co.spin.Url
 import kotlinx.cinterop.*
 import openssl.*
 import kotlinx.coroutines.*
 import platform.posix.*
-import co.spin.utils.fcntl
-import co.spin.utils.Log
-import co.spin.utils.TimeValT
-import co.spin.utils.addrinfo
-import co.spin.utils.connect
-import co.spin.utils.getaddrinfo
-import co.spin.utils.closesocket
-import co.spin.utils.freeaddrinfo
-import co.spin.utils.select
-import co.spin.utils.send
-import co.spin.utils.recv
-import co.spin.utils.setsockopt
-import co.spin.utils.INVALID_SOCKET
-import co.spin.utils.SOCKET_EWOULDBLOCK
-import co.spin.utils.SOCKET_EAGAIN_EINPROGRESS
 import co.spin.ezwsclient.WebSocket.ReadyStateValues.*
+import co.spin.utils.*
 import kotlinx.coroutines.TDispatchers
 
 fun UByte.shl(b: Int) = (toInt() shl b.toInt()).toUByte()
@@ -512,8 +498,7 @@ open class WebSocket{
 
     companion object {
 
-        private fun webSocketForUrl(_url: String, useMask: Boolean) : WebSocket{
-            val url : Url = parseUrl(_url) ?: throw Exception("Can't parse Url")
+        private fun webSocketForUrl(url: Url, useMask: Boolean) : WebSocket{
             return if (url.protocol == "wss"){
                 WebSocketOpenSSL(url, useMask)
             } else {
@@ -521,13 +506,13 @@ open class WebSocket{
             }
 
         }
-        fun fromUrl(url :String, origin: String = ""): WebSocket {
+        fun fromUrl(url : Url, origin: String = ""): WebSocket {
             val webSocket =  webSocketForUrl(url, true)
             webSocket.init()
             return webSocket
         }
 
-        fun fromUrlNoMask(url :String, origin: String): WebSocket {
+        fun fromUrlNoMask(url : Url, origin: String): WebSocket {
             val webSocket =  webSocketForUrl(url, true)
             webSocket.init()
             return webSocket

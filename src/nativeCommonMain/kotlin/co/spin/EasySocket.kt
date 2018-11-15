@@ -9,7 +9,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 @ExperimentalUnsignedTypes
-class EasySocket(url: String, delegate: SocketDelegate) : co.spin.WebSocket(url, delegate) {
+class EasySocket(url: Url, delegate: SocketDelegate) : co.spin.WebSocket(url, delegate) {
 
 
     /*!< Queue used for receiving messages. */

@@ -27,7 +27,7 @@ const val POOL_SIZE = 1
  */
 class PhxSocket(
         /*!< Websocket URL to connect to. */
-        val url: String,
+        val url: Url,
         /*!< The interval at which to send heartbeats to server. */
         val heartBeatInterval: Int = 1,
         /*!
@@ -60,9 +60,6 @@ class PhxSocket(
 
     /*!< List of callbacks when socket receives a messages. */
     private var messageCallbacks = mutableListOf<OnMessage>()
-
-    /*!< These params are used to pass arguments into the Websocket URL. */
-    private var params = mapOf<String, String>()
 
     /*!< Ref to keep track of for each WebSocket message. */
     private var ref = 0L
@@ -294,15 +291,6 @@ class PhxSocket(
         pool.enqueue { onConnClose(reason) }
     }
 
-    // SocketDelegate
-    /**
-     *  \brief Connects the Websocket.
-     *
-     *  \return void
-     */
-    fun connect() {
-        connect(mapOf())
-    }
 
     /**
      *  \brief Connects the Websocket.
@@ -310,16 +298,7 @@ class PhxSocket(
      *  \param params List of params to be formatted into Websocket URL.
      *  \return void
      */
-    fun connect(params: Map<String, String>) {
-        this.params = params
-
-        // FIXME: Add the parameters to the url.
-        val url = if (params.isNotEmpty()) {
-            this.url
-        } else {
-            this.url
-        }
-
+    fun connect() {
         setCanReconnect(false)
 
         // The socket hasn't been instantiated with a custom WebSocket.
@@ -350,7 +329,7 @@ class PhxSocket(
      */
     fun reconnect() {
         disconnectSocket()
-        connect(params)
+        connect()
     }
 
     /**

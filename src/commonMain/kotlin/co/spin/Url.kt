@@ -1,4 +1,4 @@
-package co.spin.ezwsclient
+package co.spin
 
 data class Url(val protocol : String,
                val host : String,
@@ -40,7 +40,7 @@ data class Url(val protocol : String,
                 path += _query
             }
 
-            return  Url(protocol!!,
+            return Url(protocol!!,
                     host!!,
                     port,
                     path,

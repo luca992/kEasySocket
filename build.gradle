@@ -156,7 +156,7 @@ task runProgram {
     doLast {
         exec {
             executable kotlin.targets.mac.compilations.main.getBinary('EXECUTABLE', buildType)
-            args "$url", "$token"
+            args "$url", "query"
         }
     }
 }

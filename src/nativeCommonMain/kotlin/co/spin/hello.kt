@@ -1,6 +1,7 @@
 
 import kotlin.test.*
 import co.spin.*
+import co.spin.Url.Companion.parseUrl
 import co.spin.ezwsclient.WebSocket
 import co.spin.ezwsclient.WebSocket.ReadyStateValues.*
 import kotlinx.coroutines.channels.*
@@ -30,7 +31,12 @@ fun main(args: Array<String>) = runBlocking<Unit> {
         return@runBlocking
 
     val n = Network()
-    n.start(args[0],if (args.size > 1) args[1] else null,13L)
+    val url : Url = parseUrl(args[0], if (args.size > 1) args[1] else null) ?: throw Exception("Can't parse Url")
+    try {
+        n.start(url,13L)
+    } catch (t: Throwable) {
+        t.printStackTrace()
+    }
 
 
     return@runBlocking

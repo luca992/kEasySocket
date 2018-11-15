@@ -2,6 +2,7 @@ package co.spin.ezwsclient
 
 import co.spin.utils.INVALID_SOCKET
 import co.spin.utils.Log
+import co.spin.Url
 import kotlinx.cinterop.*
 import openssl.*
 
@@ -104,8 +105,8 @@ class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
             return false
         }
 
-        X509_free(server_cert);
-        return true;
+        X509_free(server_cert)
+        return true
     }
 
     override fun connect(hostname : String, port : Int): Boolean {
