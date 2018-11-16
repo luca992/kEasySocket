@@ -292,7 +292,7 @@ open class WebSocket{
                     rxbuf= rxbuf.copyOf(N)
                     closesocket(sockfd)
                     readyState = CLOSED
-                    Log.error{if (ret < 0) "Connection error!"  else "Connection closed!"}
+                    Log.error{if (ret < 0) "Recv: Connection error!"  else "Recv: Connection closed!"}
                     break
                 } else {
                     rxbuf= rxbuf.copyOf(N + ret.toInt())
@@ -310,7 +310,7 @@ open class WebSocket{
                 else if (ret <= 0) {
                     closesocket(sockfd)
                     readyState = CLOSED
-                    Log.error{if (ret < 0) "Connection error!"  else "Connection closed!"}
+                    Log.error{if (ret < 0) "Send: Connection error!"  else "Send: Connection closed!"}
                     break
                 }
                 else {
