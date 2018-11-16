@@ -49,7 +49,6 @@ class EasySocket(url: Url, delegate: SocketDelegate) : co.spin.WebSocket(url, de
 
 
         val callback = {message :UByteArray ->
-            Log.info {message}
             receiveQueue.enqueue {
                 delegate?.webSocketDidReceive(this@EasySocket, message.toByteArray().stringFromUtf8())
 
