@@ -1,6 +1,5 @@
+package co.spin
 
-import kotlin.test.*
-import co.spin.*
 import co.spin.Url.Companion.parseUrl
 import co.spin.ezwsclient.WebSocket
 import co.spin.ezwsclient.WebSocket.ReadyStateValues.*
@@ -8,7 +7,6 @@ import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.*
 
-//import com.soywiz.klogger.*
 fun main(args: Array<String>) = runBlocking<Unit> {
 
     /*val ws = WebSocket.fromUrl("ws://localhost:8126/foo") ?: return@runBlocking
