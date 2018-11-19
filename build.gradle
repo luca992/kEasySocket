@@ -160,3 +160,10 @@ task runProgram {
         }
     }
 }
+
+
+// Publishing
+group 'co.spin'
+version projectVersion
+apply plugin: 'maven-publish'
+
