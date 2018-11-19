@@ -1,9 +1,7 @@
 package co.spin
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.TDispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import co.spin.utils.Log
+import kotlinx.coroutines.*
 import kotlinx.serialization.json.*
 
 abstract class PhxSocketDelegate {
@@ -33,7 +31,7 @@ class PhxSocket(
         /*!
         The underlying WebSocket interface. This can be used with a
         different library provided the WebSocket interface is implemented.*/
-        var socket: WebSocket? = null) : SocketDelegate() {
+        var socket: EasySocketPhnx? = null) : SocketDelegate() {
 
     /*!< Single Thread Thread Pool used for synchronization. */
     private var pool =  ThreadPool(POOL_SIZE)
@@ -69,6 +67,10 @@ class PhxSocket(
      *
      *  \return void
      */
+    private fun discardHeartBeatTimerSuspended() {
+        setCanSendHeartBeatSuspended(false)
+    }
+
     private fun discardHeartBeatTimer() {
         setCanSendHeartBeat(false)
     }
@@ -116,12 +118,15 @@ class PhxSocket(
         // After the socket connection is opened, continue to send heartbeats
         // to keep the connection alive.
         if (heartBeatInterval > 0) {
+
             GlobalScope.launch(TDispatchers.Default) {
                 // Use sleep_for to wait specified time (or sleep_until).
-                setCanSendHeartBeat(true)
+                delay(heartBeatInterval * 1000L /*interval in seconds*/)
+                setCanSendHeartBeatSuspended(true)
                 while (true) {
                     delay(heartBeatInterval * 1000L /*interval in seconds*/)
                     if (canSendHeartbeat) {
+                        Log.debug { "enqueue sendHeartbeat" }
                         pool.enqueue { sendHeartbeat() }
                     } else {
                         break
@@ -158,7 +163,9 @@ class PhxSocket(
                     pool.enqueue {
                         if (canReconnect) {
                             canReconnect = false
-                            reconnect()
+                            GlobalScope.launch(TDispatchers.Default) {
+                                reconnect()
+                            }
                         }
                         reconnecting = false
                     }
@@ -259,6 +266,12 @@ class PhxSocket(
      *  continue sending heartbeats.
      *  \return void
      */
+    private fun setCanSendHeartBeatSuspended(canSendHeartbeat: Boolean) {
+        pool.enqueue {
+            this.canSendHeartbeat = canSendHeartbeat
+        }
+    }
+
     private fun setCanSendHeartBeat(canSendHeartbeat: Boolean) {
         pool.enqueue {
             this.canSendHeartbeat = canSendHeartbeat
@@ -278,16 +291,18 @@ class PhxSocket(
     }
 
     // SocketDelegate
-    override fun webSocketDidOpen(socket: WebSocket) {
-        pool.enqueue { onConnOpen() }
+    override fun webSocketDidOpen(socket: PhnxWebSocket) {
+        pool.enqueue {
+            onConnOpen()
+        }
     }
-    override fun webSocketDidReceive(socket: WebSocket, message: String) {
+    override fun webSocketDidReceive(socket: PhnxWebSocket, message: String) {
         pool.enqueue { onConnMessage(message) }
     }
-    override fun webSocketDidError(socket: WebSocket, error: String) {
+    override fun webSocketDidError(socket: PhnxWebSocket, error: String) {
         pool.enqueue { onConnError(error) }
     }
-    override fun webSocketDidClose(socket: WebSocket, code: Int, reason: String, wasClean: Boolean) {
+    override fun webSocketDidClose(socket: PhnxWebSocket, code: Int, reason: String, wasClean: Boolean) {
         pool.enqueue { onConnClose(reason) }
     }
 
@@ -298,15 +313,16 @@ class PhxSocket(
      *  \param params List of params to be formatted into Websocket URL.
      *  \return void
      */
-    fun connect() {
+    fun connect() : Job {
         setCanReconnect(false)
 
         // The socket hasn't been instantiated with a custom WebSocket.
         if (socket==null) {
-            this.socket = EasySocket(url, this)
+            this.socket = EasySocketPhnx(url, this)
         }
-
-        socket!!.open()
+        return GlobalScope.launch {
+            socket!!.open()
+        }
     }
 
     /**
@@ -327,7 +343,7 @@ class PhxSocket(
      *
      *  \return void
      */
-    fun reconnect() {
+    private suspend fun reconnect() {
         disconnectSocket()
         connect()
     }
@@ -398,7 +414,7 @@ class PhxSocket(
         if (socket == null) {
             return SocketState.SocketClosed;
         }
-        return socket!!.getSocketState()
+        return socket!!.state
     }
 
     /**

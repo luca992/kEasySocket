@@ -32,11 +32,9 @@ fun main(args: Array<String>) = runBlocking<Unit> {
 
     val n = Network()
     val url : Url = parseUrl(args[0], if (args.size > 1) args[1] else null) ?: throw Exception("Can't parse Url")
-    try {
-        n.start(url, if (args.size > 2) args[2] else "")
-    } catch (t: Throwable) {
-        t.printStackTrace()
-    }
+
+    val j = n.start(url, if (args.size > 2) args[2] else "")
+    j.join()
 
 
     return@runBlocking

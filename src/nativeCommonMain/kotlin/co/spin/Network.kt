@@ -1,6 +1,7 @@
 package co.spin
 
 import co.spin.utils.Log
+import kotlinx.coroutines.Job
 
 class Network : PhxSocketDelegate() {
     // PhxSocketDelegate
@@ -34,9 +35,9 @@ class Network : PhxSocketDelegate() {
      *  \param param
      *  \return return type
      */
-    fun start(url: Url, initialTopic: String){
+    fun start(url: Url, initialTopic: String) : Job{
         val socket
-        = PhxSocket(url/*"ws://localhost:4000/socket/websocket"*/, 1)
+        = PhxSocket(url/*"ws://localhost:4000/socket/websocket"*/, 15)
         socket.setDelegate(this)
 
         channel = PhxChannel(socket, initialTopic, mapOf())
@@ -45,6 +46,6 @@ class Network : PhxSocketDelegate() {
         // Instantiate the PhxChannel first before connecting on the socket.
         // This is because the connection can happen before the channel
         // is done instantiating.
-        socket.connect()
+        return socket.connect()
     }
 }

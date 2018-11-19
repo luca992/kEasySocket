@@ -7,13 +7,13 @@ enum class SocketState {
     SocketClosed
 }
 
-abstract class WebSocket(
+abstract class PhnxWebSocket(
         var url: Url,
         var delegate: SocketDelegate?) {
     /**
      * Open the websocket connection.
      */
-    abstract fun open()
+    abstract suspend fun open()
 
     /**
      * Close the websocket connection.
@@ -24,10 +24,4 @@ abstract class WebSocket(
      * Send a message over websockets.
      */
     abstract fun send(message: String)
-
-    /**
-     * Get SocketState.
-     */
-    abstract fun getSocketState(): SocketState
-
 }
