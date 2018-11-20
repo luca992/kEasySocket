@@ -1,6 +1,5 @@
 package co.spin
 
-import co.spin.utils.Log
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.*
 
@@ -14,7 +13,7 @@ class ThreadPool(numWorkers: Int) {
 
 
     private fun launchWorker(id: Int, channel: ReceiveChannel<() -> Unit>)
-    = GlobalScope.launch(TDispatchers.Default) {
+    = GlobalScope.launch(EzSocketDispatchers.Default) {
         //Log.debug { "trying to consume" }
         for (func in channel) {
             //Log.debug { "consuming" }
@@ -26,7 +25,7 @@ class ThreadPool(numWorkers: Int) {
 
     fun enqueue(func: () -> Unit){
         //Log.debug { "trying to feed" }
-        GlobalScope.launch(TDispatchers.Default) {
+        GlobalScope.launch(EzSocketDispatchers.Default) {
             //Log.debug { "feeding" }
             feeder.send(func)
             //Log.debug { "fed" }

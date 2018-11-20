@@ -1,7 +1,7 @@
 package co.spin
 
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.TDispatchers
+import kotlinx.coroutines.EzSocketDispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -73,7 +73,7 @@ class PhxPush(
             return
         }
 
-        GlobalScope.launch(TDispatchers.Default) {
+        GlobalScope.launch(EzSocketDispatchers.Default) {
             afterTimerMutex.withLock {
                 shouldContinueAfterCallback = false
             }
@@ -92,7 +92,7 @@ class PhxPush(
 
         // FIXME: Should this be weak?
         val interval = afterInterval
-        GlobalScope.launch(TDispatchers.Default) {
+        GlobalScope.launch(EzSocketDispatchers.Default) {
             // Use sleep_for to wait specified time (or sleep_until).
             shouldContinueAfterCallback = true
             delay(interval*1000L /*interval in seconds*/)

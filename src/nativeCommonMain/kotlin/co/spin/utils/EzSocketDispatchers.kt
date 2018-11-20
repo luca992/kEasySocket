@@ -2,7 +2,7 @@ package kotlinx.coroutines
 
 import kotlin.coroutines.*
 
-public actual object TDispatchers {
+public actual object EzSocketDispatchers {
 
     public actual val Default: CoroutineDispatcher get() = Dispatchers.Unconfined
 

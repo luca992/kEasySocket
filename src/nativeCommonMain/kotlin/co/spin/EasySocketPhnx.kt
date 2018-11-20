@@ -55,7 +55,7 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
 
             }
         }
-        val j = GlobalScope.launch(TDispatchers.Default) {
+        val j = GlobalScope.launch(EzSocketDispatchers.Default) {
             while (shouldContinueLoop) {
                 Log.debug { "${ws.readyState.name}" }
                 when (ws.readyState) {
@@ -68,7 +68,7 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
                     }
                     WebSocket.ReadyStateValues.CLOSING -> {
                         state = SocketState.SocketClosing
-                        GlobalScope.launch(TDispatchers.Default) {
+                        GlobalScope.launch(EzSocketDispatchers.Default) {
                             socketMutex.withLock {
                                 ws.poll()
                                 ws.dispatchBinary(callback)
@@ -77,7 +77,7 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
                     }
                     WebSocket.ReadyStateValues.CONNECTING -> {
                         state = SocketState.SocketConnecting
-                        GlobalScope.launch(TDispatchers.Default) {
+                        GlobalScope.launch(EzSocketDispatchers.Default) {
                             socketMutex.withLock {
                                 Log.debug { "connecting in lock" }
                                 ws.poll()
@@ -91,7 +91,7 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
                             triggeredWebsocketJoinedCallback = true;
                             delegate?.webSocketDidOpen(this@EasySocketPhnx)
                         }
-                        GlobalScope.launch(TDispatchers.Default) {
+                        GlobalScope.launch(EzSocketDispatchers.Default) {
                             socketMutex.withLock {
                                 ws.poll()
                                 ws.dispatchBinary(callback)
@@ -123,7 +123,7 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
      * Send a message over websockets.
      */
     override fun send(message: String) {
-        GlobalScope.launch(TDispatchers.Default) {
+        GlobalScope.launch(EzSocketDispatchers.Default) {
             socketMutex.withLock {
                 if (socket != null && state == SocketState.SocketOpen) {
                     socket!!.send(message)

@@ -119,7 +119,7 @@ class PhxSocket(
         // to keep the connection alive.
         if (heartBeatInterval > 0) {
 
-            GlobalScope.launch(TDispatchers.Default) {
+            GlobalScope.launch(EzSocketDispatchers.Default) {
                 // Use sleep_for to wait specified time (or sleep_until).
                 delay(heartBeatInterval * 1000L /*interval in seconds*/)
                 setCanSendHeartBeatSuspended(true)
@@ -157,13 +157,13 @@ class PhxSocket(
                 reconnecting = true
                 canReconnect = true
 
-                GlobalScope.launch(TDispatchers.Default) {
+                GlobalScope.launch(EzSocketDispatchers.Default) {
                     // Use sleep_for to wait specified time (or sleep_until).
                     delay(RECONNECT_INTERVAL * 1000L /*interval in seconds*/)
                     pool.enqueue {
                         if (canReconnect) {
                             canReconnect = false
-                            GlobalScope.launch(TDispatchers.Default) {
+                            GlobalScope.launch(EzSocketDispatchers.Default) {
                                 reconnect()
                             }
                         }

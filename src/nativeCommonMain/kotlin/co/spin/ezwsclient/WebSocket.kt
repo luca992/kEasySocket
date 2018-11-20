@@ -21,7 +21,7 @@ import co.spin.utils.INVALID_SOCKET
 import co.spin.utils.SOCKET_EWOULDBLOCK
 import co.spin.utils.SOCKET_EAGAIN_EINPROGRESS
 import co.spin.ezwsclient.WebSocket.ReadyStateValues.*
-import kotlinx.coroutines.TDispatchers
+import kotlinx.coroutines.EzSocketDispatchers
 
 fun UByte.shl(b: Int) = (toInt() shl b.toInt()).toUByte()
 fun UByte.shr(b: Int) = (toInt() shr b.toInt()).toUByte()
@@ -326,7 +326,7 @@ open class WebSocket{
         }
     }
 
-    fun dispatchBinary(callback: (UByteArray) -> Unit): Job = GlobalScope.launch(TDispatchers.Default) {
+    fun dispatchBinary(callback: (UByteArray) -> Unit): Job = GlobalScope.launch(EzSocketDispatchers.Default) {
         try {
             // TODO: consider acquiring a lock on rxbuf...
             while (true) {

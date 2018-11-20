@@ -5,7 +5,7 @@ import kotlin.coroutines.*
 /**
  * Groups various implementations of [CoroutineDispatcher].
  */
-public expect object TDispatchers {
+public expect object EzSocketDispatchers {
     /**
      * The default [CoroutineDispatcher] that is used by all standard builders like
      * [launch][CoroutineScope.launch], [async][CoroutineScope.async], etc
