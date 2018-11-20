@@ -320,7 +320,7 @@ class PhxSocket(
         if (socket==null) {
             this.socket = EasySocketPhnx(url, this)
         }
-        return GlobalScope.launch {
+        return GlobalScope.launch(EzSocketDispatchers.Default) {
             socket!!.open()
         }
     }
