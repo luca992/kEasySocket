@@ -5,7 +5,7 @@ import co.spin.ezwsclient.WebSocket.ReadyStateValues.*
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.*
-
+/*
 fun main(args: Array<String>) = runBlocking<Unit> {
 
     /*val ws = WebSocket.fromUrl("ws://localhost:8126/foo") ?: return@runBlocking
@@ -36,3 +36,4 @@ fun main(args: Array<String>) = runBlocking<Unit> {
 
     return@runBlocking
 }
+*/

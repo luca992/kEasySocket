@@ -111,7 +111,7 @@ kotlin {
         fromPreset(presets.mingwX64, 'windows')
         fromPreset(presets.macosX64, 'mac')
 		configure([linux, windows, mac]) {
-			compilations.main.outputKinds( 'EXECUTABLE')
+			//compilations.main.outputKinds( 'EXECUTABLE')
             compilations.main.cinterops {
                 openssl {
                     switch (it) {
