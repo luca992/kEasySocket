@@ -213,11 +213,7 @@ class PhxSocket(
         val jsonRef = json.getPrimitiveOrNull("ref")
         val jsonPayload = json.get("payload").jsonObject
 
-        // Ref can be null, so check for it first.
-        var ref = -1L
-        if (jsonRef!=null) {
-            ref = jsonRef.long
-        }
+        val ref = jsonRef?.longOrNull ?: -1L
 
         for (channel in channels) {
             if (channel.topic == jsonTopic) {
@@ -273,6 +269,7 @@ class PhxSocket(
     }
 
     private fun setCanSendHeartBeat(canSendHeartbeat: Boolean) {
+        Log.debug { "enqueue canSendHeartbeat=$canSendHeartbeat" }
         pool.enqueue {
             this.canSendHeartbeat = canSendHeartbeat
         }
