@@ -1,8 +1,7 @@
 package co.spin
 
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.*
+import kotlinx.serialization.parse
 
 /**
  *  \brief Constructor
@@ -21,10 +20,10 @@ class PhxChannel(
         val params: Map<String, String>) {
 
     /*!<
-     * bindings contains a list of tuples where Item 1 is the Event
+     * eventBindings contains a list of tuples where Item 1 is the Event
      * and Item 2 is the callback.
      */
-    private var bindings = mutableListOf<Pair<String, OnReceive>>()
+    private var eventBindings = mutableMapOf<String,PhxEvent<Any>>()
 
     /*!< A flag indicating whether there has been an attempt to join channel. */
     private var joinedOnce = false
@@ -82,10 +81,10 @@ class PhxChannel(
      */
     fun triggerEvent(event: String, message: JsonElement, ref: Long) {
         // Trigger OnReceive callbacks that match event.
-        for (b in bindings) {
-            if (b.first == event) {
-                b.second.invoke(message, ref)
-            }
+        val binding = eventBindings[event]
+        binding?.callbacks?.forEach{
+            val s = binding.parse(message.toString()) ?: message
+            it(s, ref)
         }
     }
 
@@ -133,9 +132,9 @@ class PhxChannel(
 
         joinPush!!.onReceive("ok") { state = ChannelState.JOINED }
 
-        onEvent("phx_reply") { message: JsonElement, ref: Long ->
+        onEvent(PhxEventJson("phx_reply") { message: JsonElement, ref: Long ->
             triggerEvent(replyEventName(ref), message, ref)
-        }
+        })
     }
 
     /**
@@ -169,31 +168,37 @@ class PhxChannel(
     }
 
     /**
-     *  \brief Adds event and callback to this->bindings.
+     *  \brief Adds event and callback to this->eventBindings.
      *
-     *  Adding an event to bindings causes its callback to get triggered
+     *  Adding an event to eventBindings causes its callback to get triggered
      *  when its corresponding event is posted.
      *
      *  \param event The event to listen to.
      *  \param callback The callback to trigger if event is posted.
      *  \return void
      */
-    fun onEvent(event: String, callback: OnReceive) {
-        bindings.add(Pair(event, callback))
+    fun <T> onEvent(event: PhxEvent<T>) {
+        if (eventBindings[event.name] == null) {
+            eventBindings[event.name] = event as PhxEvent<Any>
+        } else {
+            event.callbacks.forEach {
+                eventBindings[event.name]!!.callbacks.add(it as OnReceive<Any>)
+            }
+        }
     }
 
     /**
-     *  \brief Removes event from this->bindings.
+     *  \brief Removes event from this->eventBindings.
      *
-     *  Removing event from bindings skips any callback associated with that
+     *  Removing event from eventBindings skips any callback associated with that
      *  event from triggering.
      *
      *  \param event The event to unsubscribe.
      *  \return void
      */
     fun offEvent(event: String?){
-        // Remove all Event bindings that match event.
-        bindings =  bindings.filter { it.first != event }.toMutableList()
+        // Remove all Event eventBindings that match event.
+        eventBindings.remove(event)
     }
 
     /**
@@ -203,11 +208,11 @@ class PhxChannel(
      *  \return void
      */
     fun onClose(callback: OnClose) {
-        onEvent("phx_close") {
+        onEvent(PhxEventJson("phx_close") {
             message: JsonElement,
             ref: Long ->
             callback(message.toString())
-        }
+        })
     }
 
     /**
@@ -217,11 +222,11 @@ class PhxChannel(
      *  \return void
      */
     fun onError(callback: OnError) {
-        onEvent("phx_error") {
+        onEvent(PhxEventJson("phx_error") {
             error: JsonElement,
             ref: Long ->
             callback(error.toString())
-        }
+        })
     }
 
     /**

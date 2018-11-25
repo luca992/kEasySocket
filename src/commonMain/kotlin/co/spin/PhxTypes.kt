@@ -8,5 +8,6 @@ typealias OnOpen = () -> Unit
 typealias OnClose = (event: String) -> Unit
 typealias OnError = (error: String) -> Unit
 typealias OnMessage = (json: JsonElement) -> Unit
-typealias OnReceive = (message: JsonElement, ref: Long) -> Unit
+typealias OnReceive<T> = (message: T, ref: Long) -> Unit
+typealias OnReceiveJson = OnReceive<JsonElement>
 typealias After = () -> Unit

@@ -210,8 +210,8 @@ class PhxSocket(
         val json = JsonTreeParser(rawMessage).read() as JsonObject
         val jsonTopic = json.get("topic").content
         val jsonEvent = json.get("event").content
+        val jsonPayload= json.get("payload").jsonObject
         val jsonRef = json.getPrimitiveOrNull("ref")
-        val jsonPayload = json.get("payload").jsonObject
 
         val ref = jsonRef?.longOrNull ?: -1L
 

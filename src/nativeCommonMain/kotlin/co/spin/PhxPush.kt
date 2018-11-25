@@ -144,14 +144,14 @@ class PhxPush(
         sent = false
 
         // FIXME: Should this be weak?
-        channel.onEvent(refEvent!!) {
+        channel.onEvent(PhxEventJson(refEvent!!) {
             message: JsonElement,
             _: Long ->
             receivedResp = message
             matchReceive(message as JsonObject)
             cancelRefEvent()
             cancelAfter()
-        }
+        })
 
 
         startAfter()
