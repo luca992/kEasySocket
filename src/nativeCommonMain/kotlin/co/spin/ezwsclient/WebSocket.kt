@@ -282,7 +282,7 @@ open class WebSocket{
                 rxbuf= rxbuf.copyOf(N + 1500)
                 var ret = 0L
                 rxbuf.usePinned { pinned: Pinned<UByteArray> ->
-                    ret = recv(pinned.addressOf(0) + N, 1500u)
+                    ret = recv(pinned.addressOf(0 + N), 1500u)
                 }
                 if (false) {
                 } else if (ret < 0 && (posix_errno() == SOCKET_EWOULDBLOCK || posix_errno() == SOCKET_EAGAIN_EINPROGRESS)) {
@@ -387,9 +387,9 @@ open class WebSocket{
                     return@launch; /* Need: ws.header_size+ws.N - rxbuf.size */
                 }
 
+
                 // We got a whole message, now do something with it:
-                if (false) {
-                } else if (
+                if (
                         ws.opcode == WsHeaderType.OpcodeType.TEXT_FRAME
                         || ws.opcode == WsHeaderType.OpcodeType.BINARY_FRAME
                         || ws.opcode == WsHeaderType.OpcodeType.CONTINUATION
@@ -422,7 +422,8 @@ open class WebSocket{
                     Log.error { "ERROR: Got unexpected WebSocket message.\n" }; this@WebSocket.close()
                 }
 
-                rxbuf = UByteArray(0)
+                val remaining = UByteArray(rxbuf.size - ws.header_size.toInt() + ws.N.toInt() )
+                rxbuf = if (remaining.isEmpty()) remaining else rxbuf.copyInto(remaining,0,ws.header_size.toInt() + ws.N.toInt())
             }
         } catch (e: Exception){
             e.printStackTrace()
