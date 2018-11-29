@@ -8,7 +8,7 @@ import kotlinx.cinterop.*
 
 internal actual object EzSocketDispatchers {
 
-    public actual val Default: CoroutineDispatcher get() = Dispatchers.Unconfined
+    public actual val Default: CoroutineDispatcher get() = MainLoopDispatcher
 
     public actual val Main: CoroutineDispatcher get() = MainLoopDispatcher
 
