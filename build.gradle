@@ -125,17 +125,6 @@ kotlin {
                 }
             }
 		}
-		//workaround: https://github.com/JetBrains/kotlin-native/issues/1828#issuecomment-434955550
-		matching { it.platformType.name == 'native' }.all {
-            compilations.all {
-                cinterops.all {
-                    configurations[dependencyConfigurationName].attributes.attribute(
-                        Usage.USAGE_ATTRIBUTE,
-                        objects.named(Usage, 'kotlin-api')
-                    )
-                }
-            }
-        }
 
         all {
             mavenPublication {
