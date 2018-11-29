@@ -8,8 +8,9 @@ import kotlin.coroutines.*
 /*
 fun main(args: Array<String>) = runBlocking<Unit> {
 
-    /*val ws = WebSocket.fromUrl("ws://localhost:8126/foo") ?: return@runBlocking
-    var callback = { s:UByteArray ->
+    /*val url : Url = parseUrl("ws://localhost:8126/foo", null) ?: throw Exception("Can't parse Url")
+    val ws = WebSocket.fromUrl(url)
+    val callback = { s:UByteArray ->
         println(s.toByteArray().stringFromUtf8())
     }
     var sendCount= 0
@@ -19,6 +20,7 @@ fun main(args: Array<String>) = runBlocking<Unit> {
             ws.send("hello")
             sendCount++
         } else {
+            delay(1000)
             ws.close()
         }
         ws.dispatchBinary(callback)
@@ -32,7 +34,6 @@ fun main(args: Array<String>) = runBlocking<Unit> {
 
     val j = n.start(url, if (args.size > 2) args[2] else "")
     j.join()
-
 
     return@runBlocking
 }

@@ -218,7 +218,7 @@ class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
 
     override fun send(buf: CPointer<UByteVar>?, len: ULong) : Long {
         val message = (buf as? CPointer<ByteVar>?)?.toKString()
-        Log.debug{"Sending: ${message?.trim()}"}
+        //Log.debug{"Sending: ${message?.trim()}"}
 
         var nbyte = len.toInt()
         var sent: Long = 0

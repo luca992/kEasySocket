@@ -1,14 +1,22 @@
 # Intro
-   kEasySocket is a multiplatform kotlin macOs, windows, linux(untested) websocket client. Also supports communication with a phoenix framework web project through the use of channels over websocket.
+  kEasySocket is a multiplatform kotlin websocket client. Also supports communication with a phoenix framework web project through the use of channels over websocket.
 
+  Platform Status:
+  * macOs: _working_ 
+  * windows: (probably needs minor fixes)
+  * linux: _untested_
+  * ios: _Not working (need to figure out how to use openssl on ios.. or use apple's lib)_
+  * java: todo
+  
   Learn more about the Phoenix Framework at http://www.phoenixframework.org/
   
 # Basic Websocket Example Usage
 
 ```kotlin
 fun main(args: Array<String>) = runBlocking<Unit> {
-    val ws = WebSocket.fromUrl("ws://localhost:8126/foo") ?: return@runBlocking
-    var callback = { s:UByteArray ->
+    val url : Url = parseUrl("ws://localhost:8126/foo", null) ?: throw Exception("Can't parse Url")
+    val ws = WebSocket.fromUrl(url)
+    val callback = { s:UByteArray ->
         println(s.toByteArray().stringFromUtf8())
     }
     var sendCount= 0
@@ -18,6 +26,7 @@ fun main(args: Array<String>) = runBlocking<Unit> {
             ws.send("hello")
             sendCount++
         } else {
+            delay(1000)
             ws.close()
         }
         ws.dispatchBinary(callback)

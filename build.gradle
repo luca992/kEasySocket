@@ -70,7 +70,7 @@ kotlin {
 		}
         unixMain
 
-        configure([linuxMain, macMain]) {
+        configure([linuxMain, macMain, /*iosX64Main, iosArm64Main*/]) {
             dependsOn unixMain
         }
         configure([unixMain, windowsMain]) {
@@ -100,7 +100,7 @@ kotlin {
             }
         }
 
-        configure([linuxTest, windowsTest, macTest]) {
+        configure([linuxTest, windowsTest, macTest,/* iosX64Test, iosArm64Test*/]) {
             dependsOn nativeCommonTest
         }
     }
@@ -110,7 +110,10 @@ kotlin {
         fromPreset(presets.linuxX64, 'linux')
         fromPreset(presets.mingwX64, 'windows')
         fromPreset(presets.macosX64, 'mac')
-		configure([linux, windows, mac]) {
+        //fromPreset(presets.iosX64, 'iosX64')
+        //fromPreset(presets.iosArm64, 'iosArm64')
+                
+		configure([linux, windows, mac,/* iosX64, iosArm64*/]) {
 			//compilations.main.outputKinds( 'EXECUTABLE')
             compilations.main.cinterops {
                 openssl {

@@ -403,7 +403,7 @@ open class WebSocket{
                     receivedData = receivedData.copyOf(receivedData.size + ws.N.toInt())
                     receivedData = rxbuf.copyInto(receivedData, oldReceivedDataSize, ws.header_size.toInt(), ws.header_size.toInt() + ws.N.toInt())// just feed
                     if (ws.fin) {
-                        Log.info { "Recieved: ${receivedData.toByteArray().stringFromUtf8()}" }
+                        //Log.info { "Recieved: ${receivedData.toByteArray().stringFromUtf8()}" }
                         callback(receivedData)
                         receivedData = UByteArray(0)
                     }
