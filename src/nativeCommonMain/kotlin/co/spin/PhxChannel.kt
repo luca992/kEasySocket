@@ -160,7 +160,7 @@ class PhxChannel(
      */
     fun leave() {
         state = ChannelState.CLOSED
-        var payload = JsonObject(mapOf())
+        val payload = JsonObject(mapOf())
         val p = pushEvent("phx_leave", payload)
         p.onReceive("ok") {
             triggerEvent("phx_close", JsonPrimitive("leave"), -1);
