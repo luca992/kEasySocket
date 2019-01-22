@@ -20,7 +20,7 @@ import co.spin.utils.setsockopt
 import co.spin.utils.INVALID_SOCKET
 import co.spin.utils.SOCKET_EWOULDBLOCK
 import co.spin.utils.SOCKET_EAGAIN_EINPROGRESS
-import co.spin.ezwsclient.WebSocket.ReadyStateValues.*
+import co.spin.ezwsclient.ReadyStateValues.*
 import kotlinx.coroutines.EzSocketDispatchers
 
 fun UByte.shl(b: Int) = (toInt() shl b.toInt()).toUByte()
@@ -32,8 +32,9 @@ const val SOCKET_ERROR  : Long = -1L
 
 
 @ExperimentalUnsignedTypes
-open class WebSocket(private var url: Url, var useMask: Boolean = true, private var origin: String = "") {
-    enum class ReadyStateValues { CLOSING, CLOSED, CONNECTING, OPEN }
+actual open class WebSocket actual constructor(private val url: Url,
+                            val useMask: Boolean,
+                            private val origin: String) {
 
     private data class WsHeaderType (
             var header_size: UInt = 0u,
@@ -64,7 +65,7 @@ open class WebSocket(private var url: Url, var useMask: Boolean = true, private 
 
 
     var sockfd: /*socketT*/ULong = ULong.MAX_VALUE
-    var readyState: ReadyStateValues = OPEN
+    actual var readyState: ReadyStateValues = OPEN
 
 
     private fun init() {
@@ -136,7 +137,7 @@ open class WebSocket(private var url: Url, var useMask: Boolean = true, private 
         Log.debug{"Connected to: $url"}
     }
 
-    fun send(buf: String?) : Long =
+    actual fun send(buf: String?) : Long =
         send(buf?.toUtf8()?.toUByteArray())
 
 
@@ -204,7 +205,7 @@ open class WebSocket(private var url: Url, var useMask: Boolean = true, private 
     }
 
 
-    fun poll(timeout : Int = 0){
+    actual fun poll(timeout : Int){
         memScoped {
             if (readyState == CLOSED) {
                 if (timeout > 0) {
@@ -270,7 +271,7 @@ open class WebSocket(private var url: Url, var useMask: Boolean = true, private 
         }
     }
 
-    fun dispatchBinary(callback: (UByteArray) -> Unit): Job = GlobalScope.launch(EzSocketDispatchers.Default) {
+    actual fun dispatchBinary(callback: (String) -> Unit): Job = GlobalScope.launch(EzSocketDispatchers.Default) {
         try {
             // TODO: consider acquiring a lock on rxbuf...
             while (true) {
@@ -348,7 +349,7 @@ open class WebSocket(private var url: Url, var useMask: Boolean = true, private 
                     receivedData = rxbuf.copyInto(receivedData, oldReceivedDataSize, ws.header_size.toInt(), ws.header_size.toInt() + ws.N.toInt())// just feed
                     if (ws.fin) {
                         //Log.info { "Recieved: ${receivedData.toByteArray().stringFromUtf8()}" }
-                        callback(receivedData)
+                        callback(receivedData.toByteArray().stringFromUtf8())
                         receivedData = UByteArray(0)
                     }
                 } else if (ws.opcode == WsHeaderType.OpcodeType.PING) {
@@ -374,20 +375,20 @@ open class WebSocket(private var url: Url, var useMask: Boolean = true, private 
         }
     }
 
-    fun sendMessage(message: String){
+    actual fun sendMessage(message: String){
         val uft8Msg = message.toUtf8().toUByteArray()
         sendData(WsHeaderType.OpcodeType.TEXT_FRAME, uft8Msg.size, uft8Msg)
     }
 
-    fun sendBinary(message: String){
+    actual fun sendBinary(message: String){
         val uft8Msg = message.toUtf8().toUByteArray()
         sendData(WsHeaderType.OpcodeType.BINARY_FRAME, uft8Msg.size, uft8Msg)
     }
-    fun sendBinary(message: ByteArray){
+    actual fun sendBinary(message: ByteArray){
         sendData(WsHeaderType.OpcodeType.BINARY_FRAME, message.size, message.toUByteArray())
     }
 
-    fun sendPing(){
+    actual fun sendPing(){
         val empty = "".toUtf8().toUByteArray()
         sendData(WsHeaderType.OpcodeType.PING, empty.size, empty)
     }
@@ -456,7 +457,7 @@ open class WebSocket(private var url: Url, var useMask: Boolean = true, private 
         }
     }
 
-    open fun close(){
+    actual open fun close(){
         if(readyState == CLOSING || readyState == CLOSED) { return; }
         readyState = CLOSING
         val txbufOldSize = txbuf.size
@@ -466,7 +467,7 @@ open class WebSocket(private var url: Url, var useMask: Boolean = true, private 
     }
 
 
-    companion object {
+    actual companion object {
 
         private fun webSocketForUrl(url: Url, useMask: Boolean) : WebSocket{
             return if (url.protocol == "wss"){
@@ -476,13 +477,13 @@ open class WebSocket(private var url: Url, var useMask: Boolean = true, private 
             }
 
         }
-        fun fromUrl(url : Url, origin: String = ""): WebSocket {
+        actual fun fromUrl(url : Url, origin: String): WebSocket {
             val webSocket =  webSocketForUrl(url, true)
             webSocket.init()
             return webSocket
         }
 
-        fun fromUrlNoMask(url : Url, origin: String): WebSocket {
+        actual fun fromUrlNoMask(url : Url, origin: String): WebSocket {
             val webSocket =  webSocketForUrl(url, true)
             webSocket.init()
             return webSocket

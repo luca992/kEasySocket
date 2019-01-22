@@ -1,5 +1,6 @@
 package co.spin
 
+import co.spin.ezwsclient.ReadyStateValues
 import co.spin.ezwsclient.WebSocket
 import co.spin.utils.Log
 import kotlinx.coroutines.*
@@ -49,9 +50,9 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
         var triggeredWebsocketJoinedCallback = false
 
 
-        val callback = {message :UByteArray ->
+        val callback = {message : String ->
             receiveQueue.enqueue {
-                delegate?.webSocketDidReceive(this@EasySocketPhnx, message.toByteArray().stringFromUtf8())
+                delegate?.webSocketDidReceive(this@EasySocketPhnx, message)
 
             }
         }
@@ -59,14 +60,14 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
             while (shouldContinueLoop) {
                 //Log.debug { "${ws.readyState.name}" }
                 when (ws.readyState) {
-                    WebSocket.ReadyStateValues.CLOSED -> {
+                    ReadyStateValues.CLOSED -> {
                         state = SocketState.SocketClosed
                         delegate?.webSocketDidClose(this@EasySocketPhnx, 0, "", true)
 
                         // We got a CLOSED so the loop should stop.
                         shouldContinueLoop = false
                     }
-                    WebSocket.ReadyStateValues.CLOSING -> {
+                    ReadyStateValues.CLOSING -> {
                         state = SocketState.SocketClosing
                         GlobalScope.launch(EzSocketDispatchers.Default) {
                             socketMutex.withLock {
@@ -75,7 +76,7 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
                             }
                         }
                     }
-                    WebSocket.ReadyStateValues.CONNECTING -> {
+                    ReadyStateValues.CONNECTING -> {
                         state = SocketState.SocketConnecting
                         GlobalScope.launch(EzSocketDispatchers.Default) {
                             socketMutex.withLock {
@@ -85,7 +86,7 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
                             }
                         }
                     }
-                    WebSocket.ReadyStateValues.OPEN -> {
+                    ReadyStateValues.OPEN -> {
                         state = SocketState.SocketOpen
                         if (!triggeredWebsocketJoinedCallback) {
                             triggeredWebsocketJoinedCallback = true;
