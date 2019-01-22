@@ -126,7 +126,7 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
         GlobalScope.launch(EzSocketDispatchers.Default) {
             socketMutex.withLock {
                 if (socket != null && state == SocketState.SocketOpen) {
-                    socket!!.send(message)
+                    socket!!.sendMessage(message)
                 }
             }
         }

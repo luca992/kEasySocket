@@ -79,48 +79,21 @@ open class WebSocket(private var url: Url, var useMask: Boolean = true, private 
             val status = alloc<IntVar>()
             var i = 0
             Log.debug{"easywsclient: connecting now: host=${url.host} port=${url.port} path=${url.path}"}
-            "GET ${url.path} HTTP/1.1\r\n".toUtf8().toUByteArray()
-                    .usePinned { pinned ->
-                        send(pinned.addressOf(0), pinned.get().size.toULong())
-                    }
+            send("GET ${url.path} HTTP/1.1\r\n")
             if (url.port == 80) {
-                "Host: ${url.host}\r\n".toUtf8().toUByteArray()
-                        .usePinned { pinned ->
-                            send(pinned.addressOf(0), pinned.get().size.toULong())
-                        }
+                send("Host: ${url.host}\r\n")
             }
             else {
-                "Host: ${url.host}:${url.port}\r\n".toUtf8().toUByteArray()
-                        .usePinned { pinned ->
-                            send(pinned.addressOf(0), pinned.get().size.toULong())
-                        }
+                send("Host: ${url.host}:${url.port}\r\n")
             }
-            "Upgrade: websocket\r\n".toUtf8().toUByteArray()
-                    .usePinned { pinned ->
-                        send(pinned.addressOf(0), pinned.get().size.toULong())
-                    }
-            "Connection: Upgrade\r\n".toUtf8().toUByteArray()
-                    .usePinned { pinned ->
-                        send(pinned.addressOf(0), pinned.get().size.toULong())
-                    }
+            send("Upgrade: websocket\r\n")
+            send("Connection: Upgrade\r\n")
             if (!origin.isEmpty()) {
-                "Origin: $origin\r\n".toUtf8().toUByteArray()
-                        .usePinned { pinned ->
-                            send(pinned.addressOf(0), pinned.get().size.toULong())
-                        }
+                send("Origin: $origin\r\n")
             }
-            "Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==\r\n".toUtf8().toUByteArray()
-                    .usePinned { pinned ->
-                        send(pinned.addressOf(0), pinned.get().size.toULong())
-                    }
-            "Sec-WebSocket-Version: 13\r\n".toUtf8().toUByteArray()
-                    .usePinned { pinned ->
-                        send(pinned.addressOf(0), pinned.get().size.toULong())
-                    }
-            "\r\n".toUtf8().toUByteArray()
-                    .usePinned { pinned ->
-                        send(pinned.addressOf(0), pinned.get().size.toULong())
-                    }
+            send("Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==\r\n")
+            send("Sec-WebSocket-Version: 13\r\n")
+            send("\r\n")
             line.usePinned{ pinned ->
                 while (i < 2 || (i < 255 && line[i - 2].toChar() != '\r' && line[i - 1].toChar() != '\n')) {
                     val recv = recv(pinned.addressOf(i), 1u)
@@ -163,9 +136,20 @@ open class WebSocket(private var url: Url, var useMask: Boolean = true, private 
         Log.debug{"Connected to: $url"}
     }
 
-    protected open fun send(buf: CPointer<UByteVar>?, len: ULong) : Long {
-        return send(sockfd,buf,len,0)
+    fun send(buf: String?) : Long =
+        send(buf?.toUtf8()?.toUByteArray())
+
+
+    fun send(buf: UByteArray?) : Long {
+        var ret = 0L
+        buf?.usePinned { pinned ->
+            ret =  send(pinned.addressOf(0),pinned.get().size.toULong())
+        }
+        return ret
     }
+
+    protected open fun send(bufPtr: CPointer<UByteVar>?, len: ULong) : Long =
+            send(sockfd,bufPtr,len,0)
 
     protected open fun recv(buf: CPointer<UByteVar>?, len: ULong) : Long {
         return recv(sockfd,buf,len,0)
@@ -262,10 +246,7 @@ open class WebSocket(private var url: Url, var useMask: Boolean = true, private 
                 }
             }
             while (!txbuf.isEmpty()) {
-                var ret =0L
-                txbuf.usePinned{ pinned->
-                    ret = send(pinned.addressOf(0), txbuf.size.toULong())
-                }
+                val ret = send(txbuf)
                 if (false) { } // ??
                 else if (ret < 0 && (posix_errno() == SOCKET_EWOULDBLOCK || posix_errno() == SOCKET_EAGAIN_EINPROGRESS)) {
                     break
@@ -393,7 +374,7 @@ open class WebSocket(private var url: Url, var useMask: Boolean = true, private 
         }
     }
 
-    fun send(message: String){
+    fun sendMessage(message: String){
         val uft8Msg = message.toUtf8().toUByteArray()
         sendData(WsHeaderType.OpcodeType.TEXT_FRAME, uft8Msg.size, uft8Msg)
     }

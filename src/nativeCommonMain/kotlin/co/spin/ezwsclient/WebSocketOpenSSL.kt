@@ -216,8 +216,8 @@ class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
         super.close()
     }
 
-    override fun send(buf: CPointer<UByteVar>?, len: ULong) : Long {
-        val message = (buf as? CPointer<ByteVar>?)?.toKString()
+    override fun send(bufPtr: CPointer<UByteVar>?, len: ULong) : Long {
+        val message = (bufPtr as? CPointer<ByteVar>?)?.toKString()
         //Log.debug{"Sending: ${message?.trim()}"}
 
         var nbyte = len.toInt()
@@ -230,7 +230,7 @@ class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
             }
 
             ERR_clear_error()
-            val write_result = SSL_write(ssl_connection, buf + sent, nbyte)
+            val write_result = SSL_write(ssl_connection, bufPtr + sent, nbyte)
             val reason = SSL_get_error(ssl_connection, write_result)
 
             if (reason == SSL_ERROR_NONE) {
