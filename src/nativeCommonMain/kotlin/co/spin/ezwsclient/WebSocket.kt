@@ -27,15 +27,12 @@ fun UByte.shl(b: Int) = (toInt() shl b.toInt()).toUByte()
 fun UByte.shr(b: Int) = (toInt() shr b.toInt()).toUByte()
 fun UByte.toChar() = (toByte()).toChar()
 
-interface Callback_Imp{
-    operator fun Callback_Imp.invoke()
-}
 
 const val SOCKET_ERROR  : Long = -1L
 
 
 @ExperimentalUnsignedTypes
-open class WebSocket{
+open class WebSocket(private var url: Url, var useMask: Boolean = true, private var origin: String = "") {
     enum class ReadyStateValues { CLOSING, CLOSED, CONNECTING, OPEN }
 
     private data class WsHeaderType (
@@ -61,9 +58,6 @@ open class WebSocket{
         }
     }
 
-    private var url: Url
-    private var origin: String
-
     var rxbuf = UByteArray(0)
     var txbuf = UByteArray(0)
     var receivedData = UByteArray(0)
@@ -71,37 +65,6 @@ open class WebSocket{
 
     var sockfd: /*socketT*/ULong = ULong.MAX_VALUE
     var readyState: ReadyStateValues = OPEN
-    var useMask: Boolean
-
-
-    var sslctx : CPointerVar<SSL_CTX>? = null
-    var cSSL : CPointerVar<SSL>? = null
-
-
-    //https://stackoverflow.com/a/16328115/1363742
-    fun InitializeSSL() {
-       // SSL_load_error_strings()
-        //SSL_library_init()
-        //OPENSSL_add_all_algorithms()
-
-    }
-
-    fun DestroySSL() {
-        //ERR_free_strings()
-        //EVP_cleanup()
-    }
-
-    fun ShutdownSSL() {
-        SSL_shutdown(cSSL?.value)
-        SSL_free(cSSL?.value)
-    }
-
-
-    constructor(url : Url, useMask : Boolean = true, origin: String= ""){
-        this.url = url
-        this.useMask = useMask
-        this.origin = origin
-    }
 
 
     private fun init() {
