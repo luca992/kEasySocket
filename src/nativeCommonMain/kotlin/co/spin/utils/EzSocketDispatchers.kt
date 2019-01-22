@@ -6,9 +6,10 @@ import platform.Foundation.*
 import platform.darwin.*
 import kotlinx.cinterop.*
 
+@kotlin.native.ThreadLocal
 internal actual object EzSocketDispatchers {
 
-    public actual val Default: CoroutineDispatcher get() = MainLoopDispatcher
+    public actual var Default: CoroutineDispatcher = MainLoopDispatcher
 
     public actual val Main: CoroutineDispatcher get() = MainLoopDispatcher
 

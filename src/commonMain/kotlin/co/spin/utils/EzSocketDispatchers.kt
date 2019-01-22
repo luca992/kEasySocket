@@ -14,7 +14,7 @@ internal expect object EzSocketDispatchers {
      * It is backed by a shared pool of threads on JVM. By default, the maximal number of threads used
      * by this dispatcher is equal to the number CPU cores, but is at least two.
      */
-    public val Default: CoroutineDispatcher
+    public var Default: CoroutineDispatcher
 
     /**
      * A coroutine dispatcher that is confined to the Main thread operating with UI objects.

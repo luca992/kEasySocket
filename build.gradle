@@ -114,7 +114,7 @@ kotlin {
         //fromPreset(presets.iosArm64, 'iosArm64')
                 
 		configure([linux, windows, mac,/* iosX64, iosArm64*/]) {
-			//compilations.main.outputKinds( 'EXECUTABLE')
+			compilations.main.outputKinds( 'EXECUTABLE')
             compilations.main.cinterops {
                 openssl {
                     switch (it) {

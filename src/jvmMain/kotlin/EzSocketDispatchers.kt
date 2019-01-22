@@ -4,7 +4,7 @@ import kotlin.coroutines.*
 
 internal actual object EzSocketDispatchers {
 
-    public actual val Default: CoroutineDispatcher get() = Dispatchers.Default
+    public actual var Default: CoroutineDispatcher = Dispatchers.Default
 
     public actual val Main: CoroutineDispatcher get() = Dispatchers.Main
 
