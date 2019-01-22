@@ -39,9 +39,12 @@ class Network : PhxSocketDelegate() {
         val socket
         = PhxSocket(url/*"ws://localhost:4000/socket/websocket"*/, 15)
         socket.setDelegate(this)
-
+        socket.onMessage {
+            println(it)
+        }
         channel = PhxChannel(socket, initialTopic, mapOf())
         channel.bootstrap()
+        channel
 
         // Instantiate the PhxChannel first before connecting on the socket.
         // This is because the connection can happen before the channel
