@@ -57,7 +57,7 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
         }
         val j = GlobalScope.launch(EzSocketDispatchers.Default) {
             while (shouldContinueLoop) {
-                Log.debug { "${ws.readyState.name}" }
+                //Log.debug { "${ws.readyState.name}" }
                 when (ws.readyState) {
                     WebSocket.ReadyStateValues.CLOSED -> {
                         state = SocketState.SocketClosed
