@@ -32,9 +32,9 @@ const val SOCKET_ERROR  : Long = -1L
 
 
 @ExperimentalUnsignedTypes
-actual open class WebSocket actual constructor(private val url: Url,
-                            val useMask: Boolean,
-                            private val origin: String) {
+open class WebSocket(private val url: Url,
+                     val useMask: Boolean,
+                     private val origin: String = "") {
 
     private data class WsHeaderType (
             var header_size: UInt = 0u,
@@ -65,7 +65,7 @@ actual open class WebSocket actual constructor(private val url: Url,
 
 
     var sockfd: /*socketT*/ULong = ULong.MAX_VALUE
-    actual var readyState: ReadyStateValues = OPEN
+    var readyState: ReadyStateValues = OPEN
 
 
     private fun init() {
@@ -137,7 +137,7 @@ actual open class WebSocket actual constructor(private val url: Url,
         Log.debug{"Connected to: $url"}
     }
 
-    actual fun send(buf: String?) : Long =
+    fun send(buf: String?) : Long =
         send(buf?.toUtf8()?.toUByteArray())
 
 
@@ -205,7 +205,7 @@ actual open class WebSocket actual constructor(private val url: Url,
     }
 
 
-    actual fun poll(timeout : Int){
+    fun poll(timeout : Int = 0){
         memScoped {
             if (readyState == CLOSED) {
                 if (timeout > 0) {
@@ -271,7 +271,7 @@ actual open class WebSocket actual constructor(private val url: Url,
         }
     }
 
-    actual fun dispatchBinary(callback: (String) -> Unit): Job = GlobalScope.launch(EzSocketDispatchers.Default) {
+    fun dispatchBinary(callback: (String) -> Unit): Job = GlobalScope.launch(EzSocketDispatchers.Default) {
         try {
             // TODO: consider acquiring a lock on rxbuf...
             while (true) {
@@ -375,20 +375,20 @@ actual open class WebSocket actual constructor(private val url: Url,
         }
     }
 
-    actual fun sendMessage(message: String){
+    fun sendMessage(message: String){
         val uft8Msg = message.toUtf8().toUByteArray()
         sendData(WsHeaderType.OpcodeType.TEXT_FRAME, uft8Msg.size, uft8Msg)
     }
 
-    actual fun sendBinary(message: String){
+    fun sendBinary(message: String){
         val uft8Msg = message.toUtf8().toUByteArray()
         sendData(WsHeaderType.OpcodeType.BINARY_FRAME, uft8Msg.size, uft8Msg)
     }
-    actual fun sendBinary(message: ByteArray){
+    fun sendBinary(message: ByteArray){
         sendData(WsHeaderType.OpcodeType.BINARY_FRAME, message.size, message.toUByteArray())
     }
 
-    actual fun sendPing(){
+    fun sendPing(){
         val empty = "".toUtf8().toUByteArray()
         sendData(WsHeaderType.OpcodeType.PING, empty.size, empty)
     }
@@ -457,7 +457,7 @@ actual open class WebSocket actual constructor(private val url: Url,
         }
     }
 
-    actual open fun close(){
+    open fun close(){
         if(readyState == CLOSING || readyState == CLOSED) { return; }
         readyState = CLOSING
         val txbufOldSize = txbuf.size
@@ -467,7 +467,7 @@ actual open class WebSocket actual constructor(private val url: Url,
     }
 
 
-    actual companion object {
+    companion object {
 
         private fun webSocketForUrl(url: Url, useMask: Boolean) : WebSocket{
             return if (url.protocol == "wss"){
@@ -477,13 +477,13 @@ actual open class WebSocket actual constructor(private val url: Url,
             }
 
         }
-        actual fun fromUrl(url : Url, origin: String): WebSocket {
+        fun fromUrl(url : Url, origin: String = ""): WebSocket {
             val webSocket =  webSocketForUrl(url, true)
             webSocket.init()
             return webSocket
         }
 
-        actual fun fromUrlNoMask(url : Url, origin: String): WebSocket {
+        fun fromUrlNoMask(url : Url, origin: String): WebSocket {
             val webSocket =  webSocketForUrl(url, true)
             webSocket.init()
             return webSocket

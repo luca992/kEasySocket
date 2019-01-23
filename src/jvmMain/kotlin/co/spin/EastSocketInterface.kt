@@ -1,14 +1,15 @@
 package co.spin
 
 import co.spin.ezwsclient.ReadyStateValues
-import co.spin.ezwsclient.WebSocket
 import co.spin.utils.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 @ExperimentalUnsignedTypes
-class EasySocketWrapper(url: Url, delegate: SocketDelegate) : WebSocketWrapper(url, delegate) {
+actual class EasySocketInterface
+actual constructor(actual override var url: Url,
+                   actual override var delegate: SocketDelegate?) : WebSocketInterface {
 
 
     /*!< Queue used for receiving messages. */
@@ -17,16 +18,18 @@ class EasySocketWrapper(url: Url, delegate: SocketDelegate) : WebSocketWrapper(u
     /*!< The mutex used when sending/polling messages over the socket. */
     private val socketMutex =  Mutex()
 
-    /*!< The underlying socket EasySocketWrapper wraps. */
-    private var socket: WebSocket? = null
+    //val client = HttpClient(CIO).config { install(WebSockets) }
+
+
+    actual override var state: SocketState = SocketState.SocketClosed
 
 
 
     /**
      * Open the websocket connection.
      */
-    override suspend fun open() {
-        socket = co.spin.ezwsclient.WebSocket.fromUrl(url)
+    actual override suspend fun open() {
+ /*       socket = co.spin.ezwsclient.WebSocket.fromUrl(url)
         if (socket==null){
             state = SocketState.SocketClosed
             delegate?.webSocketDidError(this, "")
@@ -59,7 +62,7 @@ class EasySocketWrapper(url: Url, delegate: SocketDelegate) : WebSocketWrapper(u
                 when (ws.readyState) {
                     ReadyStateValues.CLOSED -> {
                         state = SocketState.SocketClosed
-                        delegate?.webSocketDidClose(this@EasySocketWrapper, 0, "", true)
+                        delegate?.webSocketDidClose(this@EasySocketInterface, 0, "", true)
 
                         // We got a CLOSED so the loop should stop.
                         shouldContinueLoop = false
@@ -87,7 +90,7 @@ class EasySocketWrapper(url: Url, delegate: SocketDelegate) : WebSocketWrapper(u
                         state = SocketState.SocketOpen
                         if (!triggeredWebsocketJoinedCallback) {
                             triggeredWebsocketJoinedCallback = true;
-                            delegate?.webSocketDidOpen(this@EasySocketWrapper)
+                            delegate?.webSocketDidOpen(this@EasySocketInterface)
                         }
                         GlobalScope.launch(EzSocketDispatchers.Default) {
                             socketMutex.withLock {
@@ -105,29 +108,29 @@ class EasySocketWrapper(url: Url, delegate: SocketDelegate) : WebSocketWrapper(u
         Log.debug { "DONE???" }
         state = SocketState.SocketClosed
         socket = null
-
+*/
     }
 
     /**
      * Close the websocket connection.
      */
-    override fun close() {
+    actual override fun close() {
         state = SocketState.SocketClosed;
         // Was already closed or never opened.
-        socket?.close()
+       // socket?.close()
     }
 
     /**
      * Send a message over websockets.
      */
-    override fun send(message: String) {
-        GlobalScope.launch(EzSocketDispatchers.Default) {
+    actual override fun send(message: String) {
+        /*GlobalScope.launch(EzSocketDispatchers.Default) {
             socketMutex.withLock {
                 if (socket != null && state == SocketState.SocketOpen) {
                     socket!!.sendMessage(message)
                 }
             }
-        }
+        }*/
     }
 
 

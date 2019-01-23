@@ -7,11 +7,12 @@ enum class SocketState {
     SocketClosed
 }
 
-abstract class WebSocketWrapper(
-        var url: Url,
-        var delegate: SocketDelegate?) {
+interface WebSocketInterface {
 
-    var state: SocketState = SocketState.SocketClosed
+    var url: Url
+    var delegate: SocketDelegate?
+
+    var state: SocketState
 
     /**
      * Open the websocket connection.

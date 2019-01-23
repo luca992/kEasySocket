@@ -31,7 +31,7 @@ class PhxSocket(
         /*!
         The underlying WebSocket interface. This can be used with a
         different library provided the WebSocket interface is implemented.*/
-        var socket: WebSocketWrapper? = null) : SocketDelegate() {
+        var socket: WebSocketInterface? = null) : SocketDelegate() {
 
     /*!< Single Thread Thread Pool used for synchronization. */
     private var pool =  ThreadPool(POOL_SIZE)
@@ -288,18 +288,18 @@ class PhxSocket(
     }
 
     // SocketDelegate
-    override fun webSocketDidOpen(socket: WebSocketWrapper) {
+    override fun webSocketDidOpen(socket: WebSocketInterface) {
         pool.enqueue {
             onConnOpen()
         }
     }
-    override fun webSocketDidReceive(socket: WebSocketWrapper, message: String) {
+    override fun webSocketDidReceive(socket: WebSocketInterface, message: String) {
         pool.enqueue { onConnMessage(message) }
     }
-    override fun webSocketDidError(socket: WebSocketWrapper, error: String) {
+    override fun webSocketDidError(socket: WebSocketInterface, error: String) {
         pool.enqueue { onConnError(error) }
     }
-    override fun webSocketDidClose(socket: WebSocketWrapper, code: Int, reason: String, wasClean: Boolean) {
+    override fun webSocketDidClose(socket: WebSocketInterface, code: Int, reason: String, wasClean: Boolean) {
         pool.enqueue { onConnClose(reason) }
     }
 
@@ -315,7 +315,7 @@ class PhxSocket(
 
         // The socket hasn't been instantiated with a custom WebSocket.
         if (socket==null) {
-            this.socket = EasySocketWrapper(url, this)
+            this.socket = EasySocketInterface(url, this)
         }
         return GlobalScope.launch(EzSocketDispatchers.Default) {
             socket!!.open()
