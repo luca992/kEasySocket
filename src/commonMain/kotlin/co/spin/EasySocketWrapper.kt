@@ -29,7 +29,7 @@ class EasySocketWrapper(url: Url, delegate: SocketDelegate) : WebSocketWrapper(u
         socket = co.spin.ezwsclient.WebSocket.fromUrl(url)
         if (socket==null){
             state = SocketState.SocketClosed
-            delegate?.webSocketDidError(this@EasySocketWrapper, "")
+            delegate?.webSocketDidError(this, "")
             socket = null
             return
         }
@@ -49,7 +49,7 @@ class EasySocketWrapper(url: Url, delegate: SocketDelegate) : WebSocketWrapper(u
 
         val callback = {message : String ->
             receiveQueue.enqueue {
-                delegate?.webSocketDidReceive(this@EasySocketWrapper, message)
+                delegate?.webSocketDidReceive(this, message)
 
             }
         }
