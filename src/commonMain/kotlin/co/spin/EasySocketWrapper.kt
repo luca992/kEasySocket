@@ -8,7 +8,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 @ExperimentalUnsignedTypes
-class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, delegate) {
+class EasySocketWrapper(url: Url, delegate: SocketDelegate) : WebSocketWrapper(url, delegate) {
 
 
     /*!< Queue used for receiving messages. */
@@ -17,12 +17,9 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
     /*!< The mutex used when sending/polling messages over the socket. */
     private val socketMutex =  Mutex()
 
-    /*!< The underlying socket EasySocketPhnx wraps. */
+    /*!< The underlying socket EasySocketWrapper wraps. */
     private var socket: WebSocket? = null
 
-    /*!< Keep track of Socket State.
-      This is used instead of easywsclient's SocketState. */
-    var state: SocketState = SocketState.SocketClosed
 
 
     /**
@@ -32,7 +29,7 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
         socket = co.spin.ezwsclient.WebSocket.fromUrl(url)
         if (socket==null){
             state = SocketState.SocketClosed
-            delegate?.webSocketDidError(this@EasySocketPhnx, "")
+            delegate?.webSocketDidError(this@EasySocketWrapper, "")
             socket = null
             return
         }
@@ -52,7 +49,7 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
 
         val callback = {message : String ->
             receiveQueue.enqueue {
-                delegate?.webSocketDidReceive(this@EasySocketPhnx, message)
+                delegate?.webSocketDidReceive(this@EasySocketWrapper, message)
 
             }
         }
@@ -62,7 +59,7 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
                 when (ws.readyState) {
                     ReadyStateValues.CLOSED -> {
                         state = SocketState.SocketClosed
-                        delegate?.webSocketDidClose(this@EasySocketPhnx, 0, "", true)
+                        delegate?.webSocketDidClose(this@EasySocketWrapper, 0, "", true)
 
                         // We got a CLOSED so the loop should stop.
                         shouldContinueLoop = false
@@ -90,7 +87,7 @@ class EasySocketPhnx(url: Url, delegate: SocketDelegate) : PhnxWebSocket(url, de
                         state = SocketState.SocketOpen
                         if (!triggeredWebsocketJoinedCallback) {
                             triggeredWebsocketJoinedCallback = true;
-                            delegate?.webSocketDidOpen(this@EasySocketPhnx)
+                            delegate?.webSocketDidOpen(this@EasySocketWrapper)
                         }
                         GlobalScope.launch(EzSocketDispatchers.Default) {
                             socketMutex.withLock {

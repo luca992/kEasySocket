@@ -7,9 +7,12 @@ enum class SocketState {
     SocketClosed
 }
 
-abstract class PhnxWebSocket(
+abstract class WebSocketWrapper(
         var url: Url,
         var delegate: SocketDelegate?) {
+
+    var state: SocketState = SocketState.SocketClosed
+
     /**
      * Open the websocket connection.
      */
