@@ -38,6 +38,29 @@ class PhxChannel(
     /*!< The current state of the channel. */
     private var state = ChannelState.CLOSED
 
+
+    init {
+        socket.addChannel(this)
+
+        socket.onOpen { rejoin() }
+
+        socket.onClose {
+            state = ChannelState.CLOSED;
+            socket.removeChannel(this)
+        }
+
+        socket.onError { state = ChannelState.ERRORED }
+
+        joinPush = PhxPush(this, "phx_join", JsonObject(params.mapValues { JsonPrimitive(it.value) }))
+
+        joinPush!!.onReceive("ok") { state = ChannelState.JOINED }
+
+        onEvent(PhxEventJson("phx_reply") { message: JsonElement, ref: Long ->
+            triggerEvent(replyEventName(ref), message, ref)
+        })
+    }
+
+
     /**
      *  \brief Trigger joining of channel.
      *
@@ -100,42 +123,6 @@ class PhxChannel(
     }
 
 
-    /**
-     *  \brief Called to bootstrap PhxChannel and PhxSocket together.
-     *
-     *  This MUST be called for PhxChannel communication to work.
-     *
-     *  The reason for the existance of this function is because of the need
-     *  to set up shared_ptrs between PhxChannel and PhxSocket.
-     *  This initialization code can't be in the constructor because we're
-     *  trying to use this->shared_from_this() which can only be used after a
-     *  shared_ptr is already created which won't work if we're calling
-     *  this->shared_from_this from the constructor.
-     *
-     *  \return void
-     */
-    fun bootstrap() {
-        // NOTE: This can't be done in the constructor.
-        // So we bootstrap the connection here.
-        socket.addChannel(this)
-
-        socket.onOpen { rejoin() }
-
-        socket.onClose {
-            state = ChannelState.CLOSED;
-            socket.removeChannel(this)
-        }
-
-        socket.onError { state = ChannelState.ERRORED }
-
-        joinPush = PhxPush(this, "phx_join", JsonObject(params.mapValues { JsonPrimitive(it.value) }))
-
-        joinPush!!.onReceive("ok") { state = ChannelState.JOINED }
-
-        onEvent(PhxEventJson("phx_reply") { message: JsonElement, ref: Long ->
-            triggerEvent(replyEventName(ref), message, ref)
-        })
-    }
 
     /**
      *  \brief Sends a join message to Phoenix Channel.

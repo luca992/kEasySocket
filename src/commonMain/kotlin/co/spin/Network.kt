@@ -43,8 +43,6 @@ class Network : PhxSocketDelegate() {
             println(it)
         }
         channel = PhxChannel(socket, initialTopic, mapOf())
-        channel.bootstrap()
-        channel
 
         // Instantiate the PhxChannel first before connecting on the socket.
         // This is because the connection can happen before the channel
