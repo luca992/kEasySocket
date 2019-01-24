@@ -34,7 +34,6 @@ apply plugin: 'kotlin-multiplatform'
 
 kotlin {
 
-
     sourceSets {
         all {
             languageSettings {
@@ -68,7 +67,9 @@ kotlin {
 				implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlin_serialization_version"
 				implementation "io.ktor:ktor-client-websocket:$ktor_version"
                 implementation "io.ktor:ktor-client-cio:$ktor_version"
-			}
+                implementation "ch.qos.logback:logback-classic:1.2.3"
+                implementation "io.ktor:ktor-client-logging-jvm:$ktor_version"
+            }
 		}
         unixMain
 
