@@ -131,16 +131,6 @@ kotlin {
                 }
             }
 		}
-
-        all {
-            mavenPublication {
-                pom.withXml {
-                    def root = asNode()
-                    root.appendNode('name', 'openssl interop library')
-                    root.appendNode('description', 'A library providing interoperability with host openssl')
-                }
-            }
-        }
     }
 }
 
@@ -162,3 +152,51 @@ group 'co.spin'
 version projectVersion
 apply plugin: 'maven-publish'
 
+
+def pomBaseData = {
+    licenses {
+        license {
+            name project.property("project.license.name")
+            url project.property("project.license.url")
+        }
+    }
+    scm {
+        url project.property("project.scm.url")
+    }
+}
+
+def generatePom = { pom ->
+    pom.withXml {
+        def root = it.asNode()
+        root.appendNode('name', project.name)
+        root.appendNode('description', project.property("project.description"))
+        root.appendNode('url', project.property("project.scm.url"))
+        root.children().last() + pomBaseData
+    }
+}
+
+ext.generatePom = generatePom
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+def publishUser = properties.getProperty('bintrayUser') ?: rootProject.findProperty('BINTRAY_USER') ?: project.findProperty('bintrayUser') ?: System.getenv('BINTRAY_USER')
+def publishPassword = properties.getProperty('bintrayApiKey') ?: rootProject.findProperty('BINTRAY_KEY') ?: project.findProperty('bintrayApiKey') ?: System.getenv('BINTRAY_API_KEY')
+
+if (publishUser && publishPassword) {
+    publishing {
+        repositories {
+            maven {
+                credentials {
+                    username publishUser
+                    password publishPassword
+                }
+                url "https://api.bintray.com/maven/luca992/kotlin/${project.property('project.package')}/"
+            }
+        }
+
+        configure(publications) {
+            generatePom(pom)
+        }
+    }
+}
