@@ -21,6 +21,7 @@ import co.spin.utils.INVALID_SOCKET
 import co.spin.utils.SOCKET_EWOULDBLOCK
 import co.spin.utils.SOCKET_EAGAIN_EINPROGRESS
 import co.spin.ezwsclient.ReadyStateValues.*
+import co.spin.utils.*
 import kotlinx.coroutines.EzSocketDispatchers
 
 fun UByte.shl(b: Int) = (toInt() shl b.toInt()).toUByte()
@@ -28,7 +29,7 @@ fun UByte.shr(b: Int) = (toInt() shr b.toInt()).toUByte()
 fun UByte.toChar() = (toByte()).toChar()
 
 
-const val SOCKET_ERROR  : Long = -1L
+const val SOCKET_ERROR : Int = -1
 
 
 @ExperimentalUnsignedTypes
@@ -64,7 +65,7 @@ open class WebSocket(private val url: Url,
     var receivedData = UByteArray(0)
 
 
-    var sockfd: /*socketT*/ULong = ULong.MAX_VALUE
+    var sockfd: SocketT = SocketT.MAX_VALUE
     var readyState: ReadyStateValues = OPEN
 
 
@@ -161,7 +162,7 @@ open class WebSocket(private val url: Url,
         return sockfd != INVALID_SOCKET
     }
 
-    protected fun hostnameConnect(hostname : String, port : Int) : ULong {
+    protected fun hostnameConnect(hostname : String, port : Int) : SocketT {
         init_sockets()
         return memScoped {
             val hints : addrinfo = alloc<addrinfo>()
@@ -181,18 +182,18 @@ open class WebSocket(private val url: Url,
             if (ret != 0)
             {
                 Log.error{"getaddrinfo: $ret"}
-                return@memScoped 1u
+                return@memScoped 1
             }
             p = result.value
             while (p != null)
             {
-                sockfd = socket(p.pointed.ai_family, p.pointed.ai_socktype, p.pointed.ai_protocol).toULong()
+                sockfd = socket(p.pointed.ai_family, p.pointed.ai_socktype, p.pointed.ai_protocol)
                 if (sockfd.toInt() == Int.MAX_VALUE){
                     // work around for *nix which returns -1(Int) if error
                     sockfd = INVALID_SOCKET
                 }
                 if (sockfd == INVALID_SOCKET) { continue; }
-                if (connect(sockfd, p.pointed.ai_addr, p.pointed.ai_addrlen.toULong()) != SOCKET_ERROR.toULong()) {
+                if (connect(sockfd, p.pointed.ai_addr, p.pointed.ai_addrlen.toULong()) != SOCKET_ERROR) {
                     break
                 }
                 closesocket(sockfd)
