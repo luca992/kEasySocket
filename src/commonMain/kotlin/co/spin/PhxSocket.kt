@@ -207,7 +207,7 @@ class PhxSocket(
      *  \return void
      */
     private fun onConnMessage(rawMessage: String) {
-        val json = Json.plain.parseJson(rawMessage).jsonObject
+        val json = JsonTreeParser(rawMessage).read() as JsonObject
         val jsonTopic = json["topic"].content
         val jsonEvent = json["event"].content
         val jsonPayload= json["payload"].jsonObject
