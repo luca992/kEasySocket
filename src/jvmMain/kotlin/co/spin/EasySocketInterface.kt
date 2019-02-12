@@ -11,6 +11,8 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
 import io.ktor.http.cio.websocket.send
+import io.ktor.client.features.BadResponseStatusException
+
 import kotlinx.coroutines.EzSocketDispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.*
@@ -76,8 +78,25 @@ actual constructor(actual override var url: Url,
             state = SocketState.SocketConnecting
             client.wss(method = HttpMethod.Get, host = url.host, port = url.port, path = url.path,
                     block = defaultClientWebSocketSession)
-        } catch (t: Throwable) {
+        } catch (e: BadResponseStatusException) {
+            e.printStackTrace()
+            state = SocketState.SocketClosed
+            delegate?.webSocketDidClose(
+                    this@EasySocketInterface,
+                    e.statusCode.value.toInt(),
+                    e.message.toString(),
+                    false
+            )
+        }
+        catch (t: Throwable) {
             t.printStackTrace()
+            state = SocketState.SocketClosed
+            delegate?.webSocketDidClose(
+                    this@EasySocketInterface,
+                    -1,
+                    t.message.toString(),
+                    false
+            )
         }
     }
 
