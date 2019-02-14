@@ -59,11 +59,9 @@ actual constructor(actual override var url: Url,
             e.printStackTrace()
             state = SocketState.SocketClosed
             val reason = closeReason.await()
-            delegate?.webSocketDidClose(
+            delegate?.webSocketDidError(
                     this@EasySocketInterface,
-                    reason?.code?.toInt() ?: 0,
-                    reason.toString(),
-                    false
+                    reason.toString()
             )
 
         }
@@ -81,21 +79,17 @@ actual constructor(actual override var url: Url,
         } catch (e: BadResponseStatusException) {
             e.printStackTrace()
             state = SocketState.SocketClosed
-            delegate?.webSocketDidClose(
+            delegate?.webSocketDidError(
                     this@EasySocketInterface,
-                    e.statusCode.value.toInt(),
-                    e.message.toString(),
-                    false
+                    e.message.toString()
             )
         }
         catch (t: Throwable) {
             t.printStackTrace()
             state = SocketState.SocketClosed
-            delegate?.webSocketDidClose(
+            delegate?.webSocketDidError(
                     this@EasySocketInterface,
-                    -1,
-                    t.message.toString(),
-                    false
+                    t.message.toString()
             )
         }
     }
