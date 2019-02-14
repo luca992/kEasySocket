@@ -42,7 +42,7 @@ actual constructor(actual override var url: Url,
         state = SocketState.SocketOpen
         delegate?.webSocketDidOpen(this@EasySocketInterface)
         try {
-            for (message in incoming.map { it as? Frame.Text }.filterNotNull()) {
+            incoming.map { it as? Frame.Text }.filterNotNull().consumeEach { message->
                 delegate?.webSocketDidReceive(this@EasySocketInterface, message.readText())
             }
         } catch (e: ClosedReceiveChannelException) {
