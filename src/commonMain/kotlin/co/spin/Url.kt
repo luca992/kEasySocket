@@ -1,5 +1,7 @@
 package co.spin
 
+import co.spin.utils.Log
+
 data class Url(val protocol : String,
                val host : String,
                val port : Int,
@@ -21,7 +23,7 @@ data class Url(val protocol : String,
             var path     = found.groups[4]?.value
             val _query   = if (!found.groups[5]?.value.isNullOrBlank()) found.groups[5]?.value else query
 
-            println("$protocol : $host : $portStr : $path : $_query")
+            Log.info {"$protocol : $host : $portStr : $path : $_query"}
 
             val port : Int = if (portStr.isNullOrEmpty()) {
                 if (protocol == "wss") 443

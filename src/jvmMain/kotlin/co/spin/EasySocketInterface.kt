@@ -1,9 +1,9 @@
 package co.spin
 
+import co.spin.utils.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.logging.LogLevel
-import io.ktor.client.features.logging.Logging
+import io.ktor.client.features.BadResponseStatusException
 import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.features.websocket.wss
@@ -11,14 +11,13 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
 import io.ktor.http.cio.websocket.send
-import io.ktor.client.features.BadResponseStatusException
-
 import kotlinx.coroutines.EzSocketDispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.*
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.filterNotNull
+import kotlinx.coroutines.channels.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
 
 
 @ExperimentalUnsignedTypes
@@ -46,9 +45,9 @@ actual constructor(actual override var url: Url,
                 delegate?.webSocketDidReceive(this@EasySocketInterface, message.readText())
             }
         } catch (e: ClosedReceiveChannelException) {
-            println("onClose ${closeReason.await()}")
-            state = SocketState.SocketClosed
             val reason = closeReason.await()
+            Log.error{"onClose $reason"}
+            state = SocketState.SocketClosed
             delegate?.webSocketDidClose(
                     this@EasySocketInterface,
                     reason?.code?.toInt() ?: 0,

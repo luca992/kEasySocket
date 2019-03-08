@@ -422,7 +422,7 @@ class PhxSocket(
      */
     fun push(data: JsonElement) {
         try {
-            println("JSON: $data")
+            Log.info {"JSON: $data"}
             socket?.send(data.toString())
         } catch ( e:Exception) {
             Log.error { e.message }

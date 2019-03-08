@@ -1,9 +1,9 @@
 package co.spin
 
+import co.spin.utils.Log
 import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.json.JSON
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.parse
 
 open class PhxEvent<T>(val name: String,
                        val serializer: DeserializationStrategy<T>?,
@@ -12,9 +12,9 @@ open class PhxEvent<T>(val name: String,
     fun parse(content: String): T? {
         try {
             if (serializer == null) return null
-            return JSON.nonstrict.parse(serializer, content)
+            return Json.nonstrict.parse(serializer, content)
         } catch (e: Exception) {
-            println("HUH??? json deserialization failed $e")
+            Log.error{"HUH??? json deserialization failed: $e"}
             return null
         }
     }

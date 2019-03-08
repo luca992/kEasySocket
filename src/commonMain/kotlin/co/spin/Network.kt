@@ -40,7 +40,7 @@ class Network : PhxSocketDelegate() {
         = PhxSocket(url/*"ws://localhost:4000/socket/websocket"*/, 15)
         socket.setDelegate(this)
         socket.onMessage {
-            println(it)
+            Log.info {it}
         }
         channel = PhxChannel(socket, initialTopic, mapOf())
 
