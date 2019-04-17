@@ -45,19 +45,18 @@ kotlin {
         commonMain {
             dependencies {
                 implementation "org.jetbrains.kotlin:kotlin-stdlib-common"
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlin_coroutines_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlin_serialization_version"
-    			implementation "com.soywiz:klogger:$klogger_version"
             }
         }
 
-		nativeCommonMain {
+		/*nativeCommonMain {
 		    dependsOn commonMain
 			dependencies {
 			    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$kotlin_coroutines_version"
 			    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:$kotlin_serialization_version"
 			}
-		}
+		}*/
 
 		jvmMain {
 		    dependsOn commonMain
@@ -73,12 +72,12 @@ kotlin {
 		}
         unixMain
 
-        configure([linuxMain, macMain, /*iosX64Main, iosArm64Main*/]) {
+        configure([/*linuxMain, macMain,*/ /*iosX64Main, iosArm64Main*/]) {
             dependsOn unixMain
         }
-        configure([unixMain, windowsMain]) {
+        /*configure([unixMain, windowsMain]) {
             dependsOn nativeCommonMain
-        }
+        }*/
 
         commonTest {
             dependencies {
@@ -103,47 +102,59 @@ kotlin {
             }
         }
 
-        configure([linuxTest, windowsTest, macTest,/* iosX64Test, iosArm64Test*/]) {
+        /*configure([linuxTest, windowsTest, macTest,/* iosX64Test, iosArm64Test*//*]) {
             dependsOn nativeCommonTest
-        }
+        }*/
     }
 
     targets {
         fromPreset(presets.jvm, 'jvm')
-        fromPreset(presets.linuxX64, 'linux')
-        fromPreset(presets.mingwX64, 'windows')
-        fromPreset(presets.macosX64, 'mac')
+        //fromPreset(presets.linuxX64, 'linux')
+        //fromPreset(presets.mingwX64, 'windows')
+        //fromPreset(presets.macosX64, 'mac')
         //fromPreset(presets.iosX64, 'iosX64')
         //fromPreset(presets.iosArm64, 'iosArm64')
                 
-		configure([linux, windows, mac,/* iosX64, iosArm64*/]) {
-			compilations.main.outputKinds( 'EXECUTABLE')
-            compilations.main.cinterops {
-                openssl {
-                    switch (it) {
-                        case mac:
-                            includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
-                            break
-                        case linux:
+//		configure([/*linux,*/ windows, mac,/* iosX64, iosArm64*/]) {
+//			compilations.main.outputKinds( 'EXECUTABLE')
+//            compilations.main.cinterops {
+//                openssl {
+//                    switch (it) {
+//                        case mac:
+//                            includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+//                            break
+/*                        case linux:
                             includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
-                            break
-                    }
-                }
-            }
-		}
+                            break*/
+//                    }
+//                }
+//            }
+//		}
     }
 }
 
 
+dependencies {
+    // For multiplatform projects, since klogger is published without metadata
+    commonMainImplementation "com.soywiz:klogger-metadata:$klogger_version" // Common 
+    jvmMainImplementation "com.soywiz:klogger-jvm:$klogger_version" // JVM
+    //iosX64MainImplementation "com.soywiz:klogger-iosx64:$klogger_version" // iOS Simulator
+    //iosArm32MainImplementation "com.soywiz:klogger-iosarm32:$klogger_version" // Older iOS 32-bit devices
+    //iosArm64MainImplementation "com.soywiz:klogger-iosarm64:$klogger_version" // Newer iOS 64-bit devices
+    //macMainImplementation "com.soywiz:klogger-macosx64:$klogger_version" // MacOS
+    //linuxX64MainImplementation "com.soywiz:klogger-linuxx64:$klogger_version" // Linux x64
+    //windowsMainImplementation "com.soywiz:klogger-mingwx64:$klogger_version" // Windows x64
+}
+
 task runProgram {
     def buildType = 'RELEASE' // Change to 'DEBUG' to run application with debug symbols.
-    dependsOn kotlin.targets.mac.compilations.main.linkTaskName('EXECUTABLE', buildType)
-    doLast {
-        exec {
-            executable kotlin.targets.mac.compilations.main.getBinary('EXECUTABLE', buildType)
-            args "$url", "query"
-        }
-    }
+//    dependsOn kotlin.targets.mac.compilations.main.linkTaskName('EXECUTABLE', buildType)
+//    doLast {
+//        exec {
+//            executable kotlin.targets.mac.compilations.main.getBinary('EXECUTABLE', buildType)
+//            args "$url", "query"
+//        }
+//    }
 }
 
 

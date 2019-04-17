@@ -208,9 +208,9 @@ class PhxSocket(
      */
     private fun onConnMessage(rawMessage: String) {
         val json = Json.plain.parseJson(rawMessage).jsonObject
-        val jsonTopic = json["topic"].content
-        val jsonEvent = json["event"].content
-        val jsonPayload= json["payload"].jsonObject
+        val jsonTopic = json["topic"]!!.content
+        val jsonEvent = json["event"]!!.content
+        val jsonPayload= json["payload"]!!.jsonObject
         val jsonRef = json.getPrimitiveOrNull("ref")
 
         val ref = jsonRef?.longOrNull ?: -1L

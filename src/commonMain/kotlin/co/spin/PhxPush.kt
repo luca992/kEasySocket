@@ -114,7 +114,7 @@ class PhxPush(
      */
     private fun matchReceive(payload: JsonObject) {
         for (recHook in  recHooks) {
-            if (recHook.first == payload.get("status").content) {
+            if (recHook.first == payload["status"]?.content) {
                 recHook.second.invoke(payload.getObject("response"))
             }
         }
