@@ -7,12 +7,13 @@ import kotlinx.serialization.json.JsonElement
 
 open class PhxEvent<T>(val name: String,
                        val serializer: DeserializationStrategy<T>?,
-                       val callbacks: MutableList<OnReceive<T>>
+                       val callbacks: MutableList<OnReceive<T>>,
+                       val json: Json = Json.nonstrict
 ) {
     fun parse(content: String): T? {
         try {
             if (serializer == null) return null
-            return Json.nonstrict.parse(serializer, content)
+            return json.parse(serializer, content)
         } catch (e: Exception) {
             Log.error{"HUH??? json deserialization failed: $e"}
             return null
