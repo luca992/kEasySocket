@@ -47,6 +47,7 @@ kotlin {
                 implementation "org.jetbrains.kotlin:kotlin-stdlib-common"
                 implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlin_coroutines_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlin_serialization_version"
+                implementation "io.ktor:ktor-client-websockets:$ktor_version"
             }
         }
 
@@ -64,7 +65,7 @@ kotlin {
 				implementation 'org.jetbrains.kotlin:kotlin-stdlib'
 				implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
 				implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlin_serialization_version"
-				implementation "io.ktor:ktor-client-websocket:$ktor_version"
+				implementation "io.ktor:ktor-client-websockets-jvm:$ktor_version"
                 implementation "io.ktor:ktor-client-cio:$ktor_version"
                 implementation "ch.qos.logback:logback-classic:1.2.3"
                 implementation "io.ktor:ktor-client-logging-jvm:$ktor_version"

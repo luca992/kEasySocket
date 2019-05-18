@@ -3,7 +3,7 @@ package co.spin
 import co.spin.utils.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.BadResponseStatusException
+import io.ktor.client.features.ResponseException
 import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.features.websocket.wss
@@ -75,7 +75,7 @@ actual constructor(actual override var url: Url,
             state = SocketState.SocketConnecting
             client.wss(method = HttpMethod.Get, host = url.host, port = url.port, path = url.path,
                     block = defaultClientWebSocketSession)
-        } catch (e: BadResponseStatusException) {
+        } catch (e: ResponseException) {
             e.printStackTrace()
             state = SocketState.SocketClosed
             delegate?.webSocketDidError(
