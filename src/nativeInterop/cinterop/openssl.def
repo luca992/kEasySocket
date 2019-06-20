@@ -1,6 +1,11 @@
 headers = openssl/bio.h openssl/ssl.h openssl/err.h openssl/evp.h
 headerFilter = openssl/*
-compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu
-compilerOpts.osx = -I/usr/local/opt/openssl@1.1/include
-linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/openssl@1.1/lib -lssl -lcrypto
-linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lopenssl
+compilerOpts = \
+-I/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/MacOSX10.14-x86_64.sdk/include \
+-I/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/iPhoneSimulator12.2-x86_64.sdk/include \
+-I/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/iPhoneOS12.2-arm64.sdk/include
+linkerOpts = \
+-L/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/MacOSX10.14-x86_64.sdk/lib \
+-L/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/iPhoneSimulator12.2-x86_64.sdk/lib \
+-L/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/iPhoneOS12.2-arm64.sdk/lib \
+-lssl -lcrypto

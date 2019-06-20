@@ -2,7 +2,6 @@ package co.spin.utils
 
 import kotlinx.cinterop.*
 import platform.posix.*
-import platform.osx.*
 
 actual typealias SocketT = Int
 actual typealias TimeValT = Long
