@@ -1,6 +1,5 @@
 import co.spin.*
 import co.spin.Url.Companion.parseUrl
-import co.spin.ezwsclient.WebSocket
 import co.spin.ezwsclient.ReadyStateValues.*
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.*
