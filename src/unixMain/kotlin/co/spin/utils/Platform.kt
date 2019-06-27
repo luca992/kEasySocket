@@ -47,11 +47,3 @@ actual fun setsockopt(s: SocketT, level: Int, option_name: Int, option_value: CP
 actual fun fcntl(s: SocketT) {
     platform.posix.fcntl(s, F_SETFL, O_NONBLOCK)
 }
-
-actual fun FD_ZERO(set: CValuesRef<fd_set>, scope: AutofreeScope){
-    posix_FD_ZERO(set)
-}
-
-actual fun FD_SET(fd: Int, set: CValuesRef<fd_set>, scope: AutofreeScope){
-    posix_FD_SET(fd,set)
-}

@@ -100,12 +100,8 @@ kotlin {
            dependsOn nativeCommonMain
         }
 
-        configure([linuxMain, macMain]) {
+        configure([linuxMain, macMain, iosMain]) {
             dependsOn unixMain
-        }
-        
-        iosMain{
-            dependsOn nativeCommonMain
         }
         
         configure([iosX64Main, iosArm64Main]) {
