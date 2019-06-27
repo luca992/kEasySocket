@@ -13,6 +13,8 @@ import platform.windows.select
 import platform.windows.setsockopt
 import platform.posix.timeval
 import platform.posix.fd_set
+import platform.posix.*
+
 
 
 actual typealias SocketT = ULong
@@ -54,4 +56,12 @@ actual fun fcntl(s: SocketT) {
         on.value  = 1u
         ioctlsocket(s, FIONBIO.toInt(), on.ptr);
     }
+}
+
+actual fun FD_ZERO(set: CValuesRef<fd_set>, scope: AutofreeScope){
+    posix_FD_ZERO(set)
+}
+
+actual fun FD_SET(fd: Int, set: CValuesRef<fd_set>, scope: AutofreeScope){
+    posix_FD_SET(fd,set)
 }

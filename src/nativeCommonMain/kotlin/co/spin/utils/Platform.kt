@@ -22,6 +22,6 @@ expect fun recv(s: SocketT, buf: CPointer<UByteVar>?, len: ULong, flags: Int): L
 expect fun send(s: SocketT, buf: CPointer<UByteVar>?, len: ULong, flags: Int): Long
 expect fun setsockopt(s: SocketT, level: Int, option_name: Int, option_value: CPointer<IntVar>, option_len : Int) : Int
 expect fun fcntl(s: SocketT)
-
-
+expect fun FD_ZERO(set: CValuesRef<fd_set>, scope: AutofreeScope)
+expect fun FD_SET(fd: Int, set: CValuesRef<fd_set>, scope: AutofreeScope)
 

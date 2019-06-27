@@ -219,10 +219,10 @@ open class WebSocket(private val url: Url,
                 var rfds = alloc<fd_set>()
                 var wfds = alloc<fd_set>()
                 val tv = alloc<timeval>().apply{ tv_sec = timeout/(1000 as TimeValT); tv_usec = (timeout%1000) * 1000 }
-                posix_FD_ZERO(rfds.ptr)
-                posix_FD_ZERO(wfds.ptr)
-                posix_FD_SET(sockfd.toInt(), rfds.ptr);
-                if (!txbuf.isEmpty()) { posix_FD_SET(sockfd.toInt(), wfds.ptr); }
+                FD_ZERO(rfds.ptr, this)
+                FD_ZERO(wfds.ptr, this)
+                FD_SET(sockfd.toInt(), rfds.ptr, this);
+                if (!txbuf.isEmpty()) { FD_SET(sockfd.toInt(), wfds.ptr, this); }
                 select(sockfd.toInt() + 1, rfds.ptr, wfds.ptr, null, if (timeout > 0) tv.ptr else null)
             }
             while (true) {
