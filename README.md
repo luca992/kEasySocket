@@ -5,7 +5,7 @@
   * macOs: _working_ 
   * windows: (probably needs minor fixes)
   * linux: _untested_ (probably needs minor fixes)
-  * ios: _Not working (need to figure out how to use openssl on ios.. or use apple's lib)_
+  * ios: _working_
   * java: _working_
   
   Learn more about the Phoenix Framework at http://www.phoenixframework.org/
