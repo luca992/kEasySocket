@@ -62,6 +62,7 @@ kotlin {
                 implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlin_serialization_version"
                 implementation "io.ktor:ktor-client-websockets:$ktor_version"
+                implementation "com.soywiz.korlibs.klogger:klogger:$klogger_version"
             }
         }
 		jvmMain {
@@ -128,18 +129,6 @@ kotlin {
     }
 }
 
-
-dependencies {
-    // For multiplatform projects, since klogger is published without metadata
-    commonMainImplementation "com.soywiz:klogger-metadata:$klogger_version" // Common 
-    jvmMainImplementation "com.soywiz:klogger-jvm:$klogger_version" // JVM
-    iosX64MainImplementation "com.soywiz:klogger-iosx64:$klogger_version" // iOS Simulator
-    //iosArm32MainImplementation "com.soywiz:klogger-iosarm32:$klogger_version" // Older iOS 32-bit devices
-    iosArm64MainImplementation "com.soywiz:klogger-iosarm64:$klogger_version" // Newer iOS 64-bit devices
-    macMainImplementation "com.soywiz:klogger-macosx64:$klogger_version" // MacOS
-    //linuxX64MainImplementation "com.soywiz:klogger-linuxx64:$klogger_version" // Linux x64
-    windowsMainImplementation "com.soywiz:klogger-mingwx64:$klogger_version" // Windows x64
-}
 
 task runProgram {
     def buildType = 'RELEASE' // Change to 'DEBUG' to run application with debug symbols.
