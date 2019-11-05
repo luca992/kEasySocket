@@ -2,7 +2,7 @@ package co.spin
 
 import co.spin.utils.Log
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.features.ResponseException
 import io.ktor.client.features.websocket.DefaultClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
@@ -11,13 +11,11 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
 import io.ktor.http.cio.websocket.send
+import kotlinx.coroutines.*
 import kotlinx.coroutines.EzSocketDispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.filterNotNull
-import kotlinx.coroutines.channels.map
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.channels.*
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.selects.select
 
 
 @ExperimentalUnsignedTypes
@@ -27,7 +25,7 @@ actual constructor(actual override var url: Url,
 
 
 
-    val client = HttpClient(CIO).config {
+    val client = HttpClient(OkHttp).config {
         install(WebSockets)
     }
 
@@ -40,29 +38,31 @@ actual constructor(actual override var url: Url,
         websocketSession = this
         state = SocketState.SocketOpen
         delegate?.webSocketDidOpen(this@EasySocketInterface)
+
         try {
-            incoming.map { it as? Frame.Text }.filterNotNull().consumeEach { message->
+            incoming.consumeAsFlow().filterNotNull()
+                .map { it as Frame.Text }.collect { message ->
                 delegate?.webSocketDidReceive(this@EasySocketInterface, message.readText())
             }
-        } catch (e: ClosedReceiveChannelException) {
-            val reason = closeReason.await()
-            Log.error{"onClose $reason"}
-            state = SocketState.SocketClosed
-            delegate?.webSocketDidClose(
-                    this@EasySocketInterface,
-                    reason?.code?.toInt() ?: 0,
-                    reason.toString(),
-                    true
-            )
         } catch (e: Throwable) {
             e.printStackTrace()
             state = SocketState.SocketClosed
-            val reason = closeReason.await()
+            val reason = if (closeReason.isCompleted) closeReason.await() else e.message
             delegate?.webSocketDidError(
                     this@EasySocketInterface,
                     reason.toString()
             )
 
+        } catch (e: ClosedReceiveChannelException) {
+            val reason = closeReason.await()
+            Log.error{"onClose $reason"}
+            state = SocketState.SocketClosed
+            delegate?.webSocketDidClose(
+                this@EasySocketInterface,
+                reason?.code?.toInt() ?: 0,
+                reason.toString(),
+                true
+            )
         }
     }
 
