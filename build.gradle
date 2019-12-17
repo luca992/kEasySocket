@@ -52,6 +52,9 @@ kotlin {
             binaries {
                 executable {
                     // Binary configuration.
+                    runTask?.args("ws://api.example.com:80/socket/websocket", "token=exampletoken",
+                            "topic:13"
+                    )
                 }
             }
             compilations.main.cinterops {
@@ -59,6 +62,15 @@ kotlin {
                 }
             }
 		}
+        configure([jvm])  {
+            withJava()
+            jvmJar {
+                manifest {
+                    attributes 'Main-Class': 'HelloKt'
+                }
+                from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+            }
+        }
     }
     sourceSets {
         commonMain {
@@ -135,17 +147,6 @@ kotlin {
 }
 
 
-task runProgram {
-    def buildType = 'RELEASE' // Change to 'DEBUG' to run application with debug symbols.
-//    dependsOn kotlin.targets.mac.compilations.main.linkTaskName('EXECUTABLE', buildType)
-//    doLast {
-//        exec {
-//            executable kotlin.targets.mac.compilations.main.getBinary('EXECUTABLE', buildType)
-//            args "$url", "query"
-//        }
-//    }
-}
-
 
 // Publishing
 group 'co.spin'
@@ -203,3 +204,7 @@ if (publishUser && publishPassword) {
     }
 }
 
+
+// Use the following Gradle tasks to run your application:
+// :runReleaseExecutableMac - without debug symbols
+// :runDebugExecutableMac - with debug symbols

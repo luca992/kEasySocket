@@ -6,7 +6,6 @@ import kotlinx.coroutines.EzSocketDispatchers
 import kotlinx.coroutines.runBlocking
 
 fun main(args: Array<String>) = runBlocking {
-
     if (args.isEmpty())
         return@runBlocking
 
