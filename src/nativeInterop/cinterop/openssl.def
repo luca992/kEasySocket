@@ -1,9 +1,9 @@
 headers = openssl/bio.h openssl/ssl.h openssl/err.h openssl/evp.h
 headerFilter = openssl/*
-compilerOpts.osx = -I/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/MacOSX10.14-x86_64.sdk/include
-compilerOpts.ios_x64 = -I/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/iPhoneSimulator12.2-x86_64.sdk/include
-compilerOpts.ios_arm64 = -I/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/iPhoneOS12.2-arm64.sdk/include
-linkerOpts.osx = -L/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/MacOSX10.14-x86_64.sdk/lib -lssl -lcrypto
-linkerOpts.ios_x64 = -L/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/iPhoneSimulator12.2-x86_64.sdk/lib  -lssl -lcrypto
-linkerOpts.ios_arm64 = -L/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/iPhoneOS12.2-arm64.sdk/lib -lssl -lcrypto -lssl -lcrypto
+compilerOpts.osx = -I/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/MacOSX10.15-x86_64.sdk/include
+compilerOpts.ios_x64 = -I/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/iPhoneSimulator13.2-x86_64.sdk/include
+compilerOpts.ios_arm64 = -I/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/iPhoneOS13.2-arm64.sdk/include
+linkerOpts.osx = -L/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/MacOSX10.15-x86_64.sdk/lib -lssl -lcrypto
+linkerOpts.ios_x64 = -L/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/iPhoneSimulator13.2-x86_64.sdk/lib  -lssl -lcrypto
+linkerOpts.ios_arm64 = -L/Users/lucaspinazzola/Projects/kEasySocket/openssl/bin/iPhoneOS13.2-arm64.sdk/lib -lssl -lcrypto -lssl -lcrypto
 
