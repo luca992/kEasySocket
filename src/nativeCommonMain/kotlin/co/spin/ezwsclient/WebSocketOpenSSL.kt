@@ -78,6 +78,14 @@ class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
                 return false
             }
 
+            /*SSL_set_verify(
+                ssl_connection,
+                SSL_VERIFY_PEER or SSL_VERIFY_FAIL_IF_NO_PEER_CERT,
+                staticCFunction { i: Int, j: CPointer<X509_STORE_CTX>? ->
+                    return@staticCFunction 1
+                }
+            )*/
+
             ERR_clear_error()
             val connectResult = SSL_connect(ssl_connection)
             if (connectResult == 1) {
@@ -187,7 +195,7 @@ class WebSocketOpenSSL(url: Url, useMask : Boolean) : WebSocket(url, useMask) {
         else if (err == SSL_ERROR_SSL)
         {
             e = ERR_get_error()
-            return "OpenSSL failed - ${ERR_error_string(e, null)?.toKString()}"
+            return "OpenSSL failed - SSL_ERROR_SSL ${ERR_error_string(e, null)?.toKString()}"
         }
         else if (err == SSL_ERROR_NONE)
         {
