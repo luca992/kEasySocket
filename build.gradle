@@ -62,6 +62,7 @@ kotlin {
                 }
             }
 		}
+        /* to build jvm executable jar
         configure([jvm])  {
             withJava()
             jvmJar {
@@ -70,7 +71,7 @@ kotlin {
                 }
                 from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
             }
-        }
+        }*/
     }
     sourceSets {
         commonMain {
