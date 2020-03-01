@@ -1,5 +1,5 @@
 # Intro
-  kEasySocket is a multiplatform kotlin websocket client. Also supports communication with a phoenix framework web project through the use of channels over websocket.
+  kEasySocket is a multiplatform / native kotlin websocket client. Also supports communication with a phoenix framework web project through the use of channels over websocket.
 
   Platform Status:
   * macOs: _working_ 
