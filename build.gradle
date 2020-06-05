@@ -5,6 +5,7 @@ buildscript {
         maven { url 'https://plugins.gradle.org/m2/' }
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap'}
         maven { url "https://dl.bintray.com/kotlin/kotlin-dev/" }
+        maven { url "https://kotlin.bintray.com/kotlinx" }
         maven { url 'https://dl.bintray.com/jetbrains/kotlin-native-dependencies' }
         maven { url "https://dl.bintray.com/soywiz/soywiz" }
     }
@@ -20,7 +21,7 @@ allprojects {
 		jcenter()
 		maven { url 'https://dl.bintray.com/kotlin/kotlin-eap'}
 		maven { url "https://dl.bintray.com/kotlin/kotlin-dev/" }
-        maven { url "https://dl.bintray.com/kotlin/kotlinx/" }
+        maven { url "https://kotlin.bintray.com/kotlinx" }
         maven { url "https://dl.bintray.com/kotlin/ktor" }
         maven { url 'https://dl.bintray.com/touchlabpublic/kotlin' }
 		maven { url "https://dl.bintray.com/soywiz/soywiz" }
@@ -42,7 +43,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 kotlin {
     targets {
         jvm()
-        //fromPreset(presets.linuxX64, 'linux')
+        fromPreset(presets.linuxX64, 'linux')
         fromPreset(presets.mingwX64, 'windows')
         macosX64('mac')
         fromPreset(presets.iosX64, 'iosX64')
@@ -78,7 +79,7 @@ kotlin {
             dependencies {
                 implementation "org.jetbrains.kotlin:kotlin-stdlib-common"
                 implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
-                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlin_serialization_version"
+                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlin_serialization_version"
                 implementation "io.ktor:ktor-client-websockets:$ktor_version"
                 implementation "com.soywiz.korlibs.klogger:klogger:$klogger_version"
             }
@@ -87,7 +88,6 @@ kotlin {
 		    dependsOn commonMain
 			dependencies {
 				implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-				implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlin_serialization_version"
 				implementation "io.ktor:ktor-client-websockets-jvm:$ktor_version"
                 implementation "io.ktor:ktor-client-okhttp:$ktor_version"
                 implementation "ch.qos.logback:logback-classic:1.2.3"
@@ -106,8 +106,6 @@ kotlin {
         nativeCommonMain {
             dependsOn commonMain
             dependencies {
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$kotlin_coroutines_version"
-                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:$kotlin_serialization_version"
             }
         }
 
